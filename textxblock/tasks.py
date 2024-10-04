@@ -5,7 +5,7 @@ import requests
 
 @shared_task
 def task_method(message):
-    server_address = 'http://localhost:3000/'
+    server_address = 'http://host.docker.internal:3000/'
     code = {
         "code" : message
     }
