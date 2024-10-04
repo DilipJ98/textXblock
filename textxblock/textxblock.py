@@ -147,7 +147,9 @@ class TextXBlock(XBlock):
     def get_task_details(self, data, suffix=''):
         return {
             'code': self.answer,
-            'results': self.code_results
+            'results': self.code_results,
+            'id': self.scope_ids.usage_id
+            
         }
 
 
