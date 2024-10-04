@@ -103,7 +103,7 @@ function TextXBlock(runtime, element) {
       //   data: JSON.stringify({ answer_text: userAnswer }),
       //   success: showAnswerResult,
       // });
-
+      console.log(runtime);
       let handlerUrl = runtime.handlerUrl(element, "handle_task_method");
       $.ajax({
         type: "POST",
