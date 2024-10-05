@@ -114,8 +114,9 @@ class TextXBlock(XBlock):
 
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
-        result = task_method.delay(data['user_input'], self.scope_ids )
-        return {'taskid' : result.id}    
+        test = str(self.scope_ids)
+        result = task_method.delay(data['user_input'], test )
+        return {'taskid' : result.id, "test": test}    
     
     @XBlock.json_handler
     def get_task_result(self, data, suffix=''):

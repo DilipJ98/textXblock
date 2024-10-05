@@ -114,6 +114,7 @@ function TextXBlock(runtime, element) {
     }
 
     function showAnswerResult(result) {
+      console.log(result, " this is from handler task method");
       //storing task id in local storage
       localStorage.setItem("taskid", result.taskid);
       let interval = setInterval(() => {
