@@ -122,7 +122,7 @@ function TextXBlock(runtime, element) {
         $.ajax({
           type: "POST",
           url: handlerUrl,
-          data: JSON.stringify({ id: result.taskid }),
+          data: JSON.stringify({ id: result.taskid, xblock_id: result.test }),
           success: taskResult,
         });
       }, 10000);
@@ -133,6 +133,7 @@ function TextXBlock(runtime, element) {
       }, 60000);
 
       function taskResult(result) {
+        console.log(result);
         console.log(result.status, " this is status it should true or false");
         $(element).find(".result-div").css("display", "block");
         if (result.status === 200) {

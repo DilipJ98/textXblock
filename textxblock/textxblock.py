@@ -9,6 +9,8 @@ from .tasks import task_method
 import requests
 import time
 from celery.result import AsyncResult
+from .database import User
+
 
 
 class TextXBlock(XBlock):
@@ -115,9 +117,13 @@ class TextXBlock(XBlock):
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
         test = str(self.scope_ids)
-        result = task_method.delay(data['user_input'], test )
-        return {'taskid' : result.id, "test": test}    
+        block_location_id = test.split("'")[-2]
+        result = task_method.delay(data['user_input'], block_location_id )
+        user = User(xblock_id=block_location_id, task_id=result.id, code = data['user_input'], code_result = False)
+        user.save()
+        return {'taskid' : result.id, "test": block_location_id}    
     
+
     @XBlock.json_handler
     def get_task_result(self, data, suffix=''):
         result = AsyncResult(data['id'])
@@ -126,6 +132,10 @@ class TextXBlock(XBlock):
                 self.score = 1
                 status = 200
                 self.code_results = 'success'
+                user = User.objects.get(data['xblock_id'])
+                user.code_result = True
+                user.save()
+
             elif result.get()['isSuccess'] == 400:
                 self.score = 0
                 status = 400
@@ -136,7 +146,8 @@ class TextXBlock(XBlock):
                 "status": status,
                 "score": self.score,
                 "explanation": self.explanation,
-                "answer": self.actual_answer
+                "answer": self.actual_answer,
+                "resultOfDb": user
             }
         else:
             return{
