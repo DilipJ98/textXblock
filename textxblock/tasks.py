@@ -7,7 +7,7 @@ import requests
 def task_method(message, id):
     server_address = 'http://host.docker.internal:3000/'
     code = {
-        "code" : id
+        "code" : message
     }
     response = requests.post(url = server_address, json =  code)
     res = response.json()
