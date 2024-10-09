@@ -1,5 +1,4 @@
 function TextXBlock(runtime, element) {
-  $(element).find(".result-div").css("display", "none");
   //loads intially
   $(() => {
     //for initial question
@@ -33,13 +32,9 @@ function TextXBlock(runtime, element) {
           console.log(element[2], "taskid");
           console.log(element[3], "code");
           console.log(element[4], "result");
-          $(element).find(".result-div").css("display", "block");
-          if (element[4] === 1) {
-            $(element).find("#answer-validation").text("Correct");
-          } else {
-            $(element).find("#answer-validation").text("Wrong");
-          }
+          $(element).find("#answer-validation").text("Correct");
           $(element).find(".score").text(element[4]);
+          console.log("after render");
         });
       } else {
         console.log("no data found ");
@@ -139,19 +134,16 @@ function TextXBlock(runtime, element) {
 
       function taskResult(result) {
         console.log(result);
-        $(element).find(".result-div").css("display", "block");
         if (result.status === 200) {
           $(element).find("#answer-validation").text("Correct");
           $(element).find(".score").text(result.score);
           $(element).find("#show-answer").hide();
           $(element).find("#explaination").hide();
-          $(element).find(".loader").hide();
         } else if (result.status === 400) {
           $(element).find("#answer-validation").text("Wrong");
           $(element).find("#show-answer").text(result.answer);
           $(element).find("#explaination").text(result.explanation);
           $(element).find(".score").text(result.score);
-          $(element).find(".loader").hide();
         } else {
           $(element).find(".loader").text("Your code is compiling....");
         }
