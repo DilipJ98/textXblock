@@ -168,8 +168,7 @@ class TextXBlock(XBlock):
                 "status": status,
                 "score": self.score,
                 "explanation": self.explanation,
-                "answer": self.actual_answer,
-                "fetched": fetched_data
+                "answer": self.actual_answer
             }
         
         else:
