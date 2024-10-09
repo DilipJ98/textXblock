@@ -57,10 +57,6 @@ class TextXBlock(XBlock):
     )
 
 
-    db_path = "/openedx/my_database.db" 
-
-    connection = sqlite3.connect(db_path)
-    cursor = connection.cursor()
 
 
     def resource_string(self, path):
@@ -123,6 +119,11 @@ class TextXBlock(XBlock):
 
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
+        db_path = "/openedx/my_database.db" 
+
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+
         test = str(self.scope_ids)
         block_location_id = test.split("'")[-2]
         result = task_method.delay(data['user_input'], block_location_id )
@@ -131,11 +132,15 @@ class TextXBlock(XBlock):
             VALUES (?, ?, ?, ?);
         ''', (block_location_id, result.id, data['user_input'], 1))
         connection.commit()
+        connection.close()
         return {'taskid' : result.id, "test": block_location_id}    
     
 
     @XBlock.json_handler
     def get_task_result(self, data, suffix=''):
+        db_path = "/openedx/my_database.db"
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
         result = AsyncResult(data['id'])
         if result.ready():
             if result.get()['isSuccess'] == 200:
@@ -150,6 +155,8 @@ class TextXBlock(XBlock):
                 self.code_results = 'fail'
             self.runtime.publish(self, "grade", {"value":self.score, "max_value" : 1.0})
             self.save()
+
+            connection.close()
             return {
                 "status": status,
                 "score": self.score,
@@ -157,7 +164,9 @@ class TextXBlock(XBlock):
                 "answer": self.actual_answer,
                 "fetched": fetched_data
             }
+        
         else:
+            connection.close()
             return{
                 'status': 'pending',
             }
