@@ -17,25 +17,33 @@ function TextXBlock(runtime, element) {
       success: questionUpdate,
     });
 
-    let localStorageTaskId = localStorage.getItem("taskid");
-    if (localStorageTaskId) {
-      console.log(localStorageTaskId);
-      let handlerForTaskDetails = runtime.handlerUrl(
-        element,
-        "get_task_details"
-      );
-      $.ajax({
-        type: "POST",
-        url: handlerForTaskDetails,
-        data: JSON.stringify({}),
-        success: getTaskDetails,
-      });
-    } else {
-      console.log("there is no task id");
-    }
+    let handleUrlOfDb = runtime.handlerUrl(element, "get_task_details_from_db");
+    $.ajax({
+      type: "POST",
+      url: handleUrlOfDb,
+      data: JSON.stringify({}),
+      success: getTaskDetails,
+    });
 
     function getTaskDetails(result) {
-      console.log(result);
+      let dataOfResult = result.data;
+      if (dataOfResult) {
+        dataOfResult.forEach((element) => {
+          console.log(element[1], " xblock id");
+          console.log(element[2], "taskid");
+          console.log(element[3], "code");
+          console.log(element[4], "result");
+          $(element).find(".result-div").css("display", "block");
+          if (element[4] === 1) {
+            $(element).find("#answer-validation").text("Correct");
+          } else {
+            $(element).find("#answer-validation").text("Wrong");
+          }
+          $(element).find(".score").text(element[4]);
+        });
+      } else {
+        console.log("no data found ");
+      }
     }
 
     function monacoEditor() {
@@ -103,7 +111,6 @@ function TextXBlock(runtime, element) {
       //   data: JSON.stringify({ answer_text: userAnswer }),
       //   success: showAnswerResult,
       // });
-      console.log(runtime);
       let handlerUrl = runtime.handlerUrl(element, "handle_task_method");
       $.ajax({
         type: "POST",
@@ -114,9 +121,7 @@ function TextXBlock(runtime, element) {
     }
 
     function showAnswerResult(result) {
-      console.log(result, " this is from handler task method");
       //storing task id in local storage
-      localStorage.setItem("taskid", result.taskid);
       let interval = setInterval(() => {
         let handlerUrl = runtime.handlerUrl(element, "get_task_result");
         $.ajax({
@@ -134,24 +139,20 @@ function TextXBlock(runtime, element) {
 
       function taskResult(result) {
         console.log(result);
-        console.log(result.status, " this is status it should true or false");
         $(element).find(".result-div").css("display", "block");
         if (result.status === 200) {
-          console.log(result.status, " if");
           $(element).find("#answer-validation").text("Correct");
           $(element).find(".score").text(result.score);
           $(element).find("#show-answer").hide();
           $(element).find("#explaination").hide();
           $(element).find(".loader").hide();
         } else if (result.status === 400) {
-          console.log(result.status, " else if");
           $(element).find("#answer-validation").text("Wrong");
           $(element).find("#show-answer").text(result.answer);
           $(element).find("#explaination").text(result.explanation);
           $(element).find(".score").text(result.score);
           $(element).find(".loader").hide();
         } else {
-          console.log(result.status, " else");
           $(element).find(".loader").text("Your code is compiling....");
         }
       }

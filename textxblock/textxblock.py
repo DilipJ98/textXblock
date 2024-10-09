@@ -120,10 +120,8 @@ class TextXBlock(XBlock):
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
         db_path = "/openedx/my_database.db" 
-
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
-
         test = str(self.scope_ids)
         block_location_id = test.split("'")[-2]
         result = task_method.delay(data['user_input'], block_location_id )
@@ -173,13 +171,16 @@ class TextXBlock(XBlock):
         
 
     @XBlock.json_handler
-    def get_task_details(self, data, suffix=''):
-        return {
-            'code': self.answer,
-            'results': self.code_results,
-            
-        }
-
+    def get_task_details_from_db(self, data, suffix=''):
+        db_path = "/openedx/my_database.db"
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+        test = str(self.scope_ids)
+        block_location_id = test.split("'")[-2]
+        cursor.execute("select * from user where xblock_id = ?",(block_location_id,))
+        fetched_data = cursor.fetchall()
+        cursor.close()
+        return {"data": fetched_data}
 
             
     # TO-DO: change this to create the scenarios you'd like to see in the
