@@ -125,10 +125,15 @@ class TextXBlock(XBlock):
         test = str(self.scope_ids)
         block_location_id = test.split("'")[-2]
         result = task_method.delay(data['user_input'], block_location_id )
-        cursor.execute('''
-            INSERT INTO user (xblock_id, task_id, code, code_result)
-            VALUES (?, ?, ?, ?);
-        ''', (block_location_id, result.id, data['user_input'], 1))
+        cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+        block_id_db_check = cursor.fetchone()
+        if block_id_db_check is None:
+            cursor.execute('''
+                INSERT INTO user (xblock_id, task_id, code, code_result)
+                VALUES (?, ?, ?, ?);
+            ''', (block_location_id, result.id, data['user_input'], 0))
+        else:
+            cursor.execute('''UPDATE user SET task_id = ?, code = ?, code_result = ? WHERE xblock_id = ?; ''', (result.id, data['user_input'], 0, block_location_id))
         connection.commit()
         connection.close()
         return {'taskid' : result.id, "test": block_location_id}    
@@ -140,13 +145,17 @@ class TextXBlock(XBlock):
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
         result = AsyncResult(data['id'])
+        test = str(self.scope_ids)
+        block_location_id = test.split("'")[-2]
         if result.ready():
             if result.get()['isSuccess'] == 200:
                 self.score = 1
                 status = 200
                 self.code_results = 'success'
-                cursor.execute("select * from user;")
-                fetched_data = cursor.fetchall()
+                cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+                fetched_data = cursor.fetchone()
+                if fetched_data is not None:
+                    cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ?; ''', ( 1, block_location_id))
             elif result.get()['isSuccess'] == 400:
                 self.score = 0
                 status = 400

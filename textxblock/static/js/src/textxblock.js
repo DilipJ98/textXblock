@@ -24,6 +24,8 @@ function TextXBlock(runtime, element) {
       success: getTaskDetails,
     });
 
+    let dbCode;
+
     function getTaskDetails(result) {
       let localTaskId = localStorage.getItem("taskid");
       let dataOfResult = result.data;
@@ -33,11 +35,12 @@ function TextXBlock(runtime, element) {
           console.log(element[1], " xblock id");
           console.log(element[2], "taskid");
           console.log(element[3], "code");
+          dbCode = element[3];
           console.log(element[4], "result");
           marks = element[4];
         });
         $(element).find("#answer-validation").text("Correct");
-        $(element).find(".score").text();
+        $(element).find(".score").text(marks);
       }
     }
 
@@ -67,12 +70,15 @@ function TextXBlock(runtime, element) {
         require(["vs/editor/editor.main"], () => {
           //this is call back that runs once module load is successful
           //creating editor instance
+          let initialValue =
+            dbCode ||
+            "public class Test {\n  public static void main(String[] args){\n \n  } \n}";
+
           let editor = monaco.editor.create(
             document.getElementById("container"),
             {
               //an options object extra options for monaco
-              value:
-                "public class Test {\n  public static void main(String[] args){\n \n  } \n}",
+              value: initialValue,
               language: "java",
               theme: "vs-dark",
             }
