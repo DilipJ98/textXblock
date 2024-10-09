@@ -9,8 +9,7 @@ from .tasks import task_method
 import requests
 import time
 from celery.result import AsyncResult
-from db import cursor, connection
-
+import sqlite3
 
 
 
@@ -56,6 +55,13 @@ class TextXBlock(XBlock):
         scope= Scope.user_state,
         help= "the code results"
     )
+
+
+    db_path = "/openedx/my_database.db" 
+
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
