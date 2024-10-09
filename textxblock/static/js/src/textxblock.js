@@ -37,7 +37,7 @@ function TextXBlock(runtime, element) {
           marks = element[4];
         });
         $(element).find("#answer-validation").text("Correct");
-        $(element).find(".score").text(marks);
+        $(element).find(".score").text();
       }
     }
 
@@ -140,11 +140,13 @@ function TextXBlock(runtime, element) {
           $(element).find(".score").text(result.score);
           $(element).find("#show-answer").hide();
           $(element).find("#explaination").hide();
+          $(element).find(".loader").hide();
         } else if (result.status === 400) {
           $(element).find("#answer-validation").text("Wrong");
           $(element).find("#show-answer").text(result.answer);
           $(element).find("#explaination").text(result.explanation);
           $(element).find(".score").text(result.score);
+          $(element).find(".loader").hide();
         } else {
           $(element).find(".loader").text("Your code is compiling....");
         }
