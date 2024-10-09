@@ -16,32 +16,30 @@ function TextXBlock(runtime, element) {
       success: questionUpdate,
     });
 
-    let handleUrlOfDb = runtime.handlerUrl(element, "get_task_details_from_db");
-    $.ajax({
-      type: "POST",
-      url: handleUrlOfDb,
-      data: JSON.stringify({}),
-      success: getTaskDetails,
-    });
+    let handleUrlOfDb = runtime.handlerUrl(element, "get_task_result");
+    let localTaskId = localStorage.getItem("taskid");
+
+    if (localTaskId) {
+      $.ajax({
+        type: "POST",
+        url: handleUrlOfDb,
+        data: JSON.stringify({ id: localTaskId }),
+        success: getTaskDetails,
+      });
+    }
 
     let dbCode;
 
-    function getTaskDetails(result) {
-      let localTaskId = localStorage.getItem("taskid");
-      let dataOfResult = result.data;
-      let marks;
-      if (localTaskId) {
-        dataOfResult.forEach((element) => {
-          console.log(element[1], " xblock id");
-          console.log(element[2], "taskid");
-          console.log(element[3], "code");
-          dbCode = element[3];
-          console.log(element[4], "result");
-          marks = element[4];
-        });
-        $(element).find("#answer-validation").text("Correct");
-        $(element).find(".score").text(marks);
-      }
+    function getTaskDetails(statusOfTask) {
+      let dataOfResult = statusOfTask.data;
+      dataOfResult.forEach((element) => {
+        console.log(element[1], " xblock id");
+        console.log(element[2], "taskid");
+        console.log(element[3], "code");
+        dbCode = element[3];
+        console.log(element[4], "result");
+      });
+      taskResult(statusOfTask);
     }
 
     function monacoEditor() {
@@ -124,38 +122,31 @@ function TextXBlock(runtime, element) {
     function showAnswerResult(result) {
       //storing task id in local storage
       localStorage.setItem("taskid", result.taskid);
-      let interval = setInterval(() => {
-        let handlerUrl = runtime.handlerUrl(element, "get_task_result");
-        $.ajax({
-          type: "POST",
-          url: handlerUrl,
-          data: JSON.stringify({ id: result.taskid, xblock_id: result.test }),
-          success: taskResult,
-        });
-      }, 10000);
+      let handlerUrl = runtime.handlerUrl(element, "get_task_result");
+      $.ajax({
+        type: "POST",
+        url: handlerUrl,
+        data: JSON.stringify({ id: result.taskid, xblock_id: result.test }),
+        success: taskResult,
+      });
+    }
 
-      //set timeout
-      setTimeout(() => {
-        clearInterval(interval);
-      }, 60000);
-
-      function taskResult(result) {
-        console.log(result);
-        if (result.status === 200) {
-          $(element).find("#answer-validation").text("Correct");
-          $(element).find(".score").text(result.score);
-          $(element).find("#show-answer").hide();
-          $(element).find("#explaination").hide();
-          $(element).find(".loader").hide();
-        } else if (result.status === 400) {
-          $(element).find("#answer-validation").text("Wrong");
-          $(element).find("#show-answer").text(result.answer);
-          $(element).find("#explaination").text(result.explanation);
-          $(element).find(".score").text(result.score);
-          $(element).find(".loader").hide();
-        } else {
-          $(element).find(".loader").text("Your code is compiling....");
-        }
+    function taskResult(result) {
+      console.log(result);
+      if (result.status === 200) {
+        $(element).find("#answer-validation").text("Correct");
+        $(element).find(".score").text(result.score);
+        $(element).find("#show-answer").hide();
+        $(element).find("#explaination").hide();
+        $(element).find(".loader").hide();
+      } else if (result.status === 400) {
+        $(element).find("#answer-validation").text("Wrong");
+        $(element).find("#show-answer").text(result.answer);
+        $(element).find("#explaination").text(result.explanation);
+        $(element).find(".score").text(result.score);
+        $(element).find(".loader").hide();
+      } else {
+        $(element).find(".loader").text("Your code is compiling....");
       }
     }
   });

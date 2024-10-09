@@ -148,12 +148,12 @@ class TextXBlock(XBlock):
         test = str(self.scope_ids)
         block_location_id = test.split("'")[-2]
         if result.ready():
+            cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+            fetched_data = cursor.fetchone()
             if result.get()['isSuccess'] == 200:
                 self.score = 1
                 status = 200
                 self.code_results = 'success'
-                cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
-                fetched_data = cursor.fetchone()
                 if fetched_data is not None:
                     cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ?; ''', ( 1, block_location_id))
                     connection.commit()
@@ -163,19 +163,22 @@ class TextXBlock(XBlock):
                 self.code_results = 'fail'
             self.runtime.publish(self, "grade", {"value":self.score, "max_value" : 1.0})
             self.save()
-
             connection.close()
             return {
                 "status": status,
                 "score": self.score,
                 "explanation": self.explanation,
-                "answer": self.actual_answer
+                "answer": self.actual_answer,
+                "data": fetched_data
             }
         
         else:
+            cursor.execute("select * from user where xblock_id = ?", (block_location_id,))
+            fetched_data = cursor.fetchone()
             connection.close()
             return{
                 'status': 'pending',
+                'data' : fetched_data
             }
         
 
