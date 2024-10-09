@@ -29,7 +29,7 @@ function TextXBlock(runtime, element) {
     function getTaskDetails(result) {
       let localTaskId = localStorage.getItem("taskid");
       let dataOfResult = result.data;
-      let marks = 0;
+      let marks;
       if (localTaskId) {
         dataOfResult.forEach((element) => {
           console.log(element[1], " xblock id");

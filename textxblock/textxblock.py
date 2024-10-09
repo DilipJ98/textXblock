@@ -156,6 +156,7 @@ class TextXBlock(XBlock):
                 fetched_data = cursor.fetchone()
                 if fetched_data is not None:
                     cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ?; ''', ( 1, block_location_id))
+                    connection.commit()
             elif result.get()['isSuccess'] == 400:
                 self.score = 0
                 status = 400
