@@ -25,19 +25,19 @@ function TextXBlock(runtime, element) {
     });
 
     function getTaskDetails(result) {
+      let localTaskId = localStorage.getItem("taskid");
       let dataOfResult = result.data;
-      if (dataOfResult) {
+      let marks = 0;
+      if (localTaskId) {
         dataOfResult.forEach((element) => {
           console.log(element[1], " xblock id");
           console.log(element[2], "taskid");
           console.log(element[3], "code");
           console.log(element[4], "result");
-          $(element).find("#answer-validation").text("Correct");
-          $(element).find(".score").text(element[4]);
-          console.log("after render");
+          marks = element[4];
         });
-      } else {
-        console.log("no data found ");
+        $(element).find("#answer-validation").text("Correct");
+        $(element).find(".score").text(marks);
       }
     }
 
@@ -117,6 +117,7 @@ function TextXBlock(runtime, element) {
 
     function showAnswerResult(result) {
       //storing task id in local storage
+      localStorage.setItem("taskid", result.taskid);
       let interval = setInterval(() => {
         let handlerUrl = runtime.handlerUrl(element, "get_task_result");
         $.ajax({
