@@ -1,0 +1,13 @@
+setup.py
+textxblock/__init__.py
+textxblock/textxblock.py
+textxblock/static/README.txt
+textxblock/static/css/textxblock.css
+textxblock/static/html/textxblock.html
+textxblock/static/js/src/textxblock.js
+textxblock_xblock.egg-info/PKG-INFO
+textxblock_xblock.egg-info/SOURCES.txt
+textxblock_xblock.egg-info/dependency_links.txt
+textxblock_xblock.egg-info/entry_points.txt
+textxblock_xblock.egg-info/requires.txt
+textxblock_xblock.egg-info/top_level.txt
