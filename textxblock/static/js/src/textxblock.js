@@ -7,7 +7,7 @@ function TextXBlock(runtime, element) {
     let intervalOnPageLoad;
     let intervalOnSubmit;
 
-    function clearIntervals() {
+    function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
       clearInterval(intervalOnSubmit);
     }
@@ -123,6 +123,7 @@ function TextXBlock(runtime, element) {
             .find("#submit")
             .on("click", () => {
               userInputAnswer(editor.getValue());
+              clearInterval(intervalOnPageLoad);
             });
         }, (err) => {
           console.error("failed to load monaco editor", err);
@@ -183,7 +184,7 @@ function TextXBlock(runtime, element) {
         $(element).find(".score").text(result.score).show();
         $(element).find(".loader").hide();
         //clearing interval after getting result
-        clearIntervals();
+        clearIntervalsFunction();
       } else if (result.status === 400) {
         $(element).find("#answer-validation").text("Wrong").show();
         $(element).find("#show-answer").text(result.answer).show();
@@ -191,7 +192,7 @@ function TextXBlock(runtime, element) {
         $(element).find(".score").text(result.score).show();
         $(element).find(".loader").hide();
         //clearing interval after getting result
-        clearIntervals();
+        clearIntervalsFunction();
       } else {
         $(element).find(".loader").text("Your code is compiling....");
         $(element).find("#answer-validation").hide();
