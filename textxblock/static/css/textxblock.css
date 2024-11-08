@@ -1,0 +1,97 @@
+.textxblock-container {
+  display: flex;
+  justify-content: start;
+  padding: 2px;
+}
+
+.input-div {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.marks {
+  display: flex;
+}
+#answer-input {
+  margin: 0;
+  height: 150px;
+}
+
+#show-question {
+  margin: 0;
+}
+
+#answer-button {
+  width: 20%;
+  height: 35px;
+  border-radius: 5px;
+  background-color: rgb(32, 32, 123);
+  cursor: pointer;
+  color: white;
+}
+
+#answer-button:hover {
+  background-color: rgb(45, 45, 172);
+}
+
+.btn-div {
+  padding: 4px;
+  display: flex;
+  justify-content: center;
+  width: 50%;
+}
+
+.result-div {
+  border-right: 1px solid rgb(134, 131, 131);
+  border-top: 1px solid rgb(134, 131, 131);
+  border-bottom: 1px solid rgb(134, 131, 131);
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  width: 30%;
+}
+
+#container {
+  width: 100%;
+  height: 500px;
+  border-radius: 25px;
+}
+.container-div {
+  width: 100%;
+  border: 4px solid gold;
+
+  border-radius: 4px;
+  align-self: center;
+}
+
+.submit-div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 4px;
+}
+
+#submit {
+  width: 20%;
+  height: 35px;
+  border-radius: 3px;
+  background-color: rgb(30, 30, 190);
+  color: white;
+}
+
+#submit:hover {
+  cursor: pointer;
+  background-color: rgb(47, 47, 222);
+}
+
+.main-div {
+  width: 50%;
+  gap: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  border: 1px solid rgb(134, 131, 131);
+  border-radius: 2px;
+}

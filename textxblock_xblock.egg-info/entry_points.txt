@@ -1,0 +1,2 @@
+[xblock.v1]
+textxblock = textxblock:TextXBlock
