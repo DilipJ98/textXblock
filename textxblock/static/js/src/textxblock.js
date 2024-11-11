@@ -89,7 +89,7 @@ function TextXBlock(runtime, element) {
 
     function getTaskDetails(result) {
       console.log("on initial request", result);
-      if (result) {
+      if (result.status === 200 || result.status === 400) {
         if (!isEditorUpdated) {
           dbCode = result.code;
           if (editor) {
@@ -237,6 +237,7 @@ function TextXBlock(runtime, element) {
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {
+        console.log("else executing in taskResult");
         $(element).find(".loader").text("Your code is compiling....");
         $(element).find("#answer-validation").hide();
         $(element).find("#show-answer").hide();

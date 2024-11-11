@@ -233,6 +233,10 @@ class TextXBlock(XBlock):
                 "code" : self.input_code,
                 "codeResults" : self.code_results
             }
+        else:
+            return {
+                "status": self.status
+            }
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the
