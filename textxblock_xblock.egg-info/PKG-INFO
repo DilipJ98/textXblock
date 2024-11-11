@@ -1,0 +1,6 @@
+Metadata-Version: 2.1
+Name: textxblock-xblock
+Version: 0.1
+Summary: textxblock XBlock
+License: UNKNOWN
+Requires-Dist: XBlock
