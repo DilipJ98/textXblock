@@ -89,20 +89,17 @@ function TextXBlock(runtime, element) {
 
     function getTaskDetails(result) {
       console.log("on initial request", result);
-      // console.log(result, " this is status of task");
-      // let dataOfResult = result.data;
-      // console.log(dataOfResult, " this is data of result ");
-      // if (dataOfResult && Array.isArray(dataOfResult)) {
-      //   console.log("before assigning");
-      if (!isEditorUpdated) {
-        dbCode = result.code;
-        if (editor) {
-          editor.setValue(dbCode);
+      if (result) {
+        if (!isEditorUpdated) {
+          dbCode = result.code;
+          if (editor) {
+            editor.setValue(dbCode);
+          }
+          isEditorUpdated = true;
         }
-        isEditorUpdated = true;
       }
       console.log("after assigning");
-      //}
+
       taskResult(result);
     }
 
