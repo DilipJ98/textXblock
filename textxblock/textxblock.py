@@ -141,7 +141,7 @@ class TextXBlock(XBlock):
 
 
     @XBlock.json_handler
-    def get_task_result(self, data):
+    def get_task_result(self, data, suffix=''):
         return self.fetch_task_result(data['id'])
 
 
