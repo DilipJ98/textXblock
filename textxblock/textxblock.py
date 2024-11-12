@@ -59,7 +59,7 @@ class TextXBlock(XBlock):
     #using these attributes instead of database
     vertical_block_id = String(
         default= None,
-        scope= Scope.content,
+        scope= Scope.settings,
         help= "the id of xblock instance"            
     ) 
 
@@ -71,13 +71,13 @@ class TextXBlock(XBlock):
     ) 
 
     input_code = String(
-        default=None,
+        default= None,
         scope= Scope.user_state,
         help= "Input of the user code"
     )
 
     status = Integer(
-        default=0,
+        default= 0,
         scope= Scope.user_state,
         help= "the status code"
     )
