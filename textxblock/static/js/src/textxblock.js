@@ -27,56 +27,87 @@ function TextXBlock(runtime, element) {
       success: questionUpdate,
     });
 
-    let localTaskId = localStorage.getItem("taskid");
+    //let localTaskId = localStorage.getItem("taskid");
 
-    if (localTaskId) {
-      $(element).find(".loader").show();
-      $(element).find(".loader").text("we are fecthing your results....");
-      $(element).find("#answer-validation").hide();
-      $(element).find(".score").hide();
-    }
+    //if (localTaskId) {
+    //   $(element).find(".loader").show();
+    //   $(element).find(".loader").text("we are fecthing your results....");
+    //   $(element).find("#answer-validation").hide();
+    //   $(element).find(".score").hide();
+    // }
+    // let isRequestinProgress = false;
+    // intervalOnPageLoad = setInterval(() => {
+    //   if (!isRequestinProgress) {
+    //     let handleUrlOfDb = runtime.handlerUrl(element, "get_task_result");
+
+    //     //if (localTaskId) {
+    //     isRequestinProgress = true;
+    //     $.ajax({
+    //       type: "POST",
+    //       url: handleUrlOfDb,
+    //       data: JSON.stringify({ id: localTaskId }),
+    //       success: (result) => {
+    //         getTaskDetails(result);
+    //         isRequestinProgress = false;
+    //       },
+    //       error: () => {
+    //         isRequestinProgress = false;
+    //         $(element)
+    //           .find(".loader")
+    //           .text("Error occurred, please try again.");
+    //       },
+    //     });
+    //     //}
+    //   }
+    // }, 4000);
+
     let isRequestinProgress = false;
     intervalOnPageLoad = setInterval(() => {
       if (!isRequestinProgress) {
-        let handleUrlOfDb = runtime.handlerUrl(element, "get_task_result");
+        let handleUrlOfDb = runtime.handlerUrl(element, "on_intial_load");
 
-        if (localTaskId) {
-          isRequestinProgress = true;
-          $.ajax({
-            type: "POST",
-            url: handleUrlOfDb,
-            data: JSON.stringify({ id: localTaskId }),
-            success: (result) => {
-              getTaskDetails(result);
-              isRequestinProgress = false;
-            },
-            error: () => {
-              isRequestinProgress = false;
-              $(element)
-                .find(".loader")
-                .text("Error occurred, please try again.");
-            },
-          });
-        }
+        //if (localTaskId) {
+        isRequestinProgress = true;
+        $.ajax({
+          type: "POST",
+          url: handleUrlOfDb,
+          data: JSON.stringify({}),
+          success: (result) => {
+            getTaskDetails(result);
+            isRequestinProgress = false;
+          },
+          error: () => {
+            isRequestinProgress = false;
+            $(element)
+              .find(".loader")
+              .text("Error occurred, please try again.");
+          },
+        });
+        //}
       }
-    }, 4000);
+    }, 6000);
 
     function getTaskDetails(result) {
-      console.log(result, " this is status of task");
-      let dataOfResult = result.data;
-      console.log(dataOfResult, " this is data of result ");
-      if (dataOfResult && Array.isArray(dataOfResult)) {
-        console.log("before assigning");
-        if (!isEditorUpdated) {
-          dbCode = dataOfResult[3];
-          if (editor) {
-            editor.setValue(dbCode);
+      if (result.data && Object.keys(result.data).length > 0) {
+        console.log(result, " this is status of task");
+        let dataOfResult = result.data;
+        console.log(dataOfResult, " this is data of result ");
+        if (dataOfResult && Array.isArray(dataOfResult)) {
+          console.log("before assigning");
+          if (!isEditorUpdated) {
+            dbCode = dataOfResult[3];
+            if (editor) {
+              editor.setValue(dbCode);
+            }
+            isEditorUpdated = true;
           }
-          isEditorUpdated = true;
+          console.log("after assigning");
         }
-        console.log("after assigning");
+        taskResult(result);
+      } else {
+        console.log("no data receiving from get task details");
+        clearIntervalsFunction(intervalOnPageLoad);
       }
-      taskResult(result);
     }
 
     function monacoEditor() {
@@ -148,7 +179,7 @@ function TextXBlock(runtime, element) {
 
     function showAnswerResult(result) {
       //storing task id in local storage
-      localStorage.setItem("taskid", result.taskid);
+      //localStorage.setItem("taskid", result.taskid);
       let isRequestInProgress = false;
       $(element).find(".loader").show();
       $(element).find(".loader").text("Your code is compiling....");

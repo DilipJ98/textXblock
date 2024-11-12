@@ -122,8 +122,8 @@ class TextXBlock(XBlock):
         db_path = "/openedx/my_database.db" 
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
-        test = str(self.scope_ids)
-        block_location_id = test.split("'")[-2]
+        xblock_instance_data = str(self.scope_ids)
+        block_location_id = xblock_instance_data.split("'")[-2]
         result = task_method.delay(data['user_input'], block_location_id )
         cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
         block_id_db_check = cursor.fetchone()
@@ -139,14 +139,37 @@ class TextXBlock(XBlock):
         return {'taskid' : result.id, "test": block_location_id}    
     
 
+
     @XBlock.json_handler
-    def get_task_result(self, data, suffix=''):
+    def get_task_result(self, data):
+        return self.fetch_task_result(data['id'])
+
+
+    @XBlock.json_handler
+    def on_intial_load(self, data, suffix=''):
         db_path = "/openedx/my_database.db"
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
-        result = AsyncResult(data['id'])
-        test = str(self.scope_ids)
-        block_location_id = test.split("'")[-2]
+        xblock_instance_data = str(self.scope_ids)
+        block_location_id = xblock_instance_data.split("'")[-2]
+        cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+        fetched_data = cursor.fetchone()
+        connection.close()
+        if fetched_data is not None:
+            task_id = fetched_data[2]
+            return self.fetch_task_result(task_id)
+        else:
+            return {'status': 'not found', 'data': None}
+
+
+
+    def fetch_task_result(self, taskId):
+        db_path = "/openedx/my_database.db"
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+        result = AsyncResult(taskId)
+        xblock_instance_data = str(self.scope_ids)
+        block_location_id = xblock_instance_data.split("'")[-2]
         if result.ready():
             cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
             fetched_data = cursor.fetchone()
@@ -180,6 +203,12 @@ class TextXBlock(XBlock):
                 'status': 'pending',
                 'data' : fetched_data
             }
+        
+
+
+
+
+
         
 
             
