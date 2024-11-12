@@ -59,7 +59,7 @@ class TextXBlock(XBlock):
     #using these attributes instead of database
     vertical_block_id = String(
         default= None,
-        scope= Scope.settings,
+        scope= Scope.user_state,
         help= "the id of xblock instance"            
     ) 
 
