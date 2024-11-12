@@ -51,36 +51,13 @@ class TextXBlock(XBlock):
     )
 
     code_results = String(
-        default= None,
+        default= "code resulst",
         scope= Scope.user_state,
         help= "the code results"
     )
 
-    #using these attributes instead of database
-    vertical_block_id = String(
-        default= None,
-        scope= Scope.user_state,
-        help= "the id of xblock instance"            
-    ) 
 
 
-    task_Id = String(
-        default= None,
-        scope= Scope.user_state,
-        help= "task id for the user submission"            
-    ) 
-
-    input_code = String(
-        default= None,
-        scope= Scope.user_state,
-        help= "Input of the user code"
-    )
-
-    status = Integer(
-        default= 0,
-        scope= Scope.user_state,
-        help= "the status code"
-    )
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -142,103 +119,70 @@ class TextXBlock(XBlock):
 
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
-        # db_path = "/openedx/my_database.db" 
-        # connection = sqlite3.connect(db_path)
-        # cursor = connection.cursor()
-        xblock_data = str(self.scope_ids)
-        block_location_id = xblock_data.split("'")[-2]
+        db_path = "/openedx/my_database.db" 
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+        test = str(self.scope_ids)
+        block_location_id = test.split("'")[-2]
         result = task_method.delay(data['user_input'], block_location_id )
-        #cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
-        #block_id_db_check = cursor.fetchone()
-        # if block_id_db_check is None:
-        #     cursor.execute('''
-        #         INSERT INTO user (xblock_id, task_id, code, code_result)
-        #         VALUES (?, ?, ?, ?);
-        #     ''', (block_location_id, result.id, data['user_input'], 0))
-        # else:
-        #     cursor.execute('''UPDATE user SET task_id = ?, code = ?, code_result = ? WHERE xblock_id = ?; ''', (result.id, data['user_input'], 0, block_location_id))
-        # connection.commit()
-        # connection.close()
-        self.vertical_block_id = block_location_id
-        self.input_code = data['user_input']
-        self.task_Id = result.id
-        self.score = 0
-        self.code_results = None
-        self.status = 0
-        self.save()
+        cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+        block_id_db_check = cursor.fetchone()
+        if block_id_db_check is None:
+            cursor.execute('''
+                INSERT INTO user (xblock_id, task_id, code, code_result)
+                VALUES (?, ?, ?, ?);
+            ''', (block_location_id, result.id, data['user_input'], 0))
+        else:
+            cursor.execute('''UPDATE user SET task_id = ?, code = ?, code_result = ? WHERE xblock_id = ?; ''', (result.id, data['user_input'], 0, block_location_id))
+        connection.commit()
+        connection.close()
         return {'taskid' : result.id, "test": block_location_id}    
     
 
     @XBlock.json_handler
     def get_task_result(self, data, suffix=''):
-        # db_path = "/openedx/my_database.db"
-        # connection = sqlite3.connect(db_path)
-        # cursor = connection.cursor()
+        db_path = "/openedx/my_database.db"
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
         result = AsyncResult(data['id'])
-        #xblock_data = str(self.scope_ids)
-        #block_location_id = xblock_data.split("'")[-2]
+        test = str(self.scope_ids)
+        block_location_id = test.split("'")[-2]
         if result.ready():
-            # cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
-            # fetched_data = cursor.fetchone()
+            cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+            fetched_data = cursor.fetchone()
             if result.get()['isSuccess'] == 200:
                 self.score = 1
-                self.status = 200
+                status = 200
                 self.code_results = 'success'
-                # if fetched_data is not None:
-                #     cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ?; ''', ( 1, block_location_id))
-                #     connection.commit()
+                if fetched_data is not None:
+                    cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ?; ''', ( 1, block_location_id))
+                    connection.commit()
             elif result.get()['isSuccess'] == 400:
                 self.score = 0
-                self.status = 400
+                status = 400
                 self.code_results = 'fail'
             self.runtime.publish(self, "grade", {"value":self.score, "max_value" : 1.0})
             self.save()
-            #connection.close()
-            return {    
-                "status": self.status,
+            connection.close()
+            return {
+                "status": status,
                 "score": self.score,
                 "explanation": self.explanation,
                 "answer": self.actual_answer,
-                #"data": fetched_data
-                "taskId" : self.task_Id,
-                "xblockId" : self.vertical_block_id,
-                "code" : self.input_code,
-                "codeResults" : self.code_results
+                "data": fetched_data
             }
         
         else:
-            # cursor.execute("select * from user where xblock_id = ?", (block_location_id,))
-            # fetched_data = cursor.fetchone()
-            # connection.close()
+            cursor.execute("select * from user where xblock_id = ?", (block_location_id,))
+            fetched_data = cursor.fetchone()
+            connection.close()
             return{
                 'status': 'pending',
-                #'data' : fetched_data
-
+                'data' : fetched_data
             }
-    
-    @XBlock.json_handler
-    def on_page_load_check(self, data, suffix=''):
-        xblock_data = str(self.scope_ids)
-        block_location_id = xblock_data.split("'")[-2]
-        if block_location_id == self.vertical_block_id:
+        
 
-            return {
-                "status": self.status,
-                "score": self.score,
-                "explanation": self.explanation,
-                "answer": self.actual_answer,
-                #"data": fetched_data
-                "taskId" : self.task_Id,
-                "xblockId" : self.vertical_block_id,
-                "code" : self.input_code,
-                "codeResults" : self.code_results
-            }
-        else:
-            return {
-                "status": self.status
-            }
-
-
+            
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
     @staticmethod
