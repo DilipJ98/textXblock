@@ -27,46 +27,10 @@ function TextXBlock(runtime, element) {
       success: questionUpdate,
     });
 
-    //let localTaskId = localStorage.getItem("taskid");
-
-    //if (localTaskId) {
-    //   $(element).find(".loader").show();
-    //   $(element).find(".loader").text("we are fecthing your results....");
-    //   $(element).find("#answer-validation").hide();
-    //   $(element).find(".score").hide();
-    // }
-    // let isRequestinProgress = false;
-    // intervalOnPageLoad = setInterval(() => {
-    //   if (!isRequestinProgress) {
-    //     let handleUrlOfDb = runtime.handlerUrl(element, "get_task_result");
-
-    //     //if (localTaskId) {
-    //     isRequestinProgress = true;
-    //     $.ajax({
-    //       type: "POST",
-    //       url: handleUrlOfDb,
-    //       data: JSON.stringify({ id: localTaskId }),
-    //       success: (result) => {
-    //         getTaskDetails(result);
-    //         isRequestinProgress = false;
-    //       },
-    //       error: () => {
-    //         isRequestinProgress = false;
-    //         $(element)
-    //           .find(".loader")
-    //           .text("Error occurred, please try again.");
-    //       },
-    //     });
-    //     //}
-    //   }
-    // }, 4000);
-
     let isRequestinProgress = false;
     intervalOnPageLoad = setInterval(() => {
       if (!isRequestinProgress) {
         let handleUrlOfDb = runtime.handlerUrl(element, "on_intial_load");
-
-        //if (localTaskId) {
         isRequestinProgress = true;
         $.ajax({
           type: "POST",
@@ -83,9 +47,8 @@ function TextXBlock(runtime, element) {
               .text("Error occurred, please try again.");
           },
         });
-        //}
       }
-    }, 6000);
+    }, 3000);
 
     function getTaskDetails(result) {
       if (result.data && Object.keys(result.data).length > 0) {
@@ -106,7 +69,7 @@ function TextXBlock(runtime, element) {
         taskResult(result);
       } else {
         console.log("no data receiving from get task details");
-        clearIntervalsFunction(intervalOnPageLoad);
+        clearIntervalsFunction();
       }
     }
 

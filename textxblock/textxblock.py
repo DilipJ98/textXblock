@@ -204,13 +204,6 @@ class TextXBlock(XBlock):
                 'data' : fetched_data
             }
         
-
-
-
-
-
-        
-
             
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
