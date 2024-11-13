@@ -6,6 +6,8 @@ function TextXBlock(runtime, element) {
     let isEditorUpdated = false;
     let intervalOnPageLoad;
     let intervalOnSubmit;
+    let isRequestinProgress = false;
+    let pollingCount = 0;
 
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
@@ -27,28 +29,41 @@ function TextXBlock(runtime, element) {
       success: questionUpdate,
     });
 
-    let isRequestinProgress = false;
-    intervalOnPageLoad = setInterval(() => {
-      if (!isRequestinProgress) {
-        let handleUrlOfDb = runtime.handlerUrl(element, "on_intial_load");
-        isRequestinProgress = true;
-        $.ajax({
-          type: "POST",
-          url: handleUrlOfDb,
-          data: JSON.stringify({}),
-          success: (result) => {
-            getTaskDetails(result);
-            isRequestinProgress = false;
-          },
-          error: () => {
-            isRequestinProgress = false;
-            $(element)
-              .find(".loader")
-              .text("Error occurred, please try again.");
-          },
-        });
+    makeInitialAjaxCall();
+
+    function makeInitialAjaxCall() {
+      let handleUrlOfDb = runtime.handlerUrl(element, "on_intial_load");
+      isRequestinProgress = true;
+      $.ajax({
+        type: "POST",
+        url: handleUrlOfDb,
+        data: JSON.stringify({}),
+        success: (result) => {
+          getTaskDetails(result);
+          isRequestinProgress = false;
+          if (!result.data) {
+            startPollingFun();
+          }
+        },
+        error: () => {
+          isRequestinProgress = false;
+          $(element).find(".loader").text("Error occurred, please try again.");
+        },
+      });
+    }
+
+    function startPollingFun() {
+      if (pollingCount < 5) {
+        intervalOnPageLoad = setInterval(() => {
+          if (!isRequestinProgress) {
+            pollingCount++;
+            makeInitialAjaxCall();
+          }
+        }, 10000);
+      } else {
+        clearIntervalsFunction();
       }
-    }, 3000);
+    }
 
     function getTaskDetails(result) {
       if (result.data && Object.keys(result.data).length > 0) {

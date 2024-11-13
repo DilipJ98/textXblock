@@ -158,7 +158,7 @@ class TextXBlock(XBlock):
         fetched_data = cursor.fetchone()
         connection.close()
         if fetched_data is not None:
-            task_id = fetched_data[2]
+            task_id = fetched_data[3]
             return self.fetch_task_result(task_id)
         else:
             return {'status': 'not found', 'data': None}
