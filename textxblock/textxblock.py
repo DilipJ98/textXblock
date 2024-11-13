@@ -124,20 +124,17 @@ class TextXBlock(XBlock):
         cursor = connection.cursor()
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
-        print("scope ids . . . . . . . ./ . . /. / ./.././././././././././././././././././././././././", str(self.scope_ids))
         user_id = str(self.scope_ids.user_id)
-        print("user id is...............././././../././.././././././././././././././././/././././.././", user_id)
-
         result = task_method.delay(data['user_input'], block_location_id )
-        cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+        cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id))
         block_id_db_check = cursor.fetchone()
         if block_id_db_check is None:
             cursor.execute('''
-                INSERT INTO user (xblock_id, task_id, code, code_result)
-                VALUES (?, ?, ?, ?);
-            ''', (block_location_id, result.id, data['user_input'], 0))
+                INSERT INTO user (user_id, xblock_id, task_id, code, code_result)
+                VALUES (?, ?, ?, ?, ?);
+            ''', (user_id, block_location_id, result.id, data['user_input'], 0))
         else:
-            cursor.execute('''UPDATE user SET task_id = ?, code = ?, code_result = ? WHERE xblock_id = ?; ''', (result.id, data['user_input'], 0, block_location_id))
+            cursor.execute('''UPDATE user SET task_id = ?, code = ?, code_result = ? WHERE xblock_id = ? AND user_id = ?; ''', (result.id, data['user_input'], 0, block_location_id, user_id))
         connection.commit()
         connection.close()
         return {'taskid' : result.id, "test": block_location_id}    
@@ -156,7 +153,8 @@ class TextXBlock(XBlock):
         cursor = connection.cursor()
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
-        cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+        user_id = str(self.scope_ids.user_id)
+        cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id))
         fetched_data = cursor.fetchone()
         connection.close()
         if fetched_data is not None:
@@ -174,15 +172,17 @@ class TextXBlock(XBlock):
         result = AsyncResult(taskId)
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
+        user_id = str(self.scope_ids.user_id)
+
         if result.ready():
-            cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
+            cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id ))
             fetched_data = cursor.fetchone()
             if result.get()['isSuccess'] == 200:
                 self.score = 1
                 status = 200
                 self.code_results = 'success'
                 if fetched_data is not None:
-                    cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ?; ''', ( 1, block_location_id))
+                    cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ? AND user_id = ?; ''', ( 1, block_location_id, user_id))
                     connection.commit()
             elif result.get()['isSuccess'] == 400:
                 self.score = 0
@@ -200,7 +200,7 @@ class TextXBlock(XBlock):
             }
         
         else:
-            cursor.execute("select * from user where xblock_id = ?", (block_location_id,))
+            cursor.execute("select * from user where xblock_id = ? and user_id = ?", (block_location_id, user_id))
             fetched_data = cursor.fetchone()
             connection.close()
             return{
