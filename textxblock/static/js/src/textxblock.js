@@ -58,7 +58,7 @@ function TextXBlock(runtime, element) {
         if (dataOfResult && Array.isArray(dataOfResult)) {
           console.log("before assigning");
           if (!isEditorUpdated) {
-            dbCode = dataOfResult[3];
+            dbCode = dataOfResult[4];
             if (editor) {
               editor.setValue(dbCode);
             }
