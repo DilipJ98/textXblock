@@ -8,10 +8,12 @@ function TextXBlock(runtime, element) {
     let intervalOnSubmit;
     let isRequestinProgress = false;
     let pollingCount = 0;
+    let isPolling = false;
 
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
       clearInterval(intervalOnSubmit);
+      isPolling = false;
     }
 
     //for initial question
@@ -41,7 +43,7 @@ function TextXBlock(runtime, element) {
         success: (result) => {
           getTaskDetails(result);
           isRequestinProgress = false;
-          if (result.data === "pending" || result.data === "not found") {
+          if (!isPolling && result.status === "pending") {
             startPollingFun();
           }
         },
@@ -53,11 +55,16 @@ function TextXBlock(runtime, element) {
     }
 
     function startPollingFun() {
-      if (pollingCount < 5) {
+      if (pollingCount < 5 && !isPolling) {
+        isPolling = true;
         intervalOnPageLoad = setInterval(() => {
           if (!isRequestinProgress) {
             pollingCount++;
             makeInitialAjaxCall();
+          }
+          if (pollingCount >= 5) {
+            clearIntervalsFunction();
+            isPolling = false;
           }
         }, 10000);
       } else {
