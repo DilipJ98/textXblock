@@ -124,6 +124,10 @@ class TextXBlock(XBlock):
         cursor = connection.cursor()
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
+        print("scope ids . . . . . . . ./ . . /. / ./.././././././././././././././././././././././././", str(self.scope_ids))
+        user_id = str(self.scope_ids.user_id)
+        print("user id is...............././././../././.././././././././././././././././/././././.././", user_id)
+
         result = task_method.delay(data['user_input'], block_location_id )
         cursor.execute('select * from user where xblock_id = ?', (block_location_id,))
         block_id_db_check = cursor.fetchone()
