@@ -41,7 +41,7 @@ function TextXBlock(runtime, element) {
         success: (result) => {
           getTaskDetails(result);
           isRequestinProgress = false;
-          if (!result.data) {
+          if (result.data === "pending" || result.data === "not found") {
             startPollingFun();
           }
         },
@@ -132,7 +132,7 @@ function TextXBlock(runtime, element) {
             .find("#submit")
             .on("click", () => {
               userInputAnswer(editor.getValue());
-              clearInterval(intervalOnPageLoad);
+              clearIntervalsFunction();
             });
         }, (err) => {
           console.error("failed to load monaco editor", err);
