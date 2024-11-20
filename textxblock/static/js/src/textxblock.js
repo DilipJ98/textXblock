@@ -2,7 +2,6 @@ function TextXBlock(runtime, element) {
   //loads intially
   $(() => {
     let editor;
-    let dbCode;
     let isEditorUpdated = false;
     let intervalOnPageLoad;
     let intervalOnSubmit;
@@ -16,23 +15,29 @@ function TextXBlock(runtime, element) {
       isPolling = false;
     }
 
-    //for initial question
-    function questionUpdate(result) {
-      $(element).find("#show-question").text(result.question);
-      monacoEditor(result);
+    /*
+    which will used to get the admin input data that is comes from studio or editor admin input Fileds
+    like question, ans, boilerplate code, explanation, language
+    */
+    function getAdminInputData() {
+      var handlerUrls = runtime.handlerUrl(element, "get_admin_input_data");
+      $.ajax({
+        type: "POST",
+        url: handlerUrls,
+        data: JSON.stringify({}),
+        success: (data) => {
+          $(element).find("#show-question").text(data.question); //which will update UI with question
+          monacoEditor(data); //calling monaco editor
+        },
+        error: () => {
+          $(element)
+            .find("#show-question")
+            .text("Error occured, please try again");
+        },
+      });
     }
-    //handler to get question data
-    var handlerUrls = runtime.handlerUrl(element, "get_question_data");
 
-    $.ajax({
-      //ajax to manage question data
-      type: "POST",
-      url: handlerUrls,
-      data: JSON.stringify({}),
-      success: questionUpdate,
-    });
-
-    makeInitialAjaxCall();
+    getAdminInputData();
 
     function makeInitialAjaxCall() {
       let handleUrlOfDb = runtime.handlerUrl(element, "on_intial_load");
@@ -54,6 +59,8 @@ function TextXBlock(runtime, element) {
         },
       });
     }
+
+    makeInitialAjaxCall();
 
     function startPollingFun() {
       if (pollingCount < 5 && !isPolling) {
@@ -81,9 +88,8 @@ function TextXBlock(runtime, element) {
         if (dataOfResult && Array.isArray(dataOfResult)) {
           console.log("before assigning");
           if (!isEditorUpdated) {
-            dbCode = dataOfResult[4];
             if (editor) {
-              editor.setValue(dbCode);
+              editor.setValue(dataOfResult[4]);
             }
             isEditorUpdated = true;
           }
@@ -96,7 +102,7 @@ function TextXBlock(runtime, element) {
       }
     }
 
-    function monacoEditor(result) {
+    function monacoEditor(data) {
       //monaco editor shows initailly
       var requiredScript = document.createElement("script");
       /*
@@ -122,11 +128,10 @@ function TextXBlock(runtime, element) {
         require(["vs/editor/editor.main"], () => {
           //this is call back that runs once module load is successful
           //creating editor instance
-          let initialValue = dbCode || result.boilerplate;
           editor = monaco.editor.create(document.getElementById("container"), {
             //an options object extra options for monaco
-            value: initialValue,
-            language: result.language,
+            value: data.boilerplate,
+            language: data.language,
             theme: "vs-dark",
           });
           /*
@@ -146,7 +151,6 @@ function TextXBlock(runtime, element) {
       //adding script in html head
       document.head.appendChild(requiredScript);
     }
-    //calling monaco editor
 
     //this function have the user input answer and which invokes after user clicks on code submit button
     function userInputAnswer(userAnswer) {

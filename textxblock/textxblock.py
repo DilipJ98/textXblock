@@ -106,7 +106,7 @@ class TextXBlock(XBlock):
 
         
     @XBlock.json_handler
-    def get_question_data(self, data, suffix=''):
+    def get_admin_input_data(self, data, suffix=''):
         return {
             "question": self.question,
             "answer": self.actual_answer,
@@ -203,7 +203,7 @@ class TextXBlock(XBlock):
             cursor.execute("select * from user where xblock_id = ? and user_id = ?", (block_location_id, user_id))
             fetched_data = cursor.fetchone()
             connection.close()
-            return{
+            return {
                 'status': 'pending',
                 'data' : fetched_data
             }

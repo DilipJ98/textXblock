@@ -6,8 +6,8 @@ function TextXBlock(runtime, element) {
   let selectedLanguage = $(element).find("#select").val();
 
   $(element)
-    .find("#button")
-    .on("click", function (event) {
+    .find("#form")
+    .submit(function (event) {
       event.preventDefault();
       let inputQuestionEle = $(element).find("#question-input");
 
@@ -44,7 +44,7 @@ function TextXBlock(runtime, element) {
   $(element)
     .find("#select")
     .on("change", () => {
-      selectedLanguage = $(this).val();
+      selectedLanguage = $(element).find("#select").val();
     });
 
   console.log(selectedLanguage);
