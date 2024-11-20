@@ -44,6 +44,18 @@ class TextXBlock(XBlock):
         help = "explanation"
     )
 
+    boilerplate_code = String(
+        default= "",
+        scope= Scope.content,
+        help= "monaco editor code snippet"
+    )
+
+    language = String(
+        default="java",
+        scope= Scope.content,
+        help= "language for monaco editor"
+    )
+
     score = Integer(
         default = 0,
         scope = Scope.user_state,
@@ -87,33 +99,21 @@ class TextXBlock(XBlock):
         self.question = data['question_text']
         self.explanation = data['explanation']
         self.actual_answer = data['ans']
-        return {"question": self.question}
-
-
-    #@XBlock.json_handler
-    def verify_answer(self, data):
-        self.answer = data['answer_text']
-        # matching actual and user input answer
-        if self.answer == self.actual_answer:
-            #providing values for correct answer
-            self.score = 1.0
-            status = 200
-        else:
-            self.score = 0
-            status = 400
-        self.runtime.publish(self, "grade", {"value":self.score, "max_value" : 1.0})
+        self.boilerplate_code = data['boilerplate']
+        self.language = data['language']
         self.save()
-        return {
-            "status": status,
-            "score": self.score,
-            "explanation": self.explanation,
-            "answer": self.actual_answer
-        }
+        return {"question": self.question}
 
         
     @XBlock.json_handler
     def get_question_data(self, data, suffix=''):
-        return {"question": self.question, "answer": self.actual_answer, "explanation": self.explanation}
+        return {
+            "question": self.question,
+            "answer": self.actual_answer,
+            "explanation": self.explanation ,
+            'boilerplate' : self.boilerplate_code,
+            'language' : self.language
+        }
 
 
 

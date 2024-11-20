@@ -19,6 +19,7 @@ function TextXBlock(runtime, element) {
     //for initial question
     function questionUpdate(result) {
       $(element).find("#show-question").text(result.question);
+      monacoEditor(result);
     }
     //handler to get question data
     var handlerUrls = runtime.handlerUrl(element, "get_question_data");
@@ -95,7 +96,7 @@ function TextXBlock(runtime, element) {
       }
     }
 
-    function monacoEditor() {
+    function monacoEditor(result) {
       //monaco editor shows initailly
       var requiredScript = document.createElement("script");
       /*
@@ -121,14 +122,11 @@ function TextXBlock(runtime, element) {
         require(["vs/editor/editor.main"], () => {
           //this is call back that runs once module load is successful
           //creating editor instance
-          let initialValue =
-            dbCode ||
-            "public class Test {\n  public static void main(String[] args){\n \n  } \n}";
-
+          let initialValue = dbCode || result.boilerplate;
           editor = monaco.editor.create(document.getElementById("container"), {
             //an options object extra options for monaco
             value: initialValue,
-            language: "java",
+            language: result.language,
             theme: "vs-dark",
           });
           /*
@@ -149,7 +147,6 @@ function TextXBlock(runtime, element) {
       document.head.appendChild(requiredScript);
     }
     //calling monaco editor
-    monacoEditor();
 
     //this function have the user input answer and which invokes after user clicks on code submit button
     function userInputAnswer(userAnswer) {
