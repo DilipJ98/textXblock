@@ -42,7 +42,7 @@ function TextXBlock(runtime, element) {
         let boilerPlateInputEle = $(element).find("#boilerplate");
         let boilerPlateCode = boilerPlateInputEle.val();
 
-        let marks = $(element).find("#required").val();
+        let marks = $(element).find("#marks").val();
 
         // Send the question text to the backend
         var handlerUrl = runtime.handlerUrl(element, "save_admin_input_data");
