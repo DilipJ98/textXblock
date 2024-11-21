@@ -60,8 +60,6 @@ function TextXBlock(runtime, element) {
       });
     }
 
-    makeInitialAjaxCall();
-
     function startPollingFun() {
       if (pollingCount < 5 && !isPolling) {
         isPolling = true;
@@ -136,6 +134,7 @@ function TextXBlock(runtime, element) {
             language: data.language,
             theme: "vs-dark",
           });
+          makeInitialAjaxCall();
           /*
           on clicking submit calling function 
           to get the user code from monaco editor
