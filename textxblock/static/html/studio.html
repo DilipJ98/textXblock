@@ -1,39 +1,52 @@
 <div class="textxblock-container">
   <div class="parent-div">
     <form id="form">
-      <p id="question-status"></p>
-      <p>Question</p>
-      <!--Question -->
-      <textarea
-        id="question-input"
-        placeholder="Enter Question here"
-      ></textarea>
-      <!--Explanation-->
-      <p>Explanation</p>
-      <textarea
-        id="Explanation"
-        placeholder="Explanation your solution"
-      ></textarea>
-      <!--Answer-->
-      <p>Answer</p>
-      <textarea
-        id="actual-answer"
-        placeholder="Provide Answer for the question"
-      ></textarea>
+      <div class="for-inputs">
+        <div class="language-marks">
+          <span>Choose programming language</span>
+          <select id="select">
+            <option value="java">Java</option>
+            <option value="python">Python</option>
+          </select>
+          <label>Marks</label>
+          <input
+            id="marks"
+            type="number"
+            min="1"
+            max="10"
+            placeholder="Max marks 10"
+            required
+          />
+        </div>
+        <label>Question </label>
+        <textarea
+          id="question-input"
+          placeholder="Enter Question here"
+          required
+        ></textarea>
+        <!--Explanation-->
+        <label>Explanation </label>
+        <textarea
+          id="Explanation"
+          placeholder="Explain your solution"
+        ></textarea>
 
-      <p>Boilerplate</p>
-      <textarea
-        id="boilerplate"
-        placeholder="Provide boilerplate on monaco edior"
-      ></textarea>
-      <div>
-        <h2>Choose programming language</h2>
-        <select id="select">
-          <option value="java">Java</option>
-          <option value="python">Python</option>
-        </select>
+        <!--Answer-->
+        <label>Answer </label>
+        <textarea
+          id="actual-answer"
+          placeholder="Provide Answer for the question"
+          required
+        ></textarea>
+
+        <label>Boilerplate code</label>
+        <textarea
+          id="boilerplate"
+          placeholder="Provide boilerplate code on monaco edior"
+          required
+        ></textarea>
       </div>
-      <div class="btn-div">
+      <div class="button-div">
         <button id="button" type="submit">Submit</button>
       </div>
     </form>

@@ -1,51 +1,75 @@
 function TextXBlock(runtime, element) {
-  function updateQuestion(result) {
-    console.log(result.question);
-  }
-
-  let selectedLanguage = $(element).find("#select").val();
-
-  $(element)
-    .find("#form")
-    .submit(function (event) {
-      event.preventDefault();
-      let inputQuestionEle = $(element).find("#question-input");
-
-      let questionText = inputQuestionEle.val();
-
-      //explanation
-      let explanationEle = $(element).find("#Explanation");
-      let explanationValue = explanationEle.val();
-
-      //actual answer
-      let answerEle = $(element).find("#actual-answer");
-      let answer = answerEle.val();
-
-      //bolier plate
-      let boilerPlateInputEle = $(element).find("#boilerplate");
-      let boilerPlateCode = boilerPlateInputEle.val();
-
-      // Send the question text to the backend
-      var handlerUrl = runtime.handlerUrl(element, "question_data");
+  $(() => {
+    function getAdminInputData() {
+      var handlerUrl = runtime.handlerUrl(element, "get_admin_input_data");
       $.ajax({
         type: "POST",
         url: handlerUrl,
-        data: JSON.stringify({
-          question_text: questionText,
-          explanation: explanationValue,
-          ans: answer,
-          boilerplate: boilerPlateCode,
-          language: selectedLanguage,
-        }),
-        success: updateQuestion,
+        data: JSON.stringify({}),
+        success: (data) => {
+          console.log(data, "show admin input data");
+          $(element).find("#question-input").val(data.question);
+          $(element).find("#Explanation").val(data.explanation);
+          $(element).find("#actual-answer").val(data.answer);
+          $(element).find("#boilerplate").val(data.boilerplate);
+        },
+        error: () => {
+          console.log("error while retrieving get_Admin_input_data");
+        },
       });
-    });
+    }
 
-  $(element)
-    .find("#select")
-    .on("change", () => {
-      selectedLanguage = $(element).find("#select").val();
-    });
+    getAdminInputData();
 
-  console.log(selectedLanguage);
+    let selectedLanguage = $(element).find("#select").val();
+    $(element)
+      .find("#form")
+      .submit(function (event) {
+        event.preventDefault();
+        let inputQuestionEle = $(element).find("#question-input");
+
+        let questionText = inputQuestionEle.val();
+
+        //explanation
+        let explanationEle = $(element).find("#Explanation");
+        let explanationValue = explanationEle.val();
+
+        //actual answer
+        let answerEle = $(element).find("#actual-answer");
+        let answer = answerEle.val();
+
+        //bolier plate
+        let boilerPlateInputEle = $(element).find("#boilerplate");
+        let boilerPlateCode = boilerPlateInputEle.val();
+
+        let marks = $(element).find("#required").val();
+
+        // Send the question text to the backend
+        var handlerUrl = runtime.handlerUrl(element, "save_admin_input_data");
+        $.ajax({
+          type: "POST",
+          url: handlerUrl,
+          data: JSON.stringify({
+            question_text: questionText,
+            explanation: explanationValue,
+            ans: answer,
+            boilerplate: boilerPlateCode,
+            language: selectedLanguage,
+            marks: marks,
+          }),
+          success: saveAdminInputData,
+        });
+      });
+
+    function saveAdminInputData(result) {
+      console.log(result, " from showINputData function");
+    }
+
+    $(element)
+      .find("#select")
+      .on("change", () => {
+        selectedLanguage = $(element).find("#select").val();
+        console.log(selectedLanguage);
+      });
+  });
 }

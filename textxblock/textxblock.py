@@ -50,6 +50,12 @@ class TextXBlock(XBlock):
         help= "monaco editor code snippet"
     )
 
+    marks = Integer(
+        default=1,
+        scope= Scope.content,
+        help= "marks assigned by admin to each question"
+    )
+
     language = String(
         default="java",
         scope= Scope.content,
@@ -67,6 +73,7 @@ class TextXBlock(XBlock):
         scope= Scope.user_state,
         help= "the code results"
     )
+
 
 
 
@@ -94,15 +101,23 @@ class TextXBlock(XBlock):
         return frag
     
     @XBlock.json_handler
-    def question_data(self, data, suffix=''):
+    def save_admin_input_data(self, data, suffix=''):
         """Handler to save the question data."""
         self.question = data['question_text']
         self.explanation = data['explanation']
         self.actual_answer = data['ans']
         self.boilerplate_code = data['boilerplate']
         self.language = data['language']
+        self.marks = data['marks']
         self.save()
-        return {"question": self.question}
+        return {
+            "question": self.question,
+            "answer": self.actual_answer,
+            "explanation": self.explanation ,
+            'boilerplate' : self.boilerplate_code,
+            'language' : self.language,
+            'marks' : self.marks
+        }
 
         
     @XBlock.json_handler
@@ -110,8 +125,8 @@ class TextXBlock(XBlock):
         return {
             "question": self.question,
             "answer": self.actual_answer,
-            "explanation": self.explanation ,
             'boilerplate' : self.boilerplate_code,
+            "explanation": self.explanation ,
             'language' : self.language
         }
 
@@ -178,17 +193,17 @@ class TextXBlock(XBlock):
             cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id ))
             fetched_data = cursor.fetchone()
             if result.get()['isSuccess'] == 200:
-                self.score = 1
+                self.score = self.marks
                 status = 200
                 self.code_results = 'success'
                 if fetched_data is not None:
-                    cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ? AND user_id = ?; ''', ( 1, block_location_id, user_id))
+                    cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ? AND user_id = ?; ''', ( self.score, block_location_id, user_id))
                     connection.commit()
             elif result.get()['isSuccess'] == 400:
                 self.score = 0
                 status = 400
                 self.code_results = 'fail'
-            self.runtime.publish(self, "grade", {"value":self.score, "max_value" : 1.0})
+            self.runtime.publish(self, "grade", {"value":self.score, "max_value" : 10})
             self.save()
             connection.close()
             return {

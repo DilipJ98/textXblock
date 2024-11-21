@@ -4,46 +4,54 @@
 
 .parent-div {
   width: 95%;
+}
+
+#form {
+  width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
 
-  border: 1px solid black;
+.for-inputs {
   padding: 5px;
-}
-.main-container {
-  width: 90%;
-  padding: 5px;
-}
-
-#question-input {
-  width: 90%;
-  height: 100px;
-}
-
-#Explanation {
-  width: 90%;
-  height: 100px;
-}
-
-#actual-answer {
-  width: 90%;
-  height: 100px;
-}
-
-.btn-div {
+  width: 99%;
   display: flex;
-  width: 90%;
+  flex-direction: column;
+}
+
+label {
+  margin: 5px;
+}
+
+textarea {
+  border-radius: 3px;
+  margin: 5px;
+  height: 80px;
+}
+.language-marks {
+  margin: 5px;
+}
+
+input {
+  width: 10%;
+}
+
+.button-div {
+  padding: 2px;
+  display: flex;
+  width: 15%;
+  height: 40px;
   justify-content: center;
 }
 
 #button {
-  width: 20%;
-  height: 35px;
+  width: 100%;
   border-radius: 4px;
-  background-color: rgb(32, 32, 123);
+  background-color: rgb(38, 38, 117);
   color: white;
 }
 
 #button:hover {
-  background-color: rgb(45, 45, 172);
+  background-color: rgb(52, 52, 162);
 }

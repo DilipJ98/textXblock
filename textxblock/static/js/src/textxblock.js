@@ -137,11 +137,12 @@ function TextXBlock(runtime, element) {
           console.log(data.boilerplate);
           console.log(data.language);
           makeInitialAjaxCall();
+          console.log(editor.getValue(), " get editor value");
+
           /*
           on clicking submit calling function 
           to get the user code from monaco editor
           */
-          console.log(editor.getValue(), "get ediot value");
           $(element)
             .find("#submit")
             .on("click", () => {
