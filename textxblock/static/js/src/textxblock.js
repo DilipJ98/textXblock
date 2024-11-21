@@ -81,6 +81,7 @@ function TextXBlock(runtime, element) {
     }
 
     function getTaskDetails(result) {
+      console.log("task started");
       if (result.data && Object.keys(result.data).length > 0) {
         console.log(result, " this is status of task");
         let dataOfResult = result.data;
@@ -90,8 +91,8 @@ function TextXBlock(runtime, element) {
           if (!isEditorUpdated) {
             if (editor) {
               editor.setValue(dataOfResult[4]);
+              isEditorUpdated = true;
             }
-            isEditorUpdated = true;
           }
           console.log("after assigning");
         }
@@ -100,6 +101,7 @@ function TextXBlock(runtime, element) {
         console.log("no data receiving from get task details");
         clearIntervalsFunction();
       }
+      console.log("task completed");
     }
 
     function monacoEditor(data) {
@@ -150,6 +152,7 @@ function TextXBlock(runtime, element) {
       };
       //adding script in html head
       document.head.appendChild(requiredScript);
+      console.log("monaco cmpleted");
     }
 
     //this function have the user input answer and which invokes after user clicks on code submit button
