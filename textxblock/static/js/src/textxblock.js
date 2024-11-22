@@ -1,6 +1,9 @@
 function TextXBlock(runtime, element) {
   //loads intially
   $(() => {
+    //whcih unchecks checkbox on page loads
+    $(element).find(".show-ans-check").prop("checked", false);
+
     let editor;
     let isEditorUpdated = false;
     let intervalOnPageLoad;
@@ -8,6 +11,8 @@ function TextXBlock(runtime, element) {
     let isRequestinProgress = false;
     let pollingCount = 0;
     let isPolling = false;
+    let isCheckBoxChecked = false;
+    let getUserAnswerFromDb;
 
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
@@ -89,6 +94,7 @@ function TextXBlock(runtime, element) {
           if (!isEditorUpdated) {
             if (editor) {
               editor.setValue(dataOfResult[4]);
+              getUserAnswerFromDb = dataOfResult[4];
               isEditorUpdated = true;
             }
           }
@@ -147,7 +153,30 @@ function TextXBlock(runtime, element) {
             .find("#submit")
             .on("click", () => {
               userInputAnswer(editor.getValue());
+              $(element)
+                .find(".show-ans-check")
+                .css({ "pointer-events": "none", opacity: "0.5" });
               clearIntervalsFunction();
+            });
+          $(element)
+            .find(".show-ans-check")
+            .on("change", () => {
+              if (!isCheckBoxChecked) {
+                $(element)
+                  .find("#submit")
+                  .css({ "pointer-events": "none", opacity: "0.5" });
+                editor.setValue(data.answer);
+                isCheckBoxChecked = true;
+              } else if (getUserAnswerFromDb && isCheckBoxChecked) {
+                editor.setValue(getUserAnswerFromDb);
+                isCheckBoxChecked = false;
+              } else {
+                editor.setValue(data.boilerplate);
+                $(element)
+                  .find("#submit")
+                  .css({ "pointer-events": "auto", opacity: "1" });
+                isCheckBoxChecked = false;
+              }
             });
         }, (err) => {
           console.error("failed to load monaco editor", err);
@@ -203,12 +232,18 @@ function TextXBlock(runtime, element) {
     function taskResult(result) {
       console.log(result);
       if (result.status === 200) {
+        $(element)
+          .find(".show-ans-check")
+          .css({ "pointer-events": "auto", opacity: "1" });
         $(element).find("#answer-validation").text("Correct").show();
         $(element).find(".score").text(result.score).show();
         $(element).find(".loader").hide();
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
+        $(element)
+          .find(".show-ans-check")
+          .css({ "pointer-events": "auto", opacity: "1" });
         $(element).find("#answer-validation").text("Wrong").show();
         $(element).find("#show-answer").text(result.answer).show();
         $(element).find("#explaination").text(result.explanation).show();

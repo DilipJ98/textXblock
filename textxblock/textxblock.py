@@ -75,9 +75,6 @@ class TextXBlock(XBlock):
     )
 
 
-
-
-
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         return files(__package__).joinpath(path).read_text(encoding="utf-8")
@@ -203,7 +200,7 @@ class TextXBlock(XBlock):
                 self.score = 0
                 status = 400
                 self.code_results = 'fail'
-            self.runtime.publish(self, "grade", {"value":self.score, "max_value" : 10})
+            self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
             self.save()
             connection.close()
             return {
