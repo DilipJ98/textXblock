@@ -93,6 +93,7 @@ function TextXBlock(runtime, element) {
           console.log("before assigning");
           if (!isEditorUpdated) {
             if (editor) {
+              editor.setValue("");
               editor.setValue(dataOfResult[4]);
               getUserAnswerFromDb = dataOfResult[4];
               isEditorUpdated = true;
@@ -165,12 +166,15 @@ function TextXBlock(runtime, element) {
                 $(element)
                   .find("#submit")
                   .css({ "pointer-events": "none", opacity: "0.5" });
+                editor.setValue("");
                 editor.setValue(data.answer);
                 isCheckBoxChecked = true;
               } else if (getUserAnswerFromDb && isCheckBoxChecked) {
+                editor.setValue("");
                 editor.setValue(getUserAnswerFromDb);
                 isCheckBoxChecked = false;
               } else {
+                editor.setValue("");
                 editor.setValue(data.boilerplate);
                 $(element)
                   .find("#submit")
