@@ -220,6 +220,26 @@ class TextXBlock(XBlock):
                 'data' : fetched_data
             }
         
+
+    @XBlock.json_handler
+    def delete_task(self, data, suffix=''):
+        xblock_instance_data = str(self.scope_ids)
+        block_location_id = xblock_instance_data.split("'")[-2]
+        user_id = str(self.scope_ids.user_id)        
+        db_path = "/openedx/my_database.db"
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+        cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id))
+        feteched_data = cursor.fetchone()
+        if feteched_data is not None:
+            cursor.execute('delete from user where xblock_id = ? and user_id = ?', (block_location_id, user_id) )
+            connection.commit()
+            return {"status": "success", "message": "Task deleted successfully."}
+        else:
+            return {"status": "error", "message": "Task not found."}
+
+
+
             
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

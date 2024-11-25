@@ -1,9 +1,9 @@
 function TextXBlock(runtime, element) {
   //loads intially
   $(() => {
+    $(element).find(".textxblock-container").css({ opacity: "0" });
     //whcih unchecks checkbox on page loads
     $(element).find(".show-ans-check").prop("checked", false);
-
     let editor;
     let isEditorUpdated = false;
     let intervalOnPageLoad;
@@ -13,6 +13,8 @@ function TextXBlock(runtime, element) {
     let isPolling = false;
     let isCheckBoxChecked = false;
     let getUserAnswerFromDb;
+    let isThemeUpdated = false;
+    let isResetRequestInProgress = false;
 
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
@@ -60,7 +62,9 @@ function TextXBlock(runtime, element) {
         },
         error: () => {
           isRequestinProgress = false;
-          $(element).find(".loader").text("Error occurred, please try again.");
+          $(element)
+            .find(".loader")
+            .text("Error occurred, please try again..........");
         },
       });
     }
@@ -140,7 +144,77 @@ function TextXBlock(runtime, element) {
             value: data.boilerplate,
             language: data.language,
             theme: "vs-dark",
+            padding: {
+              top: 15,
+              bottom: 10,
+            },
+            minimap: {
+              enabled: false,
+            },
           });
+          $(element).find(".textxblock-container").css({ opacity: "1" });
+          $(element)
+            .find(".theme")
+            .on("click", () => {
+              if (!isThemeUpdated) {
+                monaco.editor.setTheme("vs-light");
+                //$(element).find(".code-editor-sub-menu").css({})
+                $(element).find(".light-theme").hide();
+                $(element).find(".dark-theme").show();
+                $(element)
+                  .find(".code-editor-sub-menu")
+                  .css({ "background-color": "white" });
+                isThemeUpdated = true;
+              } else {
+                monaco.editor.setTheme("vs-dark");
+                $(element).find(".dark-theme").hide();
+                $(element).find(".light-theme").show();
+                $(element)
+                  .find(".code-editor-sub-menu")
+                  .css({ "background-color": "rgb(62, 62, 68)" });
+                isThemeUpdated = false;
+              }
+            });
+
+          $(element)
+            .find(".answer-container")
+            .css({ "pointer-events": "none", opacity: "0" });
+
+          //editor to show answer
+          monaco.editor.create(document.getElementById("answer-editor"), {
+            value: data.answer,
+            language: data.language,
+            readOnly: true,
+            padding: {
+              top: 15,
+              bottom: 10,
+            },
+            minimap: {
+              enabled: false,
+            },
+          });
+
+          $(element)
+            .find(".show-ans-check")
+            .on("change", () => {
+              if (!isCheckBoxChecked) {
+                $(element).find(".answer-container").css({
+                  "pointer-events": "auto",
+                  opacity: "1",
+                  transition: "opacity 1s ease-in",
+                });
+
+                isCheckBoxChecked = true;
+              } else {
+                $(element).find(".answer-container").css({
+                  "pointer-events": "none",
+                  opacity: "0",
+                  transition: "opacity 1s ease-out",
+                });
+                isCheckBoxChecked = false;
+              }
+            });
+
           console.log(data.boilerplate);
           console.log(data.language);
           makeInitialAjaxCall();
@@ -154,33 +228,7 @@ function TextXBlock(runtime, element) {
             .find("#submit")
             .on("click", () => {
               userInputAnswer(editor.getValue());
-              $(element)
-                .find(".show-ans-check")
-                .css({ "pointer-events": "none", opacity: "0.5" });
               clearIntervalsFunction();
-            });
-          $(element)
-            .find(".show-ans-check")
-            .on("change", () => {
-              if (!isCheckBoxChecked) {
-                $(element)
-                  .find("#submit")
-                  .css({ "pointer-events": "none", opacity: "0.5" });
-                editor.setValue("");
-                editor.setValue(data.answer);
-                isCheckBoxChecked = true;
-              } else if (getUserAnswerFromDb && isCheckBoxChecked) {
-                editor.setValue("");
-                editor.setValue(getUserAnswerFromDb);
-                isCheckBoxChecked = false;
-              } else {
-                editor.setValue("");
-                editor.setValue(data.boilerplate);
-                $(element)
-                  .find("#submit")
-                  .css({ "pointer-events": "auto", opacity: "1" });
-                isCheckBoxChecked = false;
-              }
             });
         }, (err) => {
           console.error("failed to load monaco editor", err);
@@ -200,6 +248,30 @@ function TextXBlock(runtime, element) {
         data: JSON.stringify({ user_input: userAnswer }),
         success: showAnswerResult,
       });
+    }
+
+    $(element).find(".reset").on("click", resetFunction);
+
+    function resetFunction() {
+      let resetHandleUrl = runtime.handlerUrl(element, "delete_task");
+      if (!isResetRequestInProgress) {
+        isResetRequestInProgress = true;
+        $.ajax({
+          type: "POST",
+          url: resetHandleUrl,
+          data: JSON.stringify({}),
+          success: (data) => {
+            console.log(data);
+            editor.setValue("");
+            console.log("monaco editor reset done successfully");
+            isResetRequestInProgress = false;
+          },
+          error: () => {
+            console.log("error while resetting state of editor");
+            isResetRequestInProgress = false;
+          },
+        });
+      }
     }
 
     function showAnswerResult(result) {
@@ -236,18 +308,12 @@ function TextXBlock(runtime, element) {
     function taskResult(result) {
       console.log(result);
       if (result.status === 200) {
-        $(element)
-          .find(".show-ans-check")
-          .css({ "pointer-events": "auto", opacity: "1" });
         $(element).find("#answer-validation").text("Correct").show();
         $(element).find(".score").text(result.score).show();
         $(element).find(".loader").hide();
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
-        $(element)
-          .find(".show-ans-check")
-          .css({ "pointer-events": "auto", opacity: "1" });
         $(element).find("#answer-validation").text("Wrong").show();
         $(element).find("#show-answer").text(result.answer).show();
         $(element).find("#explaination").text(result.explanation).show();
