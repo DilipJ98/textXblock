@@ -2,7 +2,8 @@
   width: 100%;
   display: flex;
   justify-content: start;
-  align-items: center;
+  /* align-items: center; */
+  height: 100dvh;
 }
 
 .main-div {
@@ -69,7 +70,7 @@
   border: 1px solid rgb(134, 131, 131);
   border-radius: 2px;
   padding: 4px;
-  background-color: rgb(62, 62, 68);
+  background-color: rgb(62, 62, 68) !important;
 }
 
 .editors-div {
@@ -81,7 +82,7 @@
 
 .editor-container {
   width: 50%;
-  height: 50vh;
+  height: 80dvh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -93,22 +94,22 @@
   width: 6rem;
   border-radius: 3px;
   padding: 2px;
-  background-color: #0556f3;
+  background-color: #0556f3 !important;
   border: none;
   color: white;
   font-size: small;
 }
 
 .reset:hover {
-  background-color: #0047d1;
+  background-color: #0047d1 !important;
 }
 
 .checkbox-div {
   padding: 2px;
   width: 6rem;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center !important;
+  align-items: center !important;
   border: 1px solid rgb(134, 131, 131);
   border-radius: 3px;
 }
@@ -125,7 +126,7 @@
 }
 
 .answer-container {
-  height: 50vh;
+  height: 80dvh;
   width: 50%;
   display: flex;
   flex-direction: column;
