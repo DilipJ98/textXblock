@@ -1,6 +1,11 @@
 function TextXBlock(runtime, element) {
   //loads intially
   $(() => {
+    let metaTag = document.createElement("meta");
+    metaTag.name = "viewport";
+    metaTag.content = "width=device-width, initial-scale=1.0";
+    document.getElementsByTagName("head")[0].appendChild(metaTag);
+
     $(element).find(".textxblock-container").css({ opacity: "0" });
     //whcih unchecks checkbox on page loads
     $(element).find(".show-ans-check").prop("checked", false);
@@ -162,16 +167,20 @@ function TextXBlock(runtime, element) {
                 $(element).find(".light-theme").hide();
                 $(element).find(".dark-theme").show();
                 $(element)
-                  .find(".code-editor-sub-menu")
+                  .find(".code-editor-menu")
                   .css({ "background-color": "white" });
+                $(element).find(".lable-checkbox").css({ color: "black" });
+
                 isThemeUpdated = true;
               } else {
                 monaco.editor.setTheme("vs-dark");
                 $(element).find(".dark-theme").hide();
                 $(element).find(".light-theme").show();
                 $(element)
-                  .find(".code-editor-sub-menu")
+                  .find(".code-editor-menu")
                   .css({ "background-color": "rgb(62, 62, 68)" });
+                $(element).find(".lable-checkbox").css({ color: "white" });
+
                 isThemeUpdated = false;
               }
             });
@@ -203,7 +212,6 @@ function TextXBlock(runtime, element) {
                   opacity: "1",
                   transition: "opacity 1s ease-in",
                 });
-
                 isCheckBoxChecked = true;
               } else {
                 $(element).find(".answer-container").css({
@@ -278,10 +286,10 @@ function TextXBlock(runtime, element) {
       //storing task id in local storage
       //localStorage.setItem("taskid", result.taskid);
       let isRequestInProgress = false;
-      $(element).find(".loader").show();
-      $(element).find(".loader").text("Your code is compiling....");
-      $(element).find("#answer-validation").hide();
-      $(element).find(".score").hide();
+      // $(element).find(".loader").show();
+      // $(element).find(".loader").text("Your code is compiling....");
+      // $(element).find("#answer-validation").hide();
+      // $(element).find(".score").hide();
       intervalOnSubmit = setInterval(() => {
         let handlerUrl = runtime.handlerUrl(element, "get_task_result");
         if (!isRequestInProgress) {
@@ -308,25 +316,28 @@ function TextXBlock(runtime, element) {
     function taskResult(result) {
       console.log(result);
       if (result.status === 200) {
-        $(element).find("#answer-validation").text("Correct").show();
-        $(element).find(".score").text(result.score).show();
-        $(element).find(".loader").hide();
+        // $(element).find("#answer-validation").text("Correct").show();
+        // $(element).find(".score").text(result.score).show();
+        // $(element).find(".loader").hide();
+        $(element).find("#submit").text("success");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
-        $(element).find("#answer-validation").text("Wrong").show();
-        $(element).find("#show-answer").text(result.answer).show();
-        $(element).find("#explaination").text(result.explanation).show();
-        $(element).find(".score").text(result.score).show();
-        $(element).find(".loader").hide();
+        // $(element).find("#answer-validation").text("Wrong").show();
+        // $(element).find("#show-answer").text(result.answer).show();
+        // $(element).find("#explaination").text(result.explanation).show();
+        // $(element).find(".score").text(result.score).show();
+        // $(element).find(".loader").hide();
+        $(element).find("#submit").text("fail");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {
-        $(element).find(".loader").text("Your code is compiling....");
-        $(element).find("#answer-validation").hide();
-        $(element).find("#show-answer").hide();
-        $(element).find(".score").hide();
-        $(element).find("#explaination").hide();
+        $(element).find("#submit").text("processing");
+        // $(element).find(".loader").text("Your code is compiling....");
+        // $(element).find("#answer-validation").hide();
+        // $(element).find("#show-answer").hide();
+        // $(element).find(".score").hide();
+        // $(element).find("#explaination").hide();
       }
     }
   });

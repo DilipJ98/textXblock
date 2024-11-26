@@ -1,10 +1,17 @@
 <div class="textxblock-container">
   <div class="main-div">
-    <p id="show-question"></p>
+    <div class="show-question-div">
+      <p id="show-question"></p>
+    </div>
     <div class="container-div">
       <div class="code-editor-menu">
         <div class="code-editor-sub-menu">
-          <button class="reset"><b>Reset</b></button>
+          <div class="checkbox-div">
+            <input class="show-ans-check" type="checkbox" />
+            <label for="show-ans-check" class="lable-checkbox"
+              ><b>Code</b></label
+            >
+          </div>
 
           <div class="theme">
             <button class="light-theme">
@@ -68,23 +75,23 @@
               </svg>
             </button>
           </div>
-          <div class="checkbox-div">
-            <input class="show-ans-check" type="checkbox" />
-            <label for="show-ans-check"><b>Code</b></label>
-          </div>
+          <button class="reset"><b>Reset</b></button>
         </div>
       </div>
-      <div class="editor-container">
-        <div id="container"></div>
+      <div class="editors-div">
+        <div class="editor-container">
+          <div id="container"></div>
+        </div>
+        <div class="answer-container">
+          <div id="answer-editor"></div>
+        </div>
       </div>
-      <div class="answer-container">
-        <div id="answer-editor"></div>
+      <div class="submit-div">
+        <button id="submit">Run</button>
       </div>
     </div>
-    <div class="submit-div">
-      <button id="submit">Run</button>
-    </div>
-  </div>
+
+    <!-- </div>
   <div class="result-div">
     <br />
     <div class="marks">
@@ -94,5 +101,6 @@
     <p id="answer-validation"><b></b></p>
     <p id="show-answer"></p>
     <p id="explaination"></p>
+  </div> -->
   </div>
 </div>

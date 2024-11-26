@@ -1,183 +1,236 @@
 .textxblock-container {
+  width: 100%;
   display: flex;
   justify-content: start;
-  /* padding: 2px; */
+  align-items: center;
 }
 
 .main-div {
   width: 100%;
-  padding: 3px;
+  padding: 2px;
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
-  /* align-items: start; */
-  border: 1px solid rgb(134, 131, 131);
-  border-radius: 2px;
+  align-items: start;
+}
+
+.show-question-div {
+  padding: 1px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .container-div {
-  width: 90%;
-  align-self: center;
+  width: 100%;
   display: flex;
-  padding: 10px;
-  justify-content: center;
+  flex-direction: column;
 }
 
 .code-editor-menu {
-  width: 10%;
+  background-color: rgb(62, 62, 68);
   display: flex;
-  justify-content: end;
+  justify-content: start;
+  border: 1px solid black;
+  border-bottom: none;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  width: 50%;
 }
 
 .code-editor-sub-menu {
+  padding: 5px;
+  width: 60%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: space-around;
-  padding: 10px;
+}
+
+.space-div {
+  /* display: none; */
   width: 50%;
-  background-color: rgb(62, 62, 68);
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-  border: 1px solid rgb(134, 131, 131);
+  border: 1px solid white;
 }
 
-.editor-container {
-  width: 45%;
+.theme {
   display: flex;
-  flex-direction: column;
-}
-
-#container {
-  width: 100%;
-  border-bottom: 1px solid rgb(134, 131, 131);
-  border-top: 1px solid rgb(134, 131, 131);
-  border-right: 1px solid rgb(134, 131, 131);
-
-  /* border-right: 1px solid rgb(134, 131, 131); */
-
-  /* border-left: 2px solid rgb(134, 131, 131);
-  border-right: 1px solid rgb(134, 131, 131);
-  border-bottom-left-radius: 3px; */
-  border-bottom-right-radius: 3px;
-  border-top-right-radius: 3px;
-
-  height: 31rem;
-}
-
-.answer-container {
-  border-left: 2px solid blue;
-  width: 45%;
-  border-bottom: 1px solid rgb(134, 131, 131);
-  border-top: 1px solid rgb(134, 131, 131);
-  border-right: 1px solid rgb(134, 131, 131);
-  border-radius: 3px;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
 }
 
 .dark-theme {
   display: none;
-  padding: 5px;
-  background-color: white;
-  border: 1px solid rgb(134, 131, 131);
+  border: 1px solid black;
   border-radius: 2px;
+  padding: 4px;
+  border: 1px solid rgb(134, 131, 131);
+  background-color: white;
 }
 
 .light-theme {
-  padding: 5px;
-  background-color: rgb(62, 62, 68);
   border: 1px solid rgb(134, 131, 131);
+  border-radius: 2px;
+  padding: 4px;
+  background-color: rgb(62, 62, 68);
+}
+
+.editors-div {
+  display: flex;
+  /* border: 1px solid black; */
+  border-bottom-left-radius: 3px;
+  width: 100%;
+}
+
+.editor-container {
+  width: 50%;
+  height: 50vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 1px;
-}
-
-.marks {
-  display: flex;
-}
-
-#show-question {
-  margin: 0;
+  border: 1px solid black;
+  border-bottom-left-radius: 3px;
 }
 
 .reset {
-  color: white;
-  border-radius: 2px;
-  padding: 8px;
-  width: 100%;
+  width: 6rem;
+  border-radius: 3px;
+  padding: 2px;
   background-color: #0556f3;
-  margin: 0;
   border: none;
+  color: white;
+  font-size: small;
 }
 
 .reset:hover {
-  background-color: #0a4fdb;
+  background-color: #0047d1;
 }
 
 .checkbox-div {
-  color: white;
-  border-radius: 2px;
-  padding: 6px;
-  font-size: small;
-  background-color: aqua;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background-color: #0556f3;
-}
-
-#answer-button {
-  width: 20%;
-  height: 35px;
-  border-radius: 5px;
-  background-color: rgb(32, 32, 123);
-  cursor: pointer;
-  color: white;
-}
-
-#answer-button:hover {
-  background-color: rgb(45, 45, 172);
-}
-
-.btn-div {
-  padding: 4px;
+  padding: 2px;
+  width: 6rem;
   display: flex;
   justify-content: center;
-  width: 50%;
+  align-items: center;
+  border: 1px solid rgb(134, 131, 131);
+  border-radius: 3px;
 }
 
-.result-div {
-  border-right: 1px solid rgb(134, 131, 131);
-  border-top: 1px solid rgb(134, 131, 131);
-  border-bottom: 1px solid rgb(134, 131, 131);
+.lable-checkbox {
+  font-size: small;
+  color: white;
+}
+
+#container {
+  height: 100%;
+  width: 100%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.answer-container {
+  height: 50vh;
+  width: 50%;
   display: flex;
-  padding: 10px;
   flex-direction: column;
-  width: 30%;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  border-left: 1px solid white;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
 }
 
 #answer-editor {
   width: 100%;
-  height: 31rem;
-  /* box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.5); */
+  height: 100%;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
 }
 
 .submit-div {
-  width: 100%;
+  width: 50%;
+  background-color: #0556f3;
   display: flex;
   justify-content: center;
-  padding: 4px;
 }
 
 #submit {
-  width: 20%;
-  height: 35px;
-  border-radius: 3px;
-  background-color: rgb(30, 30, 190);
-  color: white;
+  padding: 6px;
+  width: 30%;
 }
 
-#submit:hover {
-  cursor: pointer;
-  background-color: rgb(47, 47, 222);
+@media screen and (max-width: 600px) {
+  .container-div {
+    width: 100%;
+  }
+
+  .code-editor-menu {
+    width: 100%;
+  }
+
+  .code-editor-sub-menu {
+    width: 100%;
+  }
+
+  .editors-div {
+    position: relative;
+  }
+
+  .editor-container {
+    width: 100%;
+  }
+
+  .answer-container {
+    position: absolute;
+    width: 100%;
+  }
+  #answer-editor {
+    width: 100%;
+  }
+
+  .reset {
+    width: 4rem;
+  }
+
+  .checkbox-div {
+    width: 4rem;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 850px) {
+  .container-div {
+    width: 100%;
+  }
+
+  .code-editor-menu {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+  }
+
+  .code-editor-sub-menu {
+    width: 50%;
+  }
+
+  .editors-div {
+    position: relative;
+  }
+
+  .editor-container {
+    width: 100%;
+  }
+
+  .answer-container {
+    position: absolute;
+    width: 100%;
+  }
+  #answer-editor {
+    width: 100%;
+  }
+
+  .reset {
+    width: 5rem;
+  }
+
+  .checkbox-div {
+    width: 5rem;
+  }
 }
