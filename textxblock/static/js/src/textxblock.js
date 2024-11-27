@@ -240,7 +240,7 @@ function TextXBlock(runtime, element) {
 
           console.log(data.boilerplate);
           console.log(data.language);
-          //makeInitialAjaxCall();
+          makeInitialAjaxCall();
           console.log(editor.getValue(), " get editor value");
 
           /*
@@ -353,7 +353,7 @@ function TextXBlock(runtime, element) {
         // $(element).find("#answer-validation").text("Correct").show();
         // $(element).find(".score").text(result.score).show();
         // $(element).find(".loader").hide();
-        $(element).find("#submit").text("success");
+        //$(element).find("#submit").text("success");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
@@ -362,11 +362,11 @@ function TextXBlock(runtime, element) {
         // $(element).find("#explaination").text(result.explanation).show();
         // $(element).find(".score").text(result.score).show();
         // $(element).find(".loader").hide();
-        $(element).find("#submit").text("fail");
+        //$(element).find("#submit").text("fail");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {
-        $(element).find("#submit").text("processing");
+        //$(element).find("#submit").text("processing");
         // $(element).find(".loader").text("Your code is compiling....");
         // $(element).find("#answer-validation").hide();
         // $(element).find("#show-answer").hide();
