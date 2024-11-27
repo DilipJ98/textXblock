@@ -3,7 +3,8 @@
   display: flex;
   justify-content: start;
   /* align-items: center; */
-  /* border: 2px solid black; */
+  border: 1px solid black;
+  padding: 10px;
 }
 
 .main-div {
@@ -25,32 +26,33 @@
 
 .container-div {
   width: 85%;
-  display: flex;
-  flex-direction: column;
 }
 
 .code-editor-menu {
-  background-color: rgb(62, 62, 68);
   display: flex;
   justify-content: start;
-  border: 1px solid black;
   border-bottom: none;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  width: 50%;
+  width: 100%;
 }
 
 .code-editor-sub-menu {
-  padding: 5px;
-  width: 60%;
+  background-color: rgb(62, 62, 68);
+  width: 45%;
+  height: 3rem;
   display: flex;
   justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-left: 1px solid black;
 }
 
-.space-div {
-  /* display: none; */
-  width: 50%;
-  border: 1px solid white;
+.code-editor-sub-menu-two {
+  background-color: rgb(62, 62, 68);
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  height: 3rem;
+  width: 45%;
 }
 
 .theme {
@@ -78,23 +80,26 @@
 
 .editors-div {
   display: flex;
+  justify-content: start;
   /* border: 1px solid black; */
   border-bottom-left-radius: 3px;
   width: 100%;
 }
 
 .editor-container {
-  width: 50%;
-  height: 65vh;
+  width: 45%;
+  height: 550px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: 1px solid black;
-  border-bottom-left-radius: 3px;
+  /* border-bottom-left-radius: 3px; */
+  /* padding: 5px; */
 }
 
 .reset {
   width: 6rem;
+  height: 2.3rem;
   border-radius: 3px;
   padding: 2px;
   background-color: #0556f3 !important;
@@ -110,9 +115,11 @@
 .checkbox-div {
   padding: 2px;
   width: 6rem;
+  height: 2rem;
   display: flex;
-  justify-content: center !important;
+  /* /* justify-content: center !important; */
   align-items: center !important;
+  justify-content: space-evenly;
   border: 1px solid rgb(134, 131, 131);
   border-radius: 3px;
 }
@@ -129,8 +136,9 @@
 }
 
 .answer-container {
-  height: 65vh;
-  width: 50%;
+  /* padding: 5px; */
+  height: 550px;
+  width: 45%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -139,7 +147,6 @@
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   border-left: 1px solid white;
-  border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.25);
 }
@@ -150,8 +157,8 @@
 }
 
 .submit-div {
-  width: 50%;
-  background-color: #0556f3;
+  padding: 1px;
+  width: 45%;
   display: flex;
   justify-content: center;
 }
@@ -159,6 +166,27 @@
 #submit {
   padding: 6px;
   width: 30%;
+  display: flex;
+  justify-content: center;
+}
+
+.progressBar-div {
+  display: none;
+  padding: 15px;
+  border: 1px solid black;
+  width: 30%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+}
+
+#progressBar {
+  display: none;
+  width: 0;
+  height: 100%;
+  background-color: rgb(35, 33, 33);
+  color: white;
+  transition: width 0.1s ease-in-out;
 }
 
 @media screen and (max-width: 600px) {
@@ -174,6 +202,10 @@
 
   .code-editor-sub-menu {
     width: 100%;
+  }
+
+  .code-editor-sub-menu-two {
+    display: none;
   }
 
   .editors-div {
@@ -217,7 +249,11 @@
   }
 
   .code-editor-sub-menu {
-    width: 50%;
+    width: 100%;
+  }
+
+  .code-editor-sub-menu-two {
+    display: none;
   }
 
   .editors-div {
@@ -231,6 +267,7 @@
   .answer-container {
     position: absolute;
     width: 100%;
+    border: 1px solid black;
   }
   #answer-editor {
     width: 100%;

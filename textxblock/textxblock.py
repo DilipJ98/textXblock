@@ -232,6 +232,9 @@ class TextXBlock(XBlock):
         cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id))
         feteched_data = cursor.fetchone()
         if feteched_data is not None:
+            self.score = 0
+            self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
+            self.save()
             cursor.execute('delete from user where xblock_id = ? and user_id = ?', (block_location_id, user_id) )
             connection.commit()
             return {"status": "success", "message": "Task deleted successfully."}

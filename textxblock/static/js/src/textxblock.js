@@ -9,6 +9,9 @@ function TextXBlock(runtime, element) {
     $(element).find(".textxblock-container").css({ opacity: "0" });
     //whcih unchecks checkbox on page loads
     $(element).find(".show-ans-check").prop("checked", false);
+
+    $(element).find(".code-editor-sub-menu-two").css({ opacity: "0" });
+
     let editor;
     let isEditorUpdated = false;
     let intervalOnPageLoad;
@@ -163,11 +166,13 @@ function TextXBlock(runtime, element) {
             .on("click", () => {
               if (!isThemeUpdated) {
                 monaco.editor.setTheme("vs-light");
-                //$(element).find(".code-editor-sub-menu").css({})
                 $(element).find(".light-theme").hide();
                 $(element).find(".dark-theme").show();
                 $(element)
-                  .find(".code-editor-menu")
+                  .find(".code-editor-sub-menu")
+                  .css({ "background-color": "white" });
+                $(element)
+                  .find(".code-editor-sub-menu-two")
                   .css({ "background-color": "white" });
                 $(element).find(".lable-checkbox").css({ color: "black" });
 
@@ -177,7 +182,10 @@ function TextXBlock(runtime, element) {
                 $(element).find(".dark-theme").hide();
                 $(element).find(".light-theme").show();
                 $(element)
-                  .find(".code-editor-menu")
+                  .find(".code-editor-sub-menu")
+                  .css({ "background-color": "rgb(62, 62, 68)" });
+                $(element)
+                  .find(".code-editor-sub-menu-two")
                   .css({ "background-color": "rgb(62, 62, 68)" });
                 $(element).find(".lable-checkbox").css({ color: "white" });
 
@@ -212,6 +220,9 @@ function TextXBlock(runtime, element) {
                   opacity: "1",
                   transition: "opacity 1s ease-in",
                 });
+                $(element)
+                  .find(".code-editor-sub-menu-two")
+                  .css({ opacity: "1", transition: "opacity 1s ease-in" });
                 isCheckBoxChecked = true;
               } else {
                 $(element).find(".answer-container").css({
@@ -219,13 +230,17 @@ function TextXBlock(runtime, element) {
                   opacity: "0",
                   transition: "opacity 1s ease-out",
                 });
+
+                $(element)
+                  .find(".code-editor-sub-menu-two")
+                  .css({ opacity: "0", transition: "opacity 1s ease-out" });
                 isCheckBoxChecked = false;
               }
             });
 
           console.log(data.boilerplate);
           console.log(data.language);
-          makeInitialAjaxCall();
+          //makeInitialAjaxCall();
           console.log(editor.getValue(), " get editor value");
 
           /*
@@ -235,6 +250,9 @@ function TextXBlock(runtime, element) {
           $(element)
             .find("#submit")
             .on("click", () => {
+              $(element).find("#submit").hide();
+              $(element).find("#progressBar").show();
+              $(element).find(".progressBar-div").show();
               userInputAnswer(editor.getValue());
               clearIntervalsFunction();
             });
@@ -282,7 +300,12 @@ function TextXBlock(runtime, element) {
       }
     }
 
+    let progressLoad = 5;
+
     function showAnswerResult(result) {
+      $(element)
+        .find("#progressBar")
+        .css("width", progressLoad + "%");
       //storing task id in local storage
       //localStorage.setItem("taskid", result.taskid);
       let isRequestInProgress = false;
@@ -299,6 +322,17 @@ function TextXBlock(runtime, element) {
             url: handlerUrl,
             data: JSON.stringify({ id: result.taskid, xblock_id: result.test }),
             success: (result) => {
+              if (result.status === 200 || result.status === 400) {
+                progressLoad = 100;
+                $(element)
+                  .find("#progressBar")
+                  .css("width", progressLoad + "%");
+              } else {
+                progressLoad = Math.min(progressLoad + 10, 100);
+                $(element)
+                  .find("#progressBar")
+                  .css("width", progressLoad + "%");
+              }
               taskResult(result);
               isRequestInProgress = false;
             },
