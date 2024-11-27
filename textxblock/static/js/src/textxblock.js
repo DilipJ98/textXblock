@@ -23,6 +23,7 @@ function TextXBlock(runtime, element) {
     let getUserAnswerFromDb;
     let isThemeUpdated = false;
     let isResetRequestInProgress = false;
+    let dataFromInitiaRequest;
 
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
@@ -42,6 +43,7 @@ function TextXBlock(runtime, element) {
         data: JSON.stringify({}),
         success: (data) => {
           $(element).find("#show-question").text(data.question); //which will update UI with question
+          dataFromInitiaRequest = data;
           monacoEditor(data); //calling monaco editor
         },
         error: () => {
@@ -108,6 +110,11 @@ function TextXBlock(runtime, element) {
             if (editor) {
               editor.setValue("");
               editor.setValue(dataOfResult[4]);
+              $(element).find(".results-div").show();
+              $(element)
+                .find(".results")
+                .text("we are fetching your results.........!");
+
               getUserAnswerFromDb = dataOfResult[4];
               isEditorUpdated = true;
             }
@@ -239,10 +246,7 @@ function TextXBlock(runtime, element) {
               }
             });
 
-          console.log(data.boilerplate);
-          console.log(data.language);
           makeInitialAjaxCall();
-          console.log(editor.getValue(), " get editor value");
 
           /*
           on clicking submit calling function 
@@ -251,6 +255,7 @@ function TextXBlock(runtime, element) {
           $(element)
             .find("#submit")
             .on("click", () => {
+              $(element).find(".results-div").hide();
               $(element).find(".progressBar-div").show();
               userInputAnswer(editor.getValue());
               clearIntervalsFunction();
@@ -291,6 +296,10 @@ function TextXBlock(runtime, element) {
             console.log("monaco editor reset done successfully");
             $(element).find(".results-div").hide();
             isResetRequestInProgress = false;
+            //using intial data for passing into monaco editor
+            if (dataFromInitiaRequest) {
+              monacoEditor(dataFromInitiaRequest);
+            }
           },
           error: () => {
             console.log("error while resetting state of editor");
@@ -346,20 +355,21 @@ function TextXBlock(runtime, element) {
     }
 
     function taskResult(result) {
-      $(element).find(".results-div").show();
       console.log(result, "at last task result");
       if (result.status === 200) {
         $(element).find(".progressBar-div").hide();
+        $(element).find(".results-div").show();
         $(element).find(".results").text("your solution was correct");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
         $(element).find(".progressBar-div").hide();
+        $(element).find(".results-div").show();
         $(element).find(".results").text("Your solution was incorrect");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {
-        // $(element).find(".results").text("compiling......");
+        console.log(result.status, " from else ......");
       }
     }
   });

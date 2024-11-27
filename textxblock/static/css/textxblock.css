@@ -69,6 +69,7 @@
   padding: 4px;
   border: 1px solid rgb(134, 131, 131);
   background-color: white;
+  cursor: pointer;
 }
 
 .light-theme {
@@ -76,6 +77,7 @@
   border-radius: 2px;
   padding: 4px;
   background-color: rgb(62, 62, 68) !important;
+  cursor: pointer;
 }
 
 .editors-div {
@@ -99,13 +101,17 @@
 
 .reset {
   width: 6rem;
-  height: 2.3rem;
+  height: 2rem;
   border-radius: 3px;
   padding: 2px;
   background-color: #0556f3 !important;
   border: none;
   color: white;
   font-size: small;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .reset:hover {
@@ -158,13 +164,17 @@
 
 #submit {
   width: 6rem;
-  height: 2.3rem;
+  height: 2rem;
   border-radius: 3px;
   padding: 2px;
   background-color: #0556f3 !important;
   border: none;
   color: white;
   font-size: small;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #submit:hover {
@@ -252,6 +262,10 @@
     width: 4rem;
   }
 
+  #submit {
+    width: 4rem;
+  }
+
   .checkbox-div {
     width: 4rem;
   }
@@ -261,7 +275,7 @@
   }
 }
 
-@media screen and (min-width: 600px) and (max-width: 850px) {
+@media screen and (min-width: 600px) and (max-width: 1000px) {
   .container-div {
     width: 90%;
   }
@@ -305,8 +319,76 @@
     width: 5rem;
   }
 
+  #submit {
+    width: 5rem;
+  }
+
   .checkbox-div {
     width: 5rem;
+  }
+
+  .progress-results {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .container-div {
+    width: 100%;
+  }
+  .show-question-div {
+    width: 100%;
+  }
+  .code-editor-menu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+  }
+
+  .code-editor-sub-menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto, auto;
+    gap: 10px;
+    padding: 5px;
+    align-items: center;
+    width: 100%;
+    height: auto;
+  }
+
+  .code-editor-sub-menu-two {
+    display: none;
+  }
+
+  .editors-div {
+    position: relative;
+  }
+
+  .editor-container {
+    width: 100%;
+  }
+
+  .answer-container {
+    position: absolute;
+    width: 100%;
+  }
+  #answer-editor {
+    width: 100%;
+  }
+
+  .reset {
+    width: 3rem;
+  }
+
+  #submit {
+    width: 3rem;
+  }
+
+  .checkbox-div {
+    width: 3rem;
   }
 
   .progress-results {
