@@ -251,8 +251,6 @@ function TextXBlock(runtime, element) {
             .find("#submit")
             .on("click", () => {
               $(element).find("#submit").hide();
-              $(element).find("#progressBar").show();
-              $(element).find(".progressBar-div").show();
               userInputAnswer(editor.getValue());
               clearIntervalsFunction();
             });
@@ -303,6 +301,8 @@ function TextXBlock(runtime, element) {
     let progressLoad = 5;
 
     function showAnswerResult(result) {
+      $(element).find("#progressBar").show();
+      $(element).find(".progressBar-div").show();
       $(element)
         .find("#progressBar")
         .css("width", progressLoad + "%");
@@ -324,15 +324,12 @@ function TextXBlock(runtime, element) {
             success: (result) => {
               if (result.status === 200 || result.status === 400) {
                 progressLoad = 100;
-                $(element)
-                  .find("#progressBar")
-                  .css("width", progressLoad + "%");
               } else {
                 progressLoad = Math.min(progressLoad + 10, 100);
-                $(element)
-                  .find("#progressBar")
-                  .css("width", progressLoad + "%");
               }
+              $(element)
+                .find("#progressBar")
+                .css("width", progressLoad + "%");
               taskResult(result);
               isRequestInProgress = false;
             },
