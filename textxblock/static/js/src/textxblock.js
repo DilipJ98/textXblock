@@ -289,6 +289,7 @@ function TextXBlock(runtime, element) {
             console.log(data);
             editor.setValue("");
             console.log("monaco editor reset done successfully");
+            $(element).find(".results-div").hide();
             isResetRequestInProgress = false;
           },
           error: () => {
@@ -348,15 +349,17 @@ function TextXBlock(runtime, element) {
       $(element).find(".results-div").show();
       console.log(result, "at last task result");
       if (result.status === 200) {
+        $(element).find(".progressBar-div").hide();
         $(element).find(".results").text("your solution was correct");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
+        $(element).find(".progressBar-div").hide();
         $(element).find(".results").text("Your solution was incorrect");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {
-        $(element).find(".results").text("compiling......");
+        // $(element).find(".results").text("compiling......");
       }
     }
   });

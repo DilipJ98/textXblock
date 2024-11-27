@@ -185,7 +185,7 @@
   width: 100%;
   border-radius: 3px;
   background-color: rgb(203, 199, 199);
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }
 
 #progressBar {
@@ -255,6 +255,10 @@
   .checkbox-div {
     width: 4rem;
   }
+
+  .progress-results {
+    width: 90%;
+  }
 }
 
 @media screen and (min-width: 600px) and (max-width: 850px) {
@@ -303,5 +307,9 @@
 
   .checkbox-div {
     width: 5rem;
+  }
+
+  .progress-results {
+    width: 90%;
   }
 }
