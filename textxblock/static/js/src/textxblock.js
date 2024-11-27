@@ -70,8 +70,9 @@ function TextXBlock(runtime, element) {
         },
         error: () => {
           isRequestinProgress = false;
+          $(element).find(".results-div").show();
           $(element)
-            .find(".loader")
+            .find(".results")
             .text("Error occurred, please try again..........");
         },
       });
@@ -250,7 +251,7 @@ function TextXBlock(runtime, element) {
           $(element)
             .find("#submit")
             .on("click", () => {
-              $(element).find("#submit").hide();
+              $(element).find(".progressBar-div").show();
               userInputAnswer(editor.getValue());
               clearIntervalsFunction();
             });
@@ -298,21 +299,16 @@ function TextXBlock(runtime, element) {
       }
     }
 
-    let progressLoad = 5;
+    let progressLoad = 10;
 
     function showAnswerResult(result) {
-      $(element).find("#progressBar").show();
-      $(element).find(".progressBar-div").show();
       $(element)
         .find("#progressBar")
         .css("width", progressLoad + "%");
-      //storing task id in local storage
-      //localStorage.setItem("taskid", result.taskid);
+      $(element)
+        .find("#progressBar")
+        .text(progressLoad + "%");
       let isRequestInProgress = false;
-      // $(element).find(".loader").show();
-      // $(element).find(".loader").text("Your code is compiling....");
-      // $(element).find("#answer-validation").hide();
-      // $(element).find(".score").hide();
       intervalOnSubmit = setInterval(() => {
         let handlerUrl = runtime.handlerUrl(element, "get_task_result");
         if (!isRequestInProgress) {
@@ -330,13 +326,17 @@ function TextXBlock(runtime, element) {
               $(element)
                 .find("#progressBar")
                 .css("width", progressLoad + "%");
+              $(element)
+                .find("#progressBar")
+                .text(progressLoad + "%");
               taskResult(result);
               isRequestInProgress = false;
             },
             error: () => {
               isRequestInProgress = false;
+              $(element).find(".results-div").show();
               $(element)
-                .find(".loader")
+                .find(".results")
                 .text("Error occurred, please try again.");
             },
           });
@@ -345,30 +345,18 @@ function TextXBlock(runtime, element) {
     }
 
     function taskResult(result) {
-      console.log(result);
+      $(element).find(".results-div").show();
+      console.log(result, "at last task result");
       if (result.status === 200) {
-        // $(element).find("#answer-validation").text("Correct").show();
-        // $(element).find(".score").text(result.score).show();
-        // $(element).find(".loader").hide();
-        //$(element).find("#submit").text("success");
+        $(element).find(".results").text("your solution was correct");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
-        // $(element).find("#answer-validation").text("Wrong").show();
-        // $(element).find("#show-answer").text(result.answer).show();
-        // $(element).find("#explaination").text(result.explanation).show();
-        // $(element).find(".score").text(result.score).show();
-        // $(element).find(".loader").hide();
-        //$(element).find("#submit").text("fail");
+        $(element).find(".results").text("Your solution was incorrect");
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {
-        //$(element).find("#submit").text("processing");
-        // $(element).find(".loader").text("Your code is compiling....");
-        // $(element).find("#answer-validation").hide();
-        // $(element).find("#show-answer").hide();
-        // $(element).find(".score").hide();
-        // $(element).find("#explaination").hide();
+        $(element).find(".results").text("compiling......");
       }
     }
   });

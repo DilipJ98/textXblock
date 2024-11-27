@@ -156,36 +156,61 @@
   height: 100%;
 }
 
-.submit-div {
-  padding: 1px;
-  width: 45%;
-  display: flex;
-  justify-content: center;
+#submit {
+  width: 6rem;
+  height: 2.3rem;
+  border-radius: 3px;
+  padding: 2px;
+  background-color: #0556f3 !important;
+  border: none;
+  color: white;
+  font-size: small;
 }
 
-#submit {
-  padding: 6px;
-  width: 30%;
+#submit:hover {
+  background-color: #0047d1 !important;
+}
+
+.progress-results {
+  width: 43.6%;
   display: flex;
+  padding: 10px;
   justify-content: center;
+  align-items: center;
 }
 
 .progressBar-div {
   display: none;
-  padding: 15px;
+  /* border: 1px solid black; */
+  width: 100%;
+  border-radius: 3px;
+  background-color: rgb(203, 199, 199);
   border: 1px solid black;
-  width: 30%;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
 }
 
 #progressBar {
-  display: block;
-  width: 0;
+  /* border-radius: 3px; */
+  /* padding: 5px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 0%;
   height: 100%;
-  background-color: gold;
+  color: white;
+  background-color: #337ab7;
   transition: width 0.1s ease-in-out;
+}
+
+.results-div {
+  width: 100%;
+  display: none;
+  /* padding: 5px; */
+}
+
+.results {
+  width: 100%;
+  padding: 5px;
+  height: 100%;
 }
 
 @media screen and (max-width: 600px) {
