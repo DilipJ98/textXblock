@@ -24,6 +24,7 @@ function TextXBlock(runtime, element) {
     let isThemeUpdated = false;
     let isResetRequestInProgress = false;
     let dataFromInitiaRequest;
+    let progressLoad = 0;
 
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
@@ -255,8 +256,12 @@ function TextXBlock(runtime, element) {
           $(element)
             .find("#submit")
             .on("click", () => {
+              progressLoad = 10;
               $(element).find(".results-div").hide();
               $(element).find(".progressBar-div").show();
+              $(element)
+                .find("#submit")
+                .css({ "pointer-events": "none", opacity: "0.5" });
               userInputAnswer(editor.getValue());
               clearIntervalsFunction();
             });
@@ -291,15 +296,13 @@ function TextXBlock(runtime, element) {
           url: resetHandleUrl,
           data: JSON.stringify({}),
           success: (data) => {
-            console.log(data);
-            editor.setValue("");
+            if (editor) {
+              editor.setValue(dataFromInitiaRequest.boilerplate);
+            }
             console.log("monaco editor reset done successfully");
             $(element).find(".results-div").hide();
+            $(element).find(".progressBar-div").hide();
             isResetRequestInProgress = false;
-            //using intial data for passing into monaco editor
-            if (dataFromInitiaRequest) {
-              monacoEditor(dataFromInitiaRequest);
-            }
           },
           error: () => {
             console.log("error while resetting state of editor");
@@ -308,8 +311,6 @@ function TextXBlock(runtime, element) {
         });
       }
     }
-
-    let progressLoad = 10;
 
     function showAnswerResult(result) {
       $(element)
@@ -360,12 +361,18 @@ function TextXBlock(runtime, element) {
         $(element).find(".progressBar-div").hide();
         $(element).find(".results-div").show();
         $(element).find(".results").text("your solution was correct");
+        $(element)
+          .find("#submit")
+          .css({ "pointer-events": "auto", opacity: "1" });
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
         $(element).find(".progressBar-div").hide();
         $(element).find(".results-div").show();
         $(element).find(".results").text("Your solution was incorrect");
+        $(element)
+          .find("#submit")
+          .css({ "pointer-events": "auto", opacity: "1" });
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {

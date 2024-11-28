@@ -59,14 +59,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2px;
+  /* padding: 3px; */
 }
 
 .dark-theme {
   display: none;
-  border: 1px solid black;
   border-radius: 2px;
-  padding: 4px;
+  padding: 6px;
   border: 1px solid rgb(134, 131, 131);
   background-color: white;
   cursor: pointer;
@@ -75,7 +74,7 @@
 .light-theme {
   border: 1px solid rgb(134, 131, 131);
   border-radius: 2px;
-  padding: 4px;
+  padding: 6px;
   background-color: rgb(62, 62, 68) !important;
   cursor: pointer;
 }
@@ -95,27 +94,13 @@
   justify-content: center;
   align-items: center;
   border: 1px solid black;
-  /* border-bottom-left-radius: 3px; */
-  /* padding: 5px; */
 }
 
 .reset {
-  width: 6rem;
-  height: 2rem;
-  border-radius: 3px;
-  padding: 2px;
-  background-color: #0556f3 !important;
-  border: none;
-  color: white;
-  font-size: small;
+  border-radius: 2px;
+  border: 1px solid rgb(134, 131, 131);
+  padding: 6px;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.reset:hover {
-  background-color: #0047d1 !important;
 }
 
 .checkbox-div {
