@@ -256,8 +256,13 @@ function TextXBlock(runtime, element) {
           $(element)
             .find("#submit")
             .on("click", () => {
+              $(element).find(".reset").css({ "pointer-events": "none" });
+
               progressLoad = 10;
               $(element).find(".results-div").hide();
+              $(element)
+                .find("#progressBar")
+                .css("width", 0 + "%"); //on click initially it sets width to zero
               $(element).find(".progressBar-div").show();
               $(element)
                 .find("#submit")
@@ -288,27 +293,35 @@ function TextXBlock(runtime, element) {
     $(element).find(".reset").on("click", resetFunction);
 
     function resetFunction() {
-      let resetHandleUrl = runtime.handlerUrl(element, "delete_task");
-      if (!isResetRequestInProgress) {
-        isResetRequestInProgress = true;
-        $.ajax({
-          type: "POST",
-          url: resetHandleUrl,
-          data: JSON.stringify({}),
-          success: (data) => {
-            if (editor) {
-              editor.setValue(dataFromInitiaRequest.boilerplate);
-            }
-            console.log("monaco editor reset done successfully");
-            $(element).find(".results-div").hide();
-            $(element).find(".progressBar-div").hide();
-            isResetRequestInProgress = false;
-          },
-          error: () => {
-            console.log("error while resetting state of editor");
-            isResetRequestInProgress = false;
-          },
-        });
+      if (
+        confirm(
+          "Your current code will be discarded and reset to the default code!"
+        )
+      ) {
+        let resetHandleUrl = runtime.handlerUrl(element, "delete_task");
+        if (!isResetRequestInProgress) {
+          isResetRequestInProgress = true;
+          $.ajax({
+            type: "POST",
+            url: resetHandleUrl,
+            data: JSON.stringify({}),
+            success: (data) => {
+              if (editor) {
+                editor.setValue(dataFromInitiaRequest.boilerplate);
+              }
+              console.log("monaco editor reset done successfully");
+              $(element).find(".results-div").hide();
+              $(element).find(".progressBar-div").hide();
+              isResetRequestInProgress = false;
+            },
+            error: () => {
+              console.log("error while resetting state of editor");
+              isResetRequestInProgress = false;
+            },
+          });
+        }
+      } else {
+        console.log("no reset was done");
       }
     }
 
@@ -364,6 +377,8 @@ function TextXBlock(runtime, element) {
         $(element)
           .find("#submit")
           .css({ "pointer-events": "auto", opacity: "1" });
+        $(element).find(".reset").css({ "pointer-events": "auto" });
+
         //clearing interval after getting result
         clearIntervalsFunction();
       } else if (result.status === 400) {
@@ -373,6 +388,7 @@ function TextXBlock(runtime, element) {
         $(element)
           .find("#submit")
           .css({ "pointer-events": "auto", opacity: "1" });
+        $(element).find(".reset").css({ "pointer-events": "auto" });
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {

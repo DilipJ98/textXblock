@@ -176,11 +176,9 @@
 
 .progressBar-div {
   display: none;
-  /* border: 1px solid black; */
   width: 100%;
   border-radius: 3px;
   background-color: rgb(203, 199, 199);
-  /* border: 1px solid black; */
 }
 
 #progressBar {
@@ -243,10 +241,6 @@
     width: 100%;
   }
 
-  .reset {
-    width: 4rem;
-  }
-
   #submit {
     width: 4rem;
   }
@@ -298,10 +292,6 @@
   }
   #answer-editor {
     width: 100%;
-  }
-
-  .reset {
-    width: 5rem;
   }
 
   #submit {
@@ -362,10 +352,6 @@
   }
   #answer-editor {
     width: 100%;
-  }
-
-  .reset {
-    width: 3rem;
   }
 
   #submit {
