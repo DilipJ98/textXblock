@@ -29,11 +29,10 @@ setup(
     license='UNKNOWN',          # TODO: choose a license: 'AGPL v3' and 'Apache 2.0' are popular.
     packages=[
         'textxblock',
-        'psycopg2'
-
     ],
     install_requires=[
         'XBlock',
+        'psycopg2'
     ],
     entry_points={
         'xblock.v1': [
