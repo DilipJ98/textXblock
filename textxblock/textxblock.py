@@ -9,9 +9,8 @@ from .tasks import task_method
 import requests
 import time
 from celery.result import AsyncResult
-import sqlite3
 import psycopg2
-
+import os
 
 class TextXBlock(XBlock):
     """
@@ -76,14 +75,27 @@ class TextXBlock(XBlock):
 
 
     DATABASE = {
-        "host": "host.docker.internal",
-        "port": 5432,
-        "dbname": "postgres",
-        "user": "postgres",
-        "password": "postgres",
+        "host": os.getenv("DATABASE_HOST"),
+        "port": os.getenv("DATABASE_PORT"),
+        "dbname": os.getenv("DATABASE_NAME"),
+        "user": os.getenv("DATABASE_USER"),
+        "password": os.getenv("DATABASE_PASSWORD"),
     }
-
         
+    def database_connection_fun(self):
+        try:
+            connection = psycopg2.connect(
+                host=self.DATABASE["host"],
+                port=self.DATABASE["port"],
+                dbname=self.DATABASE["dbname"],
+                user=self.DATABASE["user"],
+                password=self.DATABASE["password"],
+        )
+            cursor = connection.cursor()
+            return cursor, connection
+        except Exception as e:
+            return None, None
+
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -137,63 +149,42 @@ class TextXBlock(XBlock):
             'language' : self.language
         }
 
-    
-
 
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
         cursor, connection = self.database_connection_fun()
-        # db_path = "/openedx/my_database.db" 
-        # connection = sqlite3.connect(db_path)
-        # cursor = connection.cursor()
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         result = task_method.delay(data['user_input'], block_location_id )
-        cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
-        block_id_db_check = cursor.fetchone()
-        if block_id_db_check is None:
-            cursor.execute('''
-                INSERT INTO xblockdata (user_id, xblock_id, task_id, code, code_result)
-                VALUES (%s, %s, %s, %s, %s);
-            ''', (user_id, block_location_id, result.id, data['user_input'], 0))
-        else:
-            cursor.execute('''UPDATE xblockdata SET task_id = %s, code = %s, code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (result.id, data['user_input'], 0, block_location_id, user_id))
-        connection.commit()
-        connection.close()
-        return {'taskid' : result.id, "test": block_location_id}    
-    
-
+        if cursor:
+            try:
+                cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
+                block_id_db_check = cursor.fetchone()
+                if block_id_db_check is None:
+                    cursor.execute('''
+                        INSERT INTO xblockdata (user_id, xblock_id, task_id, code, code_result)
+                        VALUES (%s, %s, %s, %s, %s);
+                    ''', (user_id, block_location_id, result.id, data['user_input'], 0))
+                else:
+                    cursor.execute('''UPDATE xblockdata SET task_id = %s, code = %s, code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (result.id, data['user_input'], 0, block_location_id, user_id))
+                connection.commit()
+                connection.close()
+                return {'taskid' : result.id, "test": block_location_id}    
+            except Exception as e:
+                print("error while executing query", e)
+            finally:
+                connection.close()
 
     @XBlock.json_handler
     def get_task_result(self, data, suffix=''):
         return self.fetch_task_result(data['id'])
 
 
-    def database_connection_fun(self):
-        try:
-            connection = psycopg2.connect(
-                host=self.DATABASE["host"],
-                port=self.DATABASE["port"],
-                dbname=self.DATABASE["dbname"],
-                user=self.DATABASE["user"],
-                password=self.DATABASE["password"],
-        )
-            cursor = connection.cursor()
-            print("Connection established..............................................................!!!")
-            print("Connected to PostgreSQL successfully!...................................................!!!!!")
-            return cursor, connection
-        except Exception as e:
-            print(f"Error connecting to PostgreSQL: {e}.......................................................!!!!")
-            return None, None
-
 
     @XBlock.json_handler
     def on_intial_load(self, data, suffix=''): 
         cursor, connection = self.database_connection_fun()
-        # db_path = "/openedx/my_database.db"
-        # connection = sqlite3.connect(db_path)
-        # cursor = connection.cursor()
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
@@ -207,53 +198,46 @@ class TextXBlock(XBlock):
                 else:
                     return {'status': 'not found', 'data': None}
             except Exception as e:
-                print("error while executing query", e)
+                print("error while executing query on initail load", e)
             finally:
                 connection.close()
 
     def fetch_task_result(self, taskId):
-        # db_path = "/openedx/my_database.db"
-        # connection = sqlite3.connect(db_path)
-        # cursor = connection.cursor()
-
         result = AsyncResult(taskId)
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         cursor, connection = self.database_connection_fun()
-        if result.ready():
-            cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id ))
-            fetched_data = cursor.fetchone()
-            if result.get()['isSuccess'] == 200:
-                self.score = self.marks
-                status = 200
-                self.code_results = 'success'
-                if fetched_data is not None:
-                    cursor.execute('''UPDATE xblockdata SET code_result = ? WHERE xblock_id = %s AND user_id = %s; ''', ( self.score, block_location_id, user_id))
-                    connection.commit()
-            elif result.get()['isSuccess'] == 400:
-                self.score = 0
-                status = 400
-                self.code_results = 'fail'
-            self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
-            self.save()
-            connection.close()
-            return {
-                "status": status,
-                "score": self.score,
-                "explanation": self.explanation,
-                "answer": self.actual_answer,
-                "data": fetched_data
-            }
-        
-        else:
-            cursor.execute("select * from xblockdata where xblock_id = %s and user_id = %s", (block_location_id, user_id))
-            fetched_data = cursor.fetchone()
-            connection.close()
-            return {
-                'status': 'pending',
-                'data' : fetched_data
-            }
+        try:
+            if result.ready():
+                if cursor:
+                    cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
+                    fetched_data = cursor.fetchone()
+                    if result.get()['isSuccess'] == 200:
+                        self.score = self.marks
+                        status = 200
+                        self.code_results = 'success'
+                        if fetched_data is not None:
+                            cursor.execute('''UPDATE xblockdata SET code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (self.score, block_location_id, user_id))
+                            connection.commit()
+                    elif result.get()['isSuccess'] == 400:
+                        self.score = 0
+                        status = 400
+                        self.code_results = 'fail'
+                    self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+                    self.save()
+                    return {"status": status, "score": self.score, "explanation": self.explanation, "answer": self.actual_answer, "data": fetched_data}
+            else:
+                cursor.execute("select * from xblockdata where xblock_id = %s and user_id = %s", (block_location_id, user_id))
+                fetched_data = cursor.fetchone()
+                return {'status': 'pending', 'data': fetched_data}
+        except Exception as e:
+            return {"status": "error", "message": "An error occurred while fetching the task result."}
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
         
 
     @XBlock.json_handler
@@ -262,25 +246,25 @@ class TextXBlock(XBlock):
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)        
         cursor, connection = self.database_connection_fun()
+        if cursor:
+            try:
+                cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
+                feteched_data = cursor.fetchone()
+                if feteched_data is not None:
+                    self.score = 0
+                    self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
+                    self.save()
+                    cursor.execute('delete from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id) )
+                    connection.commit()
+                    return {"status": "success", "message": "task deleted successfully."}
+                else:
+                    return {"status": "error", "message": "task not found."}
+            except Exception as e:
+                print("error while executing query in delete task result")
+            finally:
+                connection.close() 
 
-        # db_path = "/openedx/my_database.db"
-        # connection = sqlite3.connect(db_path)
-        # cursor = connection.cursor()
-        cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
-        feteched_data = cursor.fetchone()
-        if feteched_data is not None:
-            self.score = 0
-            self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
-            self.save()
-            cursor.execute('delete from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id) )
-            connection.commit()
-            return {"status": "success", "message": "Task deleted successfully."}
-        else:
-            return {"status": "error", "message": "Task not found."}
 
-
-
-            
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
     @staticmethod
