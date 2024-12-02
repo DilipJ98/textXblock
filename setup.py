@@ -32,7 +32,7 @@ setup(
     ],
     install_requires=[
         'XBlock',
-        'psycopg2'
+        'psycopg2-binary',
     ],
     entry_points={
         'xblock.v1': [
