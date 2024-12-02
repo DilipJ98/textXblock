@@ -10,7 +10,7 @@ import requests
 import time
 from celery.result import AsyncResult
 import sqlite3
-
+import psycopg2
 
 
 class TextXBlock(XBlock):
@@ -73,6 +73,15 @@ class TextXBlock(XBlock):
         scope= Scope.user_state,
         help= "the code results"
     )
+
+
+    DATABASE = {
+        "host": "host.docker.internal",
+        "port": 5432,
+        "dbname": "postgres",
+        "user": "postgres",
+        "password": "postgres",
+    }
 
 
     def resource_string(self, path):
@@ -160,6 +169,24 @@ class TextXBlock(XBlock):
 
     @XBlock.json_handler
     def on_intial_load(self, data, suffix=''):
+        try:
+            connection = psycopg2.connect(
+                host=self.DATABASE["host"],
+                port=self.DATABASE["port"],
+                dbname=self.DATABASE["dbname"],
+                user=self.DATABASE["user"],
+                password=self.DATABASE["password"],
+        )
+            cursor = connection.cursor()
+            print("Connected to PostgreSQL successfully!...................................................!!!!!")
+            # cursor.execute("SELECT * FROM your_table")
+            # print(cursor.fetchall())
+        except Exception as e:
+            print(f"Error connecting to PostgreSQL: {e}.......................................................!!!!")
+        finally:
+            if connection:
+                connection.close()
+        
         db_path = "/openedx/my_database.db"
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
