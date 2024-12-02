@@ -83,6 +83,7 @@ class TextXBlock(XBlock):
         "password": "postgres",
     }
 
+        
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -136,6 +137,7 @@ class TextXBlock(XBlock):
             'language' : self.language
         }
 
+    
 
 
     @XBlock.json_handler
@@ -167,8 +169,7 @@ class TextXBlock(XBlock):
         return self.fetch_task_result(data['id'])
 
 
-    @XBlock.json_handler
-    def on_intial_load(self, data, suffix=''):
+    def database_connection_fun(self):
         try:
             connection = psycopg2.connect(
                 host=self.DATABASE["host"],
@@ -178,15 +179,27 @@ class TextXBlock(XBlock):
                 password=self.DATABASE["password"],
         )
             cursor = connection.cursor()
+            print("Connection established..............................................................!!!")
+            cursor.execute('''
+                INSERT INTO users (name, role)
+                VALUES (%s, %s);
+            ''', ('dileep', 'developer'))
+            connection.commit()
             print("Connected to PostgreSQL successfully!...................................................!!!!!")
-            # cursor.execute("SELECT * FROM your_table")
-            # print(cursor.fetchall())
+             
         except Exception as e:
             print(f"Error connecting to PostgreSQL: {e}.......................................................!!!!")
         finally:
             if connection:
                 connection.close()
-        
+
+
+
+    @XBlock.json_handler
+    def on_intial_load(self, data, suffix=''): 
+        print("Initial load triggered..............................................................")
+        self.database_connection_fun()
+        print("after load triggered..............................................................")
         db_path = "/openedx/my_database.db"
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
