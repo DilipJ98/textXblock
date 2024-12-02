@@ -142,22 +142,23 @@ class TextXBlock(XBlock):
 
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
-        db_path = "/openedx/my_database.db" 
-        connection = sqlite3.connect(db_path)
-        cursor = connection.cursor()
+        cursor, connection = self.database_connection_fun()
+        # db_path = "/openedx/my_database.db" 
+        # connection = sqlite3.connect(db_path)
+        # cursor = connection.cursor()
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         result = task_method.delay(data['user_input'], block_location_id )
-        cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id))
+        cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
         block_id_db_check = cursor.fetchone()
         if block_id_db_check is None:
             cursor.execute('''
-                INSERT INTO user (user_id, xblock_id, task_id, code, code_result)
-                VALUES (?, ?, ?, ?, ?);
+                INSERT INTO xblockdata (user_id, xblock_id, task_id, code, code_result)
+                VALUES (%s, %s, %s, %s, %s);
             ''', (user_id, block_location_id, result.id, data['user_input'], 0))
         else:
-            cursor.execute('''UPDATE user SET task_id = ?, code = ?, code_result = ? WHERE xblock_id = ? AND user_id = ?; ''', (result.id, data['user_input'], 0, block_location_id, user_id))
+            cursor.execute('''UPDATE xblockdata SET task_id = %s, code = %s, code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (result.id, data['user_input'], 0, block_location_id, user_id))
         connection.commit()
         connection.close()
         return {'taskid' : result.id, "test": block_location_id}    
@@ -180,61 +181,55 @@ class TextXBlock(XBlock):
         )
             cursor = connection.cursor()
             print("Connection established..............................................................!!!")
-            cursor.execute('''
-                INSERT INTO users (name, role)
-                VALUES (%s, %s);
-            ''', ('dileep', 'developer'))
-            connection.commit()
             print("Connected to PostgreSQL successfully!...................................................!!!!!")
-             
+            return cursor, connection
         except Exception as e:
             print(f"Error connecting to PostgreSQL: {e}.......................................................!!!!")
-        finally:
-            if connection:
-                connection.close()
-
+            return None, None
 
 
     @XBlock.json_handler
     def on_intial_load(self, data, suffix=''): 
-        print("Initial load triggered..............................................................")
-        self.database_connection_fun()
-        print("after load triggered..............................................................")
-        db_path = "/openedx/my_database.db"
-        connection = sqlite3.connect(db_path)
-        cursor = connection.cursor()
+        cursor, connection = self.database_connection_fun()
+        # db_path = "/openedx/my_database.db"
+        # connection = sqlite3.connect(db_path)
+        # cursor = connection.cursor()
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
-        cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id))
-        fetched_data = cursor.fetchone()
-        connection.close()
-        if fetched_data is not None:
-            task_id = fetched_data[3]
-            return self.fetch_task_result(task_id)
-        else:
-            return {'status': 'not found', 'data': None}
-
-
+        if cursor:
+            try: 
+                cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
+                fetched_data = cursor.fetchone()
+                if fetched_data is not None:
+                    task_id = fetched_data[3]
+                    return self.fetch_task_result(task_id)
+                else:
+                    return {'status': 'not found', 'data': None}
+            except Exception as e:
+                print("error while executing query", e)
+            finally:
+                connection.close()
 
     def fetch_task_result(self, taskId):
-        db_path = "/openedx/my_database.db"
-        connection = sqlite3.connect(db_path)
-        cursor = connection.cursor()
+        # db_path = "/openedx/my_database.db"
+        # connection = sqlite3.connect(db_path)
+        # cursor = connection.cursor()
+
         result = AsyncResult(taskId)
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
-
+        cursor, connection = self.database_connection_fun()
         if result.ready():
-            cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id ))
+            cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id ))
             fetched_data = cursor.fetchone()
             if result.get()['isSuccess'] == 200:
                 self.score = self.marks
                 status = 200
                 self.code_results = 'success'
                 if fetched_data is not None:
-                    cursor.execute('''UPDATE user SET code_result = ? WHERE xblock_id = ? AND user_id = ?; ''', ( self.score, block_location_id, user_id))
+                    cursor.execute('''UPDATE xblockdata SET code_result = ? WHERE xblock_id = %s AND user_id = %s; ''', ( self.score, block_location_id, user_id))
                     connection.commit()
             elif result.get()['isSuccess'] == 400:
                 self.score = 0
@@ -252,7 +247,7 @@ class TextXBlock(XBlock):
             }
         
         else:
-            cursor.execute("select * from user where xblock_id = ? and user_id = ?", (block_location_id, user_id))
+            cursor.execute("select * from xblockdata where xblock_id = %s and user_id = %s", (block_location_id, user_id))
             fetched_data = cursor.fetchone()
             connection.close()
             return {
@@ -266,16 +261,18 @@ class TextXBlock(XBlock):
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)        
-        db_path = "/openedx/my_database.db"
-        connection = sqlite3.connect(db_path)
-        cursor = connection.cursor()
-        cursor.execute('select * from user where xblock_id = ? and user_id = ?', (block_location_id, user_id))
+        cursor, connection = self.database_connection_fun()
+
+        # db_path = "/openedx/my_database.db"
+        # connection = sqlite3.connect(db_path)
+        # cursor = connection.cursor()
+        cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
         feteched_data = cursor.fetchone()
         if feteched_data is not None:
             self.score = 0
             self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
             self.save()
-            cursor.execute('delete from user where xblock_id = ? and user_id = ?', (block_location_id, user_id) )
+            cursor.execute('delete from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id) )
             connection.commit()
             return {"status": "success", "message": "Task deleted successfully."}
         else:
