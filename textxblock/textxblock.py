@@ -149,59 +149,77 @@ class TextXBlock(XBlock):
             'language' : self.language
         }
 
-
+    #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
         cursor, connection = self.database_connection_fun()
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
-        result = task_method.delay(data['user_input'], block_location_id )
+        celery_task_id = task_method.delay(data['user_input'], block_location_id )
         if cursor:
             try:
+                #it checks if there is nay related data to this xblock id and userid
                 cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
                 block_id_db_check = cursor.fetchone()
+                #if there is not data available in db it will insert data into databse with input details
                 if block_id_db_check is None:
                     cursor.execute('''
                         INSERT INTO xblockdata (user_id, xblock_id, task_id, code, code_result)
                         VALUES (%s, %s, %s, %s, %s);
-                    ''', (user_id, block_location_id, result.id, data['user_input'], 0))
+                    ''', (user_id, block_location_id, celery_task_id.id, data['user_input'], 0))
                 else:
+                #if the data is already exist related to xblock id and user id it will simply updates the exisint data
+                #so that it will always have latest submission code details
                     cursor.execute('''UPDATE xblockdata SET task_id = %s, code = %s, code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (result.id, data['user_input'], 0, block_location_id, user_id))
                 connection.commit()
-                connection.close()
-                return {'taskid' : result.id, "test": block_location_id}    
+                #returning celery task id to frontend so that it makes polling to check the celery task results
+                return {'taskid' : celery_task_id.id, "test": block_location_id}    
             except Exception as e:
                 print("error while executing query", e)
+                return {'status': 500, 'error': str(e)}
             finally:
-                connection.close()
-
+                if cursor:
+                    cursor.close()
+                if connection:
+                    connection.close()
+    
+    #which will be called with task id to check the status of the celry
     @XBlock.json_handler
     def get_task_result(self, data, suffix=''):
         return self.fetch_task_result(data['id'])
 
 
-
+    #this will be trigered on page initial load to check is there any exsiting data to show the user
     @XBlock.json_handler
     def on_intial_load(self, data, suffix=''): 
         cursor, connection = self.database_connection_fun()
+        #extract xblock id and user id
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         if cursor:
-            try: 
+            try:
+                #checks if there is any data matches with the xblock and user id in database 
                 cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
                 fetched_data = cursor.fetchone()
                 if fetched_data is not None:
                     task_id = fetched_data[3]
                     return self.fetch_task_result(task_id)
                 else:
+                    #if there no data found related to xblock id and userid
                     return {'status': 'not found', 'data': None}
             except Exception as e:
                 print("error while executing query on initail load", e)
-            finally:
-                connection.close()
+                return {'status': 500, 'error': str(e)}
 
+            finally:
+                if cursor:
+                    cursor.close()
+                if connection:
+                    connection.close()
+
+    #this will check the celery task result
     def fetch_task_result(self, taskId):
         result = AsyncResult(taskId)
         xblock_instance_data = str(self.scope_ids)
@@ -213,17 +231,21 @@ class TextXBlock(XBlock):
                 if cursor:
                     cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
                     fetched_data = cursor.fetchone()
+                    #checks the results
                     if result.get()['isSuccess'] == 200:
                         self.score = self.marks
                         status = 200
-                        self.code_results = 'success'
+                        #execute this if the xblock and user id already exist in database
                         if fetched_data is not None:
                             cursor.execute('''UPDATE xblockdata SET code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (self.score, block_location_id, user_id))
                             connection.commit()
+                    #if the user code evaluated to false this will execute
                     elif result.get()['isSuccess'] == 400:
+                        #update score if the user code evaluated to wrong
+                        #set score to Zero
                         self.score = 0
                         status = 400
-                        self.code_results = 'fail'
+                    #grading based on score
                     self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
                     self.save()
                     return {"status": status, "score": self.score, "explanation": self.explanation, "answer": self.actual_answer, "data": fetched_data}
@@ -232,14 +254,14 @@ class TextXBlock(XBlock):
                 fetched_data = cursor.fetchone()
                 return {'status': 'pending', 'data': fetched_data}
         except Exception as e:
-            return {"status": "error", "message": "An error occurred while fetching the task result."}
+            return {'status': 500, 'error': str(e)}
         finally:
             if cursor:
                 cursor.close()
             if connection:
                 connection.close()
         
-
+    #this will be triggered if user clicks on reset button
     @XBlock.json_handler
     def delete_task(self, data, suffix=''):
         xblock_instance_data = str(self.scope_ids)
@@ -248,12 +270,15 @@ class TextXBlock(XBlock):
         cursor, connection = self.database_connection_fun()
         if cursor:
             try:
+                #it checks the xblock id and user id exist in databse
                 cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
                 feteched_data = cursor.fetchone()
+                #setting marks to zero if the code is resets
                 if feteched_data is not None:
                     self.score = 0
                     self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
                     self.save()
+                    #delete data from database
                     cursor.execute('delete from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id) )
                     connection.commit()
                     return {"status": "success", "message": "task deleted successfully."}
@@ -261,9 +286,12 @@ class TextXBlock(XBlock):
                     return {"status": "error", "message": "task not found."}
             except Exception as e:
                 print("error while executing query in delete task result")
+                return {'status': 500, 'error': str(e)}
             finally:
-                connection.close() 
-
+                if cursor:
+                    cursor.close()
+                if connection:
+                    connection.close()
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

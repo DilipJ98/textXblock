@@ -1,15 +1,16 @@
 function TextXBlock(runtime, element) {
   //loads intially
   $(() => {
+    //meta tag for media queries
     let metaTag = document.createElement("meta");
     metaTag.name = "viewport";
     metaTag.content = "width=device-width, initial-scale=1.0";
     document.getElementsByTagName("head")[0].appendChild(metaTag);
-
+    //initially hiding the the textxblock container
     $(element).find(".textxblock-container").css({ opacity: "0" });
     //whcih unchecks checkbox on page loads
     $(element).find(".show-ans-check").prop("checked", false);
-
+    //initially hiding the menu space for answer editor
     $(element).find(".code-editor-sub-menu-two").css({ opacity: "0" });
 
     let editor;
@@ -26,6 +27,7 @@ function TextXBlock(runtime, element) {
     let dataFromInitiaRequest;
     let progressLoad = 0;
 
+    //for clearing polling intervals
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
       clearInterval(intervalOnSubmit);
@@ -47,7 +49,8 @@ function TextXBlock(runtime, element) {
           dataFromInitiaRequest = data;
           monacoEditor(data); //calling monaco editor
         },
-        error: () => {
+        error: (xhr) => {
+          console.error("error occured", xhr);
           $(element)
             .find("#show-question")
             .text("Error occured, please try again");
@@ -55,32 +58,10 @@ function TextXBlock(runtime, element) {
       });
     }
 
+    //calling function to execute
     getAdminInputData();
 
-    function makeInitialAjaxCall() {
-      let handleUrlOfDb = runtime.handlerUrl(element, "on_intial_load");
-      isRequestinProgress = true;
-      $.ajax({
-        type: "POST",
-        url: handleUrlOfDb,
-        data: JSON.stringify({}),
-        success: (result) => {
-          getTaskDetails(result);
-          isRequestinProgress = false;
-          if (!isPolling && result.status === "pending") {
-            startPollingFun();
-          }
-        },
-        error: () => {
-          isRequestinProgress = false;
-          $(element).find(".results-div").show();
-          $(element)
-            .find(".results")
-            .text("Error occurred, please try again..........");
-        },
-      });
-    }
-
+    //polling function
     function startPollingFun() {
       if (pollingCount < 5 && !isPolling) {
         isPolling = true;
@@ -95,188 +76,240 @@ function TextXBlock(runtime, element) {
           }
         }, 10000);
       } else {
+        //clearing plooing interval on count more than 5
         clearIntervalsFunction();
       }
     }
 
+    //this function will be called after monaco editor is initialized
+    //because this function gets the data from the database and updates UI that previous code inputs and results
+    function makeInitialAjaxCall() {
+      let handleUrlOfDb = runtime.handlerUrl(element, "on_intial_load");
+      isRequestinProgress = true;
+      $.ajax({
+        type: "POST",
+        url: handleUrlOfDb,
+        data: JSON.stringify({}),
+        success: (result) => {
+          getTaskDetails(result);
+          isRequestinProgress = false;
+          //checks the status of celery task is pending or not
+          //incase the celery task is pening it will start polling to get the result
+          if (!isPolling && result.status === "pending") {
+            startPollingFun();
+          }
+        },
+        error: (xhr) => {
+          isRequestinProgress = false;
+          console.error("error occures", xhr);
+          $(element).find(".results-div").show();
+          $(element)
+            .find(".results")
+            .text("Error occurred, please try again..........");
+        },
+      });
+    }
+
+    //this will be called on successfull ajax request of initail load call
     function getTaskDetails(result) {
-      console.log("task started");
+      //checks if there is any data is available
       if (result.data && Object.keys(result.data).length > 0) {
-        console.log(result, " this is status of task");
         let dataOfResult = result.data;
-        console.log(dataOfResult, " this is data of result ");
         if (dataOfResult && Array.isArray(dataOfResult)) {
-          console.log("before assigning");
+          //checks if the monaco editor updated with code
           if (!isEditorUpdated) {
             if (editor) {
               editor.setValue("");
+              //showing the input data code on the editor
               editor.setValue(dataOfResult[4]);
+              //if the data is exist it it will show fetching results on page realods
               $(element).find(".results-div").show();
               $(element)
                 .find(".results")
                 .text("we are fetching your results.........!");
-
+              //assigning the user input code to a varibale to use later in the code
               getUserAnswerFromDb = dataOfResult[4];
               isEditorUpdated = true;
             }
           }
-          console.log("after assigning");
         }
-        taskResult(result);
+        //calling the task result function which will update the UI of code results
+        showResults(result);
       } else {
         console.log("no data receiving from get task details");
+        //clearing interval if there is no data avaialbale on the intial load
+        //this will effectively stop polling if there is no data available in db
         clearIntervalsFunction();
       }
-      console.log("task completed");
     }
 
     function monacoEditor(data) {
-      //monaco editor shows initailly
-      var requiredScript = document.createElement("script");
-      /*
+      try {
+        //monaco editor shows initailly
+        var requiredScript = document.createElement("script");
+        /*
       initialize  script src with the url of requireJs hosted in
       the cdn which tells the browser to load requireJS from this url
       */
-      requiredScript.src =
-        "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js";
+        requiredScript.src =
+          "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js";
 
-      //on loading the url
-      requiredScript.onload = () => {
-        //after loading url configure requireJS by defining path for modules
-        //vs points to the url where monaco edior files are located
-        //this allow us to load the monaco editor
-        require.config({
-          paths: {
-            vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs",
-          },
-        });
-        //load the monaco editor
-        //this tells the requireJs to load the vs/editor/ediot.main module which is main entry
-
-        require(["vs/editor/editor.main"], () => {
-          //this is call back that runs once module load is successful
-          //creating editor instance
-          editor = monaco.editor.create(document.getElementById("container"), {
-            //an options object extra options for monaco
-            value: data.boilerplate,
-            language: data.language,
-            theme: "vs-dark",
-            padding: {
-              top: 15,
-              bottom: 10,
-            },
-            minimap: {
-              enabled: false,
+        //on loading the url
+        requiredScript.onload = () => {
+          //after loading url configure requireJS by defining path for modules
+          //vs points to the url where monaco edior files are located
+          //this allow us to load the monaco editor
+          require.config({
+            paths: {
+              vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs",
             },
           });
-          $(element).find(".textxblock-container").css({ opacity: "1" });
-          $(element)
-            .find(".theme")
-            .on("click", () => {
-              if (!isThemeUpdated) {
-                monaco.editor.setTheme("vs-light");
-                $(element).find(".light-theme").hide();
-                $(element).find(".dark-theme").show();
-                $(element)
-                  .find(".code-editor-sub-menu")
-                  .css({ "background-color": "white" });
-                $(element)
-                  .find(".code-editor-sub-menu-two")
-                  .css({ "background-color": "white" });
-                $(element).find(".lable-checkbox").css({ color: "black" });
+          //load the monaco editor
+          //this tells the requireJs to load the vs/editor/ediot.main module which is main entry
 
-                isThemeUpdated = true;
-              } else {
-                monaco.editor.setTheme("vs-dark");
-                $(element).find(".dark-theme").hide();
-                $(element).find(".light-theme").show();
-                $(element)
-                  .find(".code-editor-sub-menu")
-                  .css({ "background-color": "rgb(62, 62, 68)" });
-                $(element)
-                  .find(".code-editor-sub-menu-two")
-                  .css({ "background-color": "rgb(62, 62, 68)" });
-                $(element).find(".lable-checkbox").css({ color: "white" });
-
-                isThemeUpdated = false;
+          require(["vs/editor/editor.main"], () => {
+            //this is call back that runs once module load is successful
+            //creating editor instance
+            editor = monaco.editor.create(
+              document.getElementById("container"),
+              {
+                //an options object extra options for monaco
+                value: data.boilerplate,
+                language: data.language,
+                theme: "vs-dark",
+                padding: {
+                  top: 15,
+                  bottom: 10,
+                },
+                minimap: {
+                  enabled: false,
+                },
               }
+            );
+
+            //which is baiscally called on initial page relaod
+            makeInitialAjaxCall();
+
+            //initailly hiding monaco answer editor
+            $(element)
+              .find(".answer-container")
+              .css({ "pointer-events": "none", opacity: "0" });
+
+            //editor to show answer
+            monaco.editor.create(document.getElementById("answer-editor"), {
+              value: data.answer,
+              language: data.language,
+              readOnly: true,
+              padding: {
+                top: 15,
+                bottom: 10,
+              },
+              minimap: {
+                enabled: false,
+              },
             });
 
-          $(element)
-            .find(".answer-container")
-            .css({ "pointer-events": "none", opacity: "0" });
-
-          //editor to show answer
-          monaco.editor.create(document.getElementById("answer-editor"), {
-            value: data.answer,
-            language: data.language,
-            readOnly: true,
-            padding: {
-              top: 15,
-              bottom: 10,
-            },
-            minimap: {
-              enabled: false,
-            },
+            //showing text xblock container
+            $(element).find(".textxblock-container").css({ opacity: "1" });
+          }, (err) => {
+            console.error("failed to load monaco editor", err);
           });
+        };
+        //adding script in html head
+        document.head.appendChild(requiredScript);
+      } catch (error) {
+        console.error("Erro in monaco editor", error);
+      }
+    }
 
-          $(element)
-            .find(".show-ans-check")
-            .on("change", () => {
-              if (!isCheckBoxChecked) {
-                $(element).find(".answer-container").css({
-                  "pointer-events": "auto",
-                  opacity: "1",
-                  transition: "opacity 1s ease-in",
-                });
-                $(element)
-                  .find(".code-editor-sub-menu-two")
-                  .css({ opacity: "1", transition: "opacity 1s ease-in" });
-                isCheckBoxChecked = true;
-              } else {
-                $(element).find(".answer-container").css({
-                  "pointer-events": "none",
-                  opacity: "0",
-                  transition: "opacity 1s ease-out",
-                });
+    //on code check box it will show answer editor
+    $(element)
+      .find(".show-ans-check")
+      .on("change", () => {
+        toggleAnswer();
+      });
 
-                $(element)
-                  .find(".code-editor-sub-menu-two")
-                  .css({ opacity: "0", transition: "opacity 1s ease-out" });
-                isCheckBoxChecked = false;
-              }
-            });
-
-          makeInitialAjaxCall();
-
-          /*
-          on clicking submit calling function 
-          to get the user code from monaco editor
-          */
-          $(element)
-            .find("#submit")
-            .on("click", () => {
-              $(element).find(".reset").css({ "pointer-events": "none" });
-
-              progressLoad = 10;
-              $(element).find(".results-div").hide();
-              $(element)
-                .find("#progressBar")
-                .css("width", 0 + "%"); //on click initially it sets width to zero
-              $(element).find(".progressBar-div").show();
-              $(element)
-                .find("#submit")
-                .css({ "pointer-events": "none", opacity: "0.5" });
-              userInputAnswer(editor.getValue());
-              clearIntervalsFunction();
-            });
-        }, (err) => {
-          console.error("failed to load monaco editor", err);
+    function toggleAnswer() {
+      if (!isCheckBoxChecked) {
+        $(element).find(".answer-container").css({
+          "pointer-events": "auto",
+          opacity: "1",
+          transition: "opacity 1s ease-in",
         });
-      };
-      //adding script in html head
-      document.head.appendChild(requiredScript);
-      console.log("monaco cmpleted");
+        $(element)
+          .find(".code-editor-sub-menu-two")
+          .css({ opacity: "1", transition: "opacity 1s ease-in" });
+        isCheckBoxChecked = true;
+      } else {
+        $(element).find(".answer-container").css({
+          "pointer-events": "none",
+          opacity: "0",
+          transition: "opacity 1s ease-out",
+        });
+
+        $(element)
+          .find(".code-editor-sub-menu-two")
+          .css({ opacity: "0", transition: "opacity 1s ease-out" });
+        isCheckBoxChecked = false;
+      }
+    }
+
+    //for theme changes
+    $(element)
+      .find(".theme")
+      .on("click", () => {
+        toggleTheme();
+      });
+
+    function toggleTheme() {
+      if (!isThemeUpdated) {
+        monaco.editor.setTheme("vs-light");
+        $(element).find(".light-theme").hide();
+        $(element).find(".dark-theme").show();
+        $(element)
+          .find(".code-editor-sub-menu")
+          .css({ "background-color": "white" });
+        $(element)
+          .find(".code-editor-sub-menu-two")
+          .css({ "background-color": "white" });
+        $(element).find(".lable-checkbox").css({ color: "black" });
+
+        isThemeUpdated = true;
+      } else {
+        monaco.editor.setTheme("vs-dark");
+        $(element).find(".dark-theme").hide();
+        $(element).find(".light-theme").show();
+        $(element)
+          .find(".code-editor-sub-menu")
+          .css({ "background-color": "rgb(62, 62, 68)" });
+        $(element)
+          .find(".code-editor-sub-menu-two")
+          .css({ "background-color": "rgb(62, 62, 68)" });
+        $(element).find(".lable-checkbox").css({ color: "white" });
+        isThemeUpdated = false;
+      }
+    }
+
+    //on clicking submit code button or run button
+    $(element)
+      .find("#submit")
+      .on("click", () => {
+        onCodeSubmit();
+      });
+    function onCodeSubmit() {
+      $(element).find(".reset").css({ "pointer-events": "none" });
+      progressLoad = 10;
+      $(element).find(".results-div").hide();
+      $(element)
+        .find("#progressBar")
+        .css("width", 0 + "%"); //on click initially it sets width to zero
+      $(element).find(".progressBar-div").show();
+      $(element)
+        .find("#submit")
+        .css({ "pointer-events": "none", opacity: "0.5" });
+      //calling user input answer function which will get the value duing submit
+      userInputAnswer(editor.getValue());
+      clearIntervalsFunction();
     }
 
     //this function have the user input answer and which invokes after user clicks on code submit button
@@ -286,10 +319,17 @@ function TextXBlock(runtime, element) {
         type: "POST",
         url: handlerUrl,
         data: JSON.stringify({ user_input: userAnswer }),
-        success: showAnswerResult,
+        success: getTaskResult,
+        error: (xhr) => {
+          console.error("Error occurred:", xhr);
+          $(element).find(".results-div").show();
+          $(element).find(".results").text("Error occurred, please try again.");
+        },
       });
     }
 
+    //for reset code to initail state
+    //which will delete the previous stored data of the user input
     $(element).find(".reset").on("click", resetFunction);
 
     function resetFunction() {
@@ -309,14 +349,17 @@ function TextXBlock(runtime, element) {
               if (editor) {
                 editor.setValue(dataFromInitiaRequest.boilerplate);
               }
-              console.log("monaco editor reset done successfully");
               $(element).find(".results-div").hide();
               $(element).find(".progressBar-div").hide();
               isResetRequestInProgress = false;
             },
-            error: () => {
-              console.log("error while resetting state of editor");
+            error: (xhr) => {
               isResetRequestInProgress = false;
+              console.error("Error occurred:", xhr);
+              $(element).find(".results-div").show();
+              $(element)
+                .find(".results")
+                .text("Error occurred, please try again.");
             },
           });
         }
@@ -325,7 +368,8 @@ function TextXBlock(runtime, element) {
       }
     }
 
-    function showAnswerResult(result) {
+    function getTaskResult(result) {
+      //which manages progress bar
       $(element)
         .find("#progressBar")
         .css("width", progressLoad + "%");
@@ -333,6 +377,7 @@ function TextXBlock(runtime, element) {
         .find("#progressBar")
         .text(progressLoad + "%");
       let isRequestInProgress = false;
+      //polls till celery return results
       intervalOnSubmit = setInterval(() => {
         let handlerUrl = runtime.handlerUrl(element, "get_task_result");
         if (!isRequestInProgress) {
@@ -342,9 +387,11 @@ function TextXBlock(runtime, element) {
             url: handlerUrl,
             data: JSON.stringify({ id: result.taskid, xblock_id: result.test }),
             success: (result) => {
+              //based on the celery task status it will updted the resul for progress bar
               if (result.status === 200 || result.status === 400) {
-                progressLoad = 100;
+                progressLoad = 100; //if the celery results are ready it will show bar 100%
               } else {
+                //which ensures the progree bar not to exceed 100%
                 progressLoad = Math.min(progressLoad + 10, 100);
               }
               $(element)
@@ -353,11 +400,12 @@ function TextXBlock(runtime, element) {
               $(element)
                 .find("#progressBar")
                 .text(progressLoad + "%");
-              taskResult(result);
+              showResults(result);
               isRequestInProgress = false;
             },
-            error: () => {
+            error: (xhr) => {
               isRequestInProgress = false;
+              console.error("error occured ", xhr);
               $(element).find(".results-div").show();
               $(element)
                 .find(".results")
@@ -368,8 +416,8 @@ function TextXBlock(runtime, element) {
       }, 5000);
     }
 
-    function taskResult(result) {
-      console.log(result, "at last task result");
+    //which manages to show results and progress bar
+    function showResults(result) {
       if (result.status === 200) {
         $(element).find(".progressBar-div").hide();
         $(element).find(".results-div").show();
