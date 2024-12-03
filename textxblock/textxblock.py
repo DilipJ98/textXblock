@@ -171,9 +171,8 @@ class TextXBlock(XBlock):
                 else:
                 #if the data is already exist related to xblock id and user id it will simply updates the exisint data
                 #so that it will always have latest submission code details
-                    cursor.execute('''UPDATE xblockdata SET task_id = %s, code = %s, code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (result.id, data['user_input'], 0, block_location_id, user_id))
+                    cursor.execute('''UPDATE xblockdata SET task_id = %s, code = %s, code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (celery_task_id.id, data['user_input'], 0, block_location_id, user_id))
                 connection.commit()
-                print(celery_task_id.id, "...........................................!!!!!!")
                 #returning celery task id to frontend so that it makes polling to check the celery task results
                 return {'taskid' : celery_task_id.id, "test": block_location_id}    
             except Exception as e:
@@ -188,7 +187,6 @@ class TextXBlock(XBlock):
     #which will be called with task id to check the status of the celry
     @XBlock.json_handler
     def get_task_result(self, data, suffix=''):
-        print(data, "data.....................................................!!!!")
         return self.fetch_task_result(data['id'])
 
 

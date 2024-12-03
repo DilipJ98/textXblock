@@ -50,7 +50,7 @@ function TextXBlock(runtime, element) {
           monacoEditor(data); //calling monaco editor
         },
         error: (xhr) => {
-          console.error("error occured", xhr);
+          console.error("error occured", xhr.statusText);
           $(element)
             .find("#show-question")
             .text("Error occured, please try again");
@@ -101,7 +101,8 @@ function TextXBlock(runtime, element) {
         },
         error: (xhr) => {
           isRequestinProgress = false;
-          console.error("error occures", xhr);
+          console.error("error occures", xhr.statusText);
+          $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
           $(element)
             .find(".results")
@@ -321,7 +322,8 @@ function TextXBlock(runtime, element) {
         data: JSON.stringify({ user_input: userAnswer }),
         success: getTaskResult,
         error: (xhr) => {
-          console.error("Error occurred:", xhr);
+          console.error("Error occurred:", xhr.statusText);
+          $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
           $(element).find(".results").text("Error occurred, please try again.");
         },
@@ -355,7 +357,8 @@ function TextXBlock(runtime, element) {
             },
             error: (xhr) => {
               isResetRequestInProgress = false;
-              console.error("Error occurred:", xhr);
+              console.error("Error occurred:", xhr.statusText);
+              $(element).find(".progressBar-div").hide();
               $(element).find(".results-div").show();
               $(element)
                 .find(".results")
@@ -369,7 +372,6 @@ function TextXBlock(runtime, element) {
     }
 
     function getTaskResult(result) {
-      console.log(result, " from get task result");
       //which manages progress bar
       $(element)
         .find("#progressBar")
@@ -391,22 +393,29 @@ function TextXBlock(runtime, element) {
               //based on the celery task status it will updted the resul for progress bar
               if (response.status === 200 || response.status === 400) {
                 progressLoad = 100; //if the celery results are ready it will show bar 100%
+                $(element)
+                  .find("#progressBar")
+                  .css("width", progressLoad + "%");
+                $(element)
+                  .find("#progressBar")
+                  .text(progressLoad + "%");
               } else {
                 //which ensures the progree bar not to exceed 100%
                 progressLoad = Math.min(progressLoad + 10, 100);
+                $(element)
+                  .find("#progressBar")
+                  .css("width", progressLoad + "%");
+                $(element)
+                  .find("#progressBar")
+                  .text(progressLoad + "%");
               }
-              $(element)
-                .find("#progressBar")
-                .css("width", progressLoad + "%");
-              $(element)
-                .find("#progressBar")
-                .text(progressLoad + "%");
               showResults(result);
               isRequestInProgress = false;
             },
             error: (xhr) => {
               isRequestInProgress = false;
-              console.error("error occured ", xhr);
+              console.error("error occured ", xhr.statusText);
+              $(element).find(".progressBar-div").hide();
               $(element).find(".results-div").show();
               $(element)
                 .find(".results")
