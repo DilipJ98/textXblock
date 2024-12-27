@@ -196,6 +196,7 @@ class TextXBlock(XBlock):
         cursor, connection = self.database_connection_fun()
         #extract xblock id and user id
         xblock_instance_data = str(self.scope_ids)
+        print(xblock_instance_data,"...............................................")
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         if cursor:
@@ -248,15 +249,12 @@ class TextXBlock(XBlock):
                     #grading based on score
                     self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
                     self.save()
-                    print("before return in  try")
                     return {"status": status, "score": self.score, "explanation": self.explanation, "answer": self.actual_answer, "data": fetched_data}
             else:
                 cursor.execute("select * from xblockdata where xblock_id = %s and user_id = %s", (block_location_id, user_id))
                 fetched_data = cursor.fetchone()
-                print("before retun in try else")
                 return {'status': 'pending', 'data': fetched_data}
         except Exception as e:
-            print("in catch")
             return {'status': 500, 'error': str(e)}
         finally:
             if cursor:

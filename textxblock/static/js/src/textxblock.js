@@ -372,7 +372,6 @@ function TextXBlock(runtime, element) {
     }
 
     function getTaskResult(result) {
-      console.log(result, " this is result");
       //which manages progress bar
       $(element)
         .find("#progressBar")
@@ -391,7 +390,6 @@ function TextXBlock(runtime, element) {
             url: handlerUrl,
             data: JSON.stringify({ id: result.taskid, xblock_id: result.test }),
             success: (response) => {
-              console.log(response, " this is response");
               //based on the celery task status it will updted the resul for progress bar
               if (response.status === 200 || response.status === 400) {
                 progressLoad = 100; //if the celery results are ready it will show bar 100%
