@@ -12,6 +12,9 @@ function TextXBlock(runtime, element) {
           $(element).find("#Explanation").val(data.explanation);
           $(element).find("#actual-answer").val(data.answer);
           $(element).find("#boilerplate").val(data.boilerplate);
+          $(element).find("#file-name").val(data.fileName);
+          $(element).find("#repo-url").val(data.solutionRepo);
+          $(element).find("#expected-output").val(data.expectedOutput);
         },
         error: () => {
           console.log("error while retrieving get_Admin_input_data");
@@ -21,7 +24,9 @@ function TextXBlock(runtime, element) {
 
     getAdminInputData();
 
-    let selectedLanguage = $(element).find("#select").val();
+    let selectedLanguage = $(element).find("#select-language").val();
+    let selctedExecution = $(element).find("#select-execution").val();
+
     $(element)
       .find("#form")
       .submit(function (event) {
@@ -44,18 +49,28 @@ function TextXBlock(runtime, element) {
 
         let marks = $(element).find("#marks").val();
 
+        let expectedOutput = $(element).find("#expected-output").val();
+
+        let fileName = $(element).find("#file-name").val();
+
+        let repoUrl = $(element).find("#repo-url").val();
+
         // Send the question text to the backend
         var handlerUrl = runtime.handlerUrl(element, "save_admin_input_data");
         $.ajax({
           type: "POST",
           url: handlerUrl,
           data: JSON.stringify({
-            question_text: questionText,
+            questionText: questionText,
             explanation: explanationValue,
             ans: answer,
             boilerplate: boilerPlateCode,
             language: selectedLanguage,
             marks: marks,
+            expectedOutput: expectedOutput,
+            fileName: fileName,
+            executionMode: selctedExecution,
+            solutionRepo: repoUrl,
           }),
           success: saveAdminInputData,
         });
@@ -66,10 +81,17 @@ function TextXBlock(runtime, element) {
     }
 
     $(element)
-      .find("#select")
+      .find("#select-language")
       .on("change", () => {
-        selectedLanguage = $(element).find("#select").val();
+        selectedLanguage = $(element).find("#select-language").val();
         console.log(selectedLanguage);
+      });
+
+    $(element)
+      .find("#select-execution")
+      .on("change", () => {
+        selctedExecution = $(element).find("#select-execution").val();
+        console.log(selctedExecution);
       });
   });
 }

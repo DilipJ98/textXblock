@@ -73,6 +73,30 @@ class TextXBlock(XBlock):
         help= "the code results"
     )
 
+    file_name = String(
+        default= "file name",
+        scope= Scope.content,
+        help= "file name"
+    )
+
+    execution_mode = String(
+        default= "execution mode",
+        scope= Scope.content,
+        help= "execution mode"
+    )
+
+    expected_output = Integer(
+        default= 0,
+        scope= Scope.content,
+        help= "expected output"
+    )
+
+    solution_repo = String(
+        default= "solution repo",
+        scope= Scope.content,
+        help= "solution repo"
+    )
+    
 
     DATABASE = {
         "host": os.getenv("DATABASE_HOST"),
@@ -122,12 +146,16 @@ class TextXBlock(XBlock):
     @XBlock.json_handler
     def save_admin_input_data(self, data, suffix=''):
         """Handler to save the question data."""
-        self.question = data['question_text']
+        self.question = data['questionText']
         self.explanation = data['explanation']
         self.actual_answer = data['ans']
         self.boilerplate_code = data['boilerplate']
         self.language = data['language']
         self.marks = data['marks']
+        self.file_name = data['fileName']
+        self.execution_mode = data['executionMode']
+        self.solution_repo = data['solutionRepo']
+        self.expected_output = data['expectedOutput']
         self.save()
         return {
             "question": self.question,
@@ -135,7 +163,11 @@ class TextXBlock(XBlock):
             "explanation": self.explanation ,
             'boilerplate' : self.boilerplate_code,
             'language' : self.language,
-            'marks' : self.marks
+            'marks' : self.marks,
+            'fileName' : self.file_name,
+            'executionMode' : self.execution_mode,
+            'solutionRepo' : self.solution_repo,
+            'expectedOutput' : self.expected_output
         }
 
         
@@ -146,7 +178,12 @@ class TextXBlock(XBlock):
             "answer": self.actual_answer,
             'boilerplate' : self.boilerplate_code,
             "explanation": self.explanation ,
-            'language' : self.language
+            'language' : self.language,
+            'marks' : self.marks,
+            'fileName' : self.file_name,
+            'executionMode' : self.execution_mode,
+            'solutionRepo' : self.solution_repo,
+            'expectedOutput' : self.expected_output
         }
 
     #this will be executed if the user clicks on run button or user submits code
@@ -154,9 +191,11 @@ class TextXBlock(XBlock):
     def handle_task_method(self, data, suffix=''):
         cursor, connection = self.database_connection_fun()
         xblock_instance_data = str(self.scope_ids)
+        print(xblock_instance_data,"...............................................")
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
-        celery_task_id = task_method.delay(data['user_input'], block_location_id )
+        
+        celery_task_id = task_method.delay(data['user_input'], block_location_id, user_id, self.get_admin_input_data({}, suffix="") )
         if cursor:
             try:
                 #it checks if there is nay related data to this xblock id and userid

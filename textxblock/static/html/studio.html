@@ -4,9 +4,14 @@
       <div class="for-inputs">
         <div class="language-marks">
           <span>Choose programming language</span>
-          <select id="select">
+          <select id="select-language">
             <option value="java">Java</option>
             <option value="python">Python</option>
+          </select>
+          <span>Choose execution type</span>
+          <select id="select-execution">
+            <option value="direct">Direct</option>
+            <option value="repo">Repo</option>
           </select>
           <label>Marks</label>
           <input
@@ -45,6 +50,20 @@
           placeholder="Provide boilerplate code on monaco edior"
           required
         ></textarea>
+
+        <label>Expected output</label>
+        <input
+          type="number"
+          id="expected-output"
+          placeholder="Expected output"
+          required
+        />
+
+        <label>Repo url</label>
+        <input type="text" id="repo-url" placeholder="Repo address" required />
+
+        <label>File name</label>
+        <input type="text" id="file-name" placeholder="File name" required />
       </div>
       <div class="button-div">
         <button id="button" type="submit">Submit</button>
