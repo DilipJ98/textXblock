@@ -210,9 +210,9 @@ class TextXBlock(XBlock):
         print(xblock_instance_data,"...............................................")
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
-        user_service = self.runtime.service(self, 'user')
-        current_user = user_service.get_current_user()
-        print(dir(current_user),".............................................////////////////")
+        # user_service = self.runtime.service(self, 'user')
+        # current_user = user_service.get_current_user()
+        # print(dir(current_user),".............................................////////////////")
         data_dict = self.get_admin_data()
         data_dict['student_code'] = data['user_input']
         # data_dict['email'] = email
