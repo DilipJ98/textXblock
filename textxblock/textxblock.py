@@ -129,15 +129,15 @@ class TextXBlock(XBlock):
 
     
     #TO-DO: change this view to display your data your own way.
-    # def student_view(self, context=None):
-    #     html = self.resource_string("static/html/textxblock.html")
-    #     frag = Fragment(html.format(self=self))
-    #     frag.add_css(self.resource_string("static/css/textxblock.css"))
-    #     frag.add_javascript(self.resource_string("static/js/src/textxblock.js"))
-    #     frag.initialize_js('TextXBlock')
-    #     return frag
+    def student_view(self, context=None):
+        html = self.resource_string("static/html/textxblock.html")
+        frag = Fragment(html.format(self=self))
+        frag.add_css(self.resource_string("static/css/textxblock.css"))
+        frag.add_javascript(self.resource_string("static/js/src/textxblock.js"))
+        frag.initialize_js('TextXBlock')
+        return frag
             
-    def student_view(self, context=None):        
+    def studio_view(self, context=None):        
         html = self.resource_string("static/html/studio.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/studio.css"))
