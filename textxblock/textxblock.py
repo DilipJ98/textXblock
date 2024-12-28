@@ -10,9 +10,10 @@ import requests
 import time
 from datetime import datetime
 from celery.result import AsyncResult
-import psycopg2
+# import psycopg2
 import os
 
+@XBlock.needs('user')
 class TextXBlock(XBlock):
     """
     TO-DO: document what your XBlock does.
@@ -128,15 +129,15 @@ class TextXBlock(XBlock):
 
     
     #TO-DO: change this view to display your data your own way.
-    def student_view(self, context=None):
-        html = self.resource_string("static/html/textxblock.html")
-        frag = Fragment(html.format(self=self))
-        frag.add_css(self.resource_string("static/css/textxblock.css"))
-        frag.add_javascript(self.resource_string("static/js/src/textxblock.js"))
-        frag.initialize_js('TextXBlock')
-        return frag
+    # def student_view(self, context=None):
+    #     html = self.resource_string("static/html/textxblock.html")
+    #     frag = Fragment(html.format(self=self))
+    #     frag.add_css(self.resource_string("static/css/textxblock.css"))
+    #     frag.add_javascript(self.resource_string("static/js/src/textxblock.js"))
+    #     frag.initialize_js('TextXBlock')
+    #     return frag
             
-    def studio_view(self, context=None):        
+    def student_view(self, context=None):        
         html = self.resource_string("static/html/studio.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/studio.css"))
@@ -210,9 +211,13 @@ class TextXBlock(XBlock):
         print(xblock_instance_data,"...............................................")
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
-        # user_service = self.runtime.service(self, 'user')
-        # current_user = user_service.get_current_user()
-        # print(dir(current_user),".............................................////////////////")
+        user_service = self.runtime.service(self, 'user')
+        current_user = user_service.get_current_user()
+        username = current_user.opt_attrs.get("edx-platform.username", None)
+        email = current_user.opt_attrs.get("email", None)
+        print(current_user, "...............................................CURENT USER")
+        print(username, email, "...............................................!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
         data_dict = self.get_admin_data()
         data_dict['student_code'] = data['user_input']
         # data_dict['email'] = email
