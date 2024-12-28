@@ -8,6 +8,7 @@ from xblock.fields import Integer, Scope, String
 from .tasks import task_method
 import requests
 import time
+from datetime import datetime
 from celery.result import AsyncResult
 import psycopg2
 import os
@@ -92,7 +93,7 @@ class TextXBlock(XBlock):
     )
 
     solution_repo = String(
-        default= "solution repo",
+        default= None,
         scope= Scope.content,
         help= "solution repo"
     )
@@ -195,10 +196,10 @@ class TextXBlock(XBlock):
             "explanation": self.explanation ,
             'language' : self.language,
             'marks' : self.marks,
-            'fileName' : self.file_name,
-            'executionMode' : self.execution_mode,
-            'solutionRepo' : self.solution_repo,
-            'expectedOutput' : self.expected_output
+            'file_name' : self.file_name,
+            'execution_mode' : self.execution_mode,
+            'solution_repo' : self.solution_repo,
+            'expected_output' : self.expected_output
         }
 
     #this will be executed if the user clicks on run button or user submits code
@@ -209,8 +210,18 @@ class TextXBlock(XBlock):
         print(xblock_instance_data,"...............................................")
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
-        
-        celery_task_id = task_method.delay(data['user_input'], block_location_id, user_id, self.get_admin_data() )
+        user = self.runtime.user
+        print(user, "./././././././././/././././././././././/..//")
+        email = user.email
+        print(email, "email....................\.\\\\\.\\.\.\.\..\.\\..\.\.\.\...........")
+        data_dict = self.get_admin_data()
+        data_dict['student_code'] = data['user_input']
+        data_dict['email'] = email
+        data_dict['user_id'] = user_id
+        data_dict['xblock_id'] = block_location_id
+        data_dict['submitted_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        celery_task_id = task_method.delay(data_dict)
         if cursor:
             try:
                 #it checks if there is nay related data to this xblock id and userid
@@ -250,7 +261,6 @@ class TextXBlock(XBlock):
         cursor, connection = self.database_connection_fun()
         #extract xblock id and user id
         xblock_instance_data = str(self.scope_ids)
-        print(xblock_instance_data,"...............................................")
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         if cursor:
