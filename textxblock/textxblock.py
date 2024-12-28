@@ -186,6 +186,21 @@ class TextXBlock(XBlock):
             'expectedOutput' : self.expected_output
         }
 
+
+    def get_admin_data(self):
+        return {
+            "question": self.question,
+            "answer": self.actual_answer,
+            'boilerplate' : self.boilerplate_code,
+            "explanation": self.explanation ,
+            'language' : self.language,
+            'marks' : self.marks,
+            'fileName' : self.file_name,
+            'executionMode' : self.execution_mode,
+            'solutionRepo' : self.solution_repo,
+            'expectedOutput' : self.expected_output
+        }
+
     #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
@@ -195,7 +210,7 @@ class TextXBlock(XBlock):
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         
-        celery_task_id = task_method.delay(data['user_input'], block_location_id, user_id, self.get_admin_input_data({}, suffix="") )
+        celery_task_id = task_method.delay(data['user_input'], block_location_id, user_id, self.get_admin_data() )
         if cursor:
             try:
                 #it checks if there is nay related data to this xblock id and userid
