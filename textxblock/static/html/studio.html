@@ -2,26 +2,38 @@
   <div class="parent-div">
     <form id="form">
       <div class="for-inputs">
-        <div class="language-marks">
-          <span>Choose programming language</span>
-          <select id="select-language">
-            <option value="java">Java</option>
-            <option value="python">Python</option>
-          </select>
-          <span>Choose execution type</span>
-          <select id="select-execution">
-            <option value="direct">Direct</option>
-            <option value="repo">Repo</option>
-          </select>
-          <label>Marks</label>
+        <div class="file-marks-div">
+          <input type="text" id="file-name" placeholder="File name" required />
+          <div>
+            <select id="select-language">
+              <option value="java">Java</option>
+              <option value="python">Python</option>
+            </select>
+          </div>
           <input
             id="marks"
             type="number"
             min="1"
             max="10"
-            placeholder="Max marks 10"
+            placeholder="marks"
             required
           />
+        </div>
+
+        <div class="switch-btn-div" style="display: flex; width: 100%">
+          <label class="switch">
+            <input type="checkbox" class="checkBox" />
+            <span class="slider">
+              <div class="slider-div">
+                <span class="left-text">Direct</span>
+                <span class="right-text">Repo</span>
+              </div>
+            </span>
+          </label>
+          <!-- <select id="select-execution">
+            <option value="direct">Direct</option>
+            <option value="repo">Repo</option>
+          </select> -->
         </div>
         <label>Question </label>
         <textarea
@@ -51,19 +63,15 @@
           required
         ></textarea>
 
-        <label>Expected output</label>
+        <!-- <label>Expected output</label> -->
         <input
           type="number"
           id="expected-output"
           placeholder="Expected output"
-          required
         />
 
-        <label>Repo url</label>
-        <input type="text" id="repo-url" placeholder="Repo address" required />
-
-        <label>File name</label>
-        <input type="text" id="file-name" placeholder="File name" required />
+        <!-- <label>Repo url</label> -->
+        <input type="text" id="repo-url" placeholder="Repo address" />
       </div>
       <div class="button-div">
         <button id="button" type="submit">Submit</button>

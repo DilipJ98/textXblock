@@ -10,7 +10,7 @@ import requests
 import time
 from datetime import datetime
 from celery.result import AsyncResult
-# import psycopg2
+import psycopg2
 import os
 
 @XBlock.needs('user')
@@ -191,11 +191,7 @@ class TextXBlock(XBlock):
 
     def get_admin_data(self):
         return {
-            "question": self.question,
-            "answer": self.actual_answer,
-            'boilerplate' : self.boilerplate_code,
-            "explanation": self.explanation ,
-            'language' : self.language,
+            'programming_language' : self.language,
             'marks' : self.marks,
             'file_name' : self.file_name,
             'execution_mode' : self.execution_mode,
@@ -208,35 +204,31 @@ class TextXBlock(XBlock):
     def handle_task_method(self, data, suffix=''):
         cursor, connection = self.database_connection_fun()
         xblock_instance_data = str(self.scope_ids)
-        print(xblock_instance_data,"...............................................")
         block_location_id = xblock_instance_data.split("'")[-2]
-        user_id = str(self.scope_ids.user_id)
+        student_id = str(self.scope_ids.user_id)
         user_service = self.runtime.service(self, 'user')
         current_user = user_service.get_current_user()
-        username = current_user.opt_attrs.get("edx-platform.username", None)
-        email = current_user.opt_attrs.get("email", None)
-        print(current_user, "...............................................CURENT USER")
-        print(username, email, "...............................................!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
+        student_name = current_user.opt_attrs.get("edx-platform.username", None)
+  
         data_dict = self.get_admin_data()
-        data_dict['student_code'] = data['user_input']
-        # data_dict['email'] = email
-        data_dict['user_id'] = user_id
+        data_dict['student_id'] = student_id
+        data_dict['student_name'] = student_name
         data_dict['xblock_id'] = block_location_id
+        data_dict['student_code'] = data['user_input']
         data_dict['submitted_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         celery_task_id = task_method.delay(data_dict)
         if cursor:
             try:
                 #it checks if there is nay related data to this xblock id and userid
-                cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
+                cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, student_id))
                 block_id_db_check = cursor.fetchone()
                 #if there is not data available in db it will insert data into databse with input details
                 if block_id_db_check is None:
                     cursor.execute('''
                         INSERT INTO xblockdata (user_id, xblock_id, task_id, code, code_result)
                         VALUES (%s, %s, %s, %s, %s);
-                    ''', (user_id, block_location_id, celery_task_id.id, data['user_input'], 0))
+                    ''', (student_id, block_location_id, celery_task_id.id, data['user_input'], 0))
                 else:
                 #if the data is already exist related to xblock id and user id it will simply updates the exisint data
                 #so that it will always have latest submission code details

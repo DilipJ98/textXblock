@@ -3,7 +3,11 @@
 }
 
 .parent-div {
-  width: 95%;
+  width: 45%;
+  /* background-color: aqua; */
+  border: 1px solid;
+  padding: 20px;
+  border-radius: 5px;
 }
 
 #form {
@@ -11,20 +15,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* border: 1px solid black; */
 }
 
 .for-inputs {
-  padding: 5px;
-  width: 99%;
+  padding: 4px;
+  width: 98%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 
 label {
+  width: 98%;
   margin: 5px;
 }
 
 textarea {
+  width: 98%;
   border-radius: 3px;
   margin: 5px;
   height: 80px;
@@ -34,15 +43,16 @@ textarea {
 }
 
 input {
-  width: 10%;
+  width: 100%;
 }
 
 .button-div {
   padding: 2px;
   display: flex;
-  width: 15%;
+  width: 25%;
   height: 40px;
   justify-content: center;
+  /* background-color: aqua; */
 }
 
 #button {
@@ -54,4 +64,145 @@ input {
 
 #button:hover {
   background-color: rgb(52, 52, 162);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  margin-top: 15px;
+  height: 30px;
+  /* border: 2px solid black; */
+}
+
+.file-marks-div {
+  width: 98%;
+  /* background-color: aqua; */
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+#file-name {
+  padding: 2px;
+  width: 70%;
+  border-radius: 4px;
+  border: 1px solid;
+  outline: none;
+  /* border: none; */
+}
+
+#marks {
+  padding: 7px;
+  width: 15%;
+  border-radius: 4px;
+  border: 1px solid;
+  outline: none;
+}
+
+select {
+  /* width: 20%; */
+  padding: 7px;
+  border: 1px solid;
+  border-radius: 4px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 4px;
+  border: 1px solid black;
+}
+
+.slider::before {
+  position: absolute;
+  top: -5px;
+  left: -1px;
+  content: "";
+  height: 34px;
+  width: 50.2%;
+  /* left: 2px; */
+  /* bottom: 2px; */
+  /* background-color: #ccc; */
+  background-color: blue;
+  transition: 0.4s;
+  border-radius: 6px;
+  border-bottom: 2px solid white;
+  border-top: 2px solid white;
+  /* z-index: 1; */
+  /* display: flex; */
+}
+
+.slider::before:hover {
+  border: 2px solid yellow;
+  cursor: pointer;
+  background-color: red;
+}
+
+input:not(:checked) + .slider .slider-div .left-text {
+  color: #fff;
+}
+
+input:checked + .slider .slider-div .right-text {
+  color: #fff;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(100%);
+}
+
+.slider-div {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  /* font-size: 25px; */
+  color: black;
+
+  display: flex;
+}
+
+.left-text {
+  width: 50%;
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  /* border: 1px solid blue; */
+}
+
+#expected-output {
+  width: 98%;
+  border-radius: 4px;
+  margin: 5px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid;
+}
+
+#repo-url {
+  width: 98%;
+  border-radius: 4px;
+  margin: 5px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid;
 }

@@ -1,5 +1,6 @@
 function TextXBlock(runtime, element) {
   $(() => {
+    $(element).find("#repo-url").hide().val("");
     function getAdminInputData() {
       var handlerUrl = runtime.handlerUrl(element, "get_admin_input_data");
       $.ajax({
@@ -14,7 +15,7 @@ function TextXBlock(runtime, element) {
           $(element).find("#boilerplate").val(data.boilerplate);
           $(element).find("#file-name").val(data.fileName);
           $(element).find("#repo-url").val(data.solutionRepo);
-          $(element).find("#expected-output").val(data.expectedOutput);
+          // $(element).find("#expected-output").val(data.expectedOutput);
         },
         error: () => {
           console.log("error while retrieving get_Admin_input_data");
@@ -25,8 +26,9 @@ function TextXBlock(runtime, element) {
     getAdminInputData();
 
     let selectedLanguage = $(element).find("#select-language").val();
-    let selctedExecution = $(element).find("#select-execution").val();
-
+    let executionMode = "direct";
+    let repoUrl = null;
+    let expectedOutput = 0;
     $(element)
       .find("#form")
       .submit(function (event) {
@@ -49,14 +51,18 @@ function TextXBlock(runtime, element) {
 
         let marks = $(element).find("#marks").val();
 
-        let expectedOutput = $(element).find("#expected-output").val();
-
         let fileName = $(element).find("#file-name").val();
 
-        let repoUrl = $(element).find("#repo-url").val();
+        expectedOutput =
+          executionMode === "direct"
+            ? $(element).find("#expected-output").val()
+            : 0;
+        repoUrl =
+          executionMode === "repo" ? $(element).find("#repo-url").val() : null;
 
         // Send the question text to the backend
         var handlerUrl = runtime.handlerUrl(element, "save_admin_input_data");
+
         $.ajax({
           type: "POST",
           url: handlerUrl,
@@ -69,16 +75,14 @@ function TextXBlock(runtime, element) {
             marks: marks,
             expectedOutput: expectedOutput,
             fileName: fileName,
-            executionMode: selctedExecution,
+            executionMode: executionMode,
             solutionRepo: repoUrl,
           }),
-          success: saveAdminInputData,
+          success: (data) => {
+            console.log("instructor data is saved successfully");
+          },
         });
       });
-
-    function saveAdminInputData(result) {
-      console.log(result, " from showINputData function");
-    }
 
     $(element)
       .find("#select-language")
@@ -91,7 +95,20 @@ function TextXBlock(runtime, element) {
       .find("#select-execution")
       .on("change", () => {
         selctedExecution = $(element).find("#select-execution").val();
-        console.log(selctedExecution);
+      });
+
+    $(element)
+      .find(".checkBox")
+      .on("change", function () {
+        if ($(this).is(":checked")) {
+          $(element).find("#repo-url").show().val("");
+          $(element).find("#expected-output").hide().val(0);
+          executionMode = "repo";
+        } else {
+          $(element).find("#repo-url").hide().val("");
+          $(element).find("#expected-output").show().val("");
+          executionMode = "direct";
+        }
       });
   });
 }
