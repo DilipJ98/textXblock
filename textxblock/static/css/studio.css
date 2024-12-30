@@ -144,12 +144,6 @@ select {
   /* display: flex; */
 }
 
-.slider::before:hover {
-  border: 2px solid yellow;
-  cursor: pointer;
-  background-color: red;
-}
-
 input:not(:checked) + .slider .slider-div .left-text {
   color: #fff;
 }

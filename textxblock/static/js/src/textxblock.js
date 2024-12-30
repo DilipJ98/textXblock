@@ -237,6 +237,9 @@ function TextXBlock(runtime, element) {
           opacity: "1",
           transition: "opacity 1s ease-in",
         });
+        $(element).find(".code-editor-sub-menu").css({
+          "border-top-right-radius": "0",
+        });
         $(element)
           .find(".code-editor-sub-menu-two")
           .css({ opacity: "1", transition: "opacity 1s ease-in" });
@@ -247,7 +250,9 @@ function TextXBlock(runtime, element) {
           opacity: "0",
           transition: "opacity 1s ease-out",
         });
-
+        $(element).find(".code-editor-sub-menu").css({
+          "border-top-right-radius": "4px",
+        });
         $(element)
           .find(".code-editor-sub-menu-two")
           .css({ opacity: "0", transition: "opacity 1s ease-out" });

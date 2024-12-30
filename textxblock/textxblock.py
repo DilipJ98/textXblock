@@ -232,7 +232,7 @@ class TextXBlock(XBlock):
                 else:
                 #if the data is already exist related to xblock id and user id it will simply updates the exisint data
                 #so that it will always have latest submission code details
-                    cursor.execute('''UPDATE xblockdata SET task_id = %s, code = %s, code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (celery_task_id.id, data['user_input'], 0, block_location_id, user_id))
+                    cursor.execute('''UPDATE xblockdata SET task_id = %s, code = %s, code_result = %s WHERE xblock_id = %s AND user_id = %s; ''', (celery_task_id.id, data['user_input'], 0, block_location_id, student_id))
                 connection.commit()
                 #returning celery task id to frontend so that it makes polling to check the celery task results
                 return {'taskid' : celery_task_id.id, "test": block_location_id}    
