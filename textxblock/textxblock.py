@@ -6,12 +6,11 @@ from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import Integer, Scope, String
 from .tasks import task_method
-import requests
-import time
-from datetime import datetime
+from datetime import datetime, timezone
 from celery.result import AsyncResult
 import psycopg2
 import os
+
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -99,6 +98,11 @@ class TextXBlock(XBlock):
         help= "solution repo"
     )
     
+    time_stamp = String(
+        default= None,
+        scope= Scope.user_state,
+        help= "time stamp of the initial load"
+    )
 
     DATABASE = {
         "host": os.getenv("DATABASE_HOST"),
@@ -188,6 +192,10 @@ class TextXBlock(XBlock):
             'expectedOutput' : self.expected_output
         }
 
+    @XBlock.json_handler
+    def get_time_stamp(self, data, suffix=''):
+        return {"time_stamp": self.time_stamp}
+    
 
     def get_admin_data(self):
         return {
@@ -215,7 +223,7 @@ class TextXBlock(XBlock):
         data_dict['student_name'] = student_name
         data_dict['xblock_id'] = block_location_id
         data_dict['student_code'] = data['user_input']
-        data_dict['submitted_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        data_dict['submitted_time'] = datetime.now(timezone.utc)
 
         celery_task_id = task_method.delay(data_dict)
         if cursor:
@@ -259,6 +267,11 @@ class TextXBlock(XBlock):
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
+        
+        if self.time_stamp is None:
+            self.time_stamp = datetime.now(timezone.utc).isoformat()
+            self.save()
+
         if cursor:
             try:
                 #checks if there is any data matches with the xblock and user id in database 

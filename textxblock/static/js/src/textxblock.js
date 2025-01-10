@@ -231,6 +231,15 @@ function TextXBlock(runtime, element) {
       });
 
     function toggleAnswer() {
+      $.ajax({
+        type: "POST",
+        url: runtime.handlerUrl(element, "get_time_stamp"),
+        data: JSON.stringify({}),
+        success: (data) => {
+          console.log("time stamp", data);
+        },
+      });
+
       if (!isCheckBoxChecked) {
         $(element).find(".answer-container").css({
           "pointer-events": "auto",
@@ -302,6 +311,7 @@ function TextXBlock(runtime, element) {
       .on("click", () => {
         onCodeSubmit();
       });
+
     function onCodeSubmit() {
       $(element).find(".reset").css({ "pointer-events": "none" });
       progressLoad = 10;
