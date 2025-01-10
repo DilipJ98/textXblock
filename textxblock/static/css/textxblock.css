@@ -49,14 +49,14 @@
   /* border: 1px solid; */
 }
 
-.code-editor-sub-menu-two {
+/* .code-editor-sub-menu-two {
   background-color: rgb(62, 62, 68);
   border-top-right-radius: 4px;
   border-top: 1px solid black;
   border-right: 1px solid black;
   height: 4rem;
   width: 45%;
-}
+} */
 
 .theme {
   display: flex;
@@ -130,25 +130,28 @@
 }
 
 .answer-container {
-  /* padding: 5px; */
-  height: 550px;
   width: 45%;
+  padding: 15px;
+  /* height: 550px; */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   border-right: 1px solid black;
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   border-left: 1px solid white;
   border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.25);
+  font-size: larger;
+  background-color: rgb(196, 196, 228);
 }
 
-#answer-editor {
+/* #answer-editor {
   width: 100%;
   height: 100%;
-}
+} */
 
 #submit {
   width: 6rem;
@@ -240,9 +243,9 @@
     position: absolute;
     width: 100%;
   }
-  #answer-editor {
+  /* #answer-editor {
     width: 100%;
-  }
+  } */
 
   #submit {
     width: 4rem;
@@ -293,9 +296,9 @@
     width: 100%;
     border: 1px solid black;
   }
-  #answer-editor {
+  /* #answer-editor {
     width: 100%;
-  }
+  } */
 
   #submit {
     width: 5rem;
@@ -353,9 +356,9 @@
     position: absolute;
     width: 100%;
   }
-  #answer-editor {
+  /* #answer-editor {
     width: 100%;
-  }
+  } */
 
   #submit {
     width: 3rem;

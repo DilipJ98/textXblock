@@ -223,7 +223,7 @@ class TextXBlock(XBlock):
         data_dict['student_name'] = student_name
         data_dict['xblock_id'] = block_location_id
         data_dict['student_code'] = data['user_input']
-        data_dict['submitted_time'] = datetime.now(timezone.utc)
+        data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
 
         celery_task_id = task_method.delay(data_dict)
         if cursor:
@@ -271,6 +271,7 @@ class TextXBlock(XBlock):
         if self.time_stamp is None:
             self.time_stamp = datetime.now(timezone.utc).isoformat()
             self.save()
+
 
         if cursor:
             try:

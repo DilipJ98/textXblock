@@ -10,8 +10,9 @@ function TextXBlock(runtime, element) {
     $(element).find(".textxblock-container").css({ opacity: "0" });
     //whcih unchecks checkbox on page loads
     $(element).find(".show-ans-check").prop("checked", false);
-    //initially hiding the menu space for answer editor
-    $(element).find(".code-editor-sub-menu-two").css({ opacity: "0" });
+    $(element)
+      .find(".answer-container")
+      .css({ "pointer-events": "none", opacity: "0" });
 
     let editor;
     let isEditorUpdated = false;
@@ -191,25 +192,6 @@ function TextXBlock(runtime, element) {
             //which is baiscally called on initial page relaod
             makeInitialAjaxCall();
 
-            //initailly hiding monaco answer editor
-            $(element)
-              .find(".answer-container")
-              .css({ "pointer-events": "none", opacity: "0" });
-
-            //editor to show answer
-            monaco.editor.create(document.getElementById("answer-editor"), {
-              value: data.answer,
-              language: data.language,
-              readOnly: true,
-              padding: {
-                top: 15,
-                bottom: 10,
-              },
-              minimap: {
-                enabled: false,
-              },
-            });
-
             //showing text xblock container
             $(element).find(".textxblock-container").css({ opacity: "1" });
           }, (err) => {
@@ -236,11 +218,23 @@ function TextXBlock(runtime, element) {
         url: runtime.handlerUrl(element, "get_time_stamp"),
         data: JSON.stringify({}),
         success: (data) => {
-          console.log("time stamp", data);
+          toggleAnswer2(data);
         },
       });
+    }
 
-      if (!isCheckBoxChecked) {
+    function toggleAnswer2(data) {
+      let serverDate = new Date(data.time_stamp).toISOString();
+      let frontEndDate = new Date().toISOString();
+      let serverDateObj = new Date(serverDate);
+      let frontEndDateObj = new Date(frontEndDate);
+      let differenceInMilliseconds =
+        frontEndDateObj.getTime() - serverDateObj.getTime();
+      let differenceInSeconds = Math.floor(differenceInMilliseconds / 1000);
+      let differenceInMinutes = Math.floor(differenceInSeconds / 60);
+
+      if (!isCheckBoxChecked && differenceInMinutes > 5) {
+        $(element).find(".answer-container").text(dataFromInitiaRequest.answer);
         $(element).find(".answer-container").css({
           "pointer-events": "auto",
           opacity: "1",
@@ -249,9 +243,7 @@ function TextXBlock(runtime, element) {
         $(element).find(".code-editor-sub-menu").css({
           "border-top-right-radius": "0",
         });
-        $(element)
-          .find(".code-editor-sub-menu-two")
-          .css({ opacity: "1", transition: "opacity 1s ease-in" });
+
         isCheckBoxChecked = true;
       } else {
         $(element).find(".answer-container").css({
@@ -262,9 +254,7 @@ function TextXBlock(runtime, element) {
         $(element).find(".code-editor-sub-menu").css({
           "border-top-right-radius": "4px",
         });
-        $(element)
-          .find(".code-editor-sub-menu-two")
-          .css({ opacity: "0", transition: "opacity 1s ease-out" });
+
         isCheckBoxChecked = false;
       }
     }
@@ -284,9 +274,6 @@ function TextXBlock(runtime, element) {
         $(element)
           .find(".code-editor-sub-menu")
           .css({ "background-color": "white" });
-        $(element)
-          .find(".code-editor-sub-menu-two")
-          .css({ "background-color": "white" });
         $(element).find(".lable-checkbox").css({ color: "black" });
 
         isThemeUpdated = true;
@@ -297,9 +284,7 @@ function TextXBlock(runtime, element) {
         $(element)
           .find(".code-editor-sub-menu")
           .css({ "background-color": "rgb(62, 62, 68)" });
-        $(element)
-          .find(".code-editor-sub-menu-two")
-          .css({ "background-color": "rgb(62, 62, 68)" });
+
         $(element).find(".lable-checkbox").css({ color: "white" });
         isThemeUpdated = false;
       }
