@@ -272,7 +272,6 @@ class TextXBlock(XBlock):
             self.time_stamp = datetime.now(timezone.utc).isoformat()
             self.save()
 
-
         if cursor:
             try:
                 #checks if there is any data matches with the xblock and user id in database 
@@ -367,6 +366,12 @@ class TextXBlock(XBlock):
                     cursor.close()
                 if connection:
                     connection.close()
+
+
+    @XBlock.handler
+    def results_handler(self, request, suffix=''):
+        print("results handler method receiving this body.................1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",  request.body.decode('utf-8'))
+
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
