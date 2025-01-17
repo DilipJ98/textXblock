@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 from celery.result import AsyncResult
 import psycopg2
 import os
-
+from webob import Response
+import json
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -370,7 +371,12 @@ class TextXBlock(XBlock):
 
     @XBlock.handler
     def results_handler(self, request, suffix=''):
-        print("results handler method receiving this body.................1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",  request.body.decode('utf-8'))
+        print("Handler invoked - Inside the handler method")
+        print("Request body:", request.body.decode('utf-8'))        
+        response_data = {'status': 'success', 'message': 'Handler executed successfully'}
+        response = Response(json.dumps(response_data))
+        response.content_type = 'application/json'
+        return response
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the
