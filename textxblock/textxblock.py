@@ -372,7 +372,7 @@ class TextXBlock(XBlock):
                     connection.close()
 
 
-    @XBlock.json_handler
+    @XBlock.handler
     def results_handler(self, data, suffix=''):
         print("Handler invoked - Inside the results_handler method.................!!!!!..........!!!!.........!!!!.!!!.....!!!!!!!")
         print("Received data:", data)
