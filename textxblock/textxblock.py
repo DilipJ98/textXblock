@@ -372,15 +372,17 @@ class TextXBlock(XBlock):
                     connection.close()
 
 
-    @XBlock.handler
-    def results_handler(self, request, suffix=''):
-        logging.debug("Handler invoked - Inside the handler method................................1.1.")
-        logging.debug("Request body: %s", request.body.decode('utf-8'))
-        response_data = {'status': 'success', 'message': 'Handler executed successfully..........'}
-        response = Response(json.dumps(response_data))
-        response.content_type = 'application/json'
-        logging.debug("Response data: %s", response_data)
-        return response
+    @XBlock.json_handler
+    def results_handler(self, data, suffix=''):
+        print("Handler invoked - Inside the results_handler method.................!!!!!..........!!!!.........!!!!.!!!.....!!!!!!!")
+        print("Received data:", data)
+        key_value = data.get('key', 'default_value')
+        response_data = {
+            'status': 'success',
+            'message': 'Handler executed successfully',
+            'received_key_value': key_value
+        }
+        return response_data
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the
