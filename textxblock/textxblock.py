@@ -373,16 +373,29 @@ class TextXBlock(XBlock):
 
 
     @XBlock.handler
-    def results_handler(self, data, suffix=''):
+    def results_handler(self, request, suffix=''):
         print("Handler invoked - Inside the results_handler method.................!!!!!..........!!!!.........!!!!.!!!.....!!!!!!!")
-        print("Received data:", data)
-        key_value = data.get('key', 'default_value')
-        response_data = {
-            'status': 'success',
-            'message': 'Handler executed successfully',
-            'received_key_value': key_value
-        }
-        return response_data
+        
+        try:
+            # Parse JSON body from the incoming request
+            data = json.loads(request.body)
+            print("Received data:", data)
+
+            # Extract key from request data
+            key_value = data.get('key', 'default_value')
+
+            # Prepare response data
+            response_data = {
+                'status': 'success',
+                'message': 'Handler executed successfully',
+                'received_key_value': key_value
+            }
+
+            # Return JSON response
+            return Response(json.dumps(response_data), content_type='application/json', status=200)
+        
+        except Exception as e:
+            return Response(json.dumps({'status': 'error', 'message': str(e)}), content_type='application/json', status=400)
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the
