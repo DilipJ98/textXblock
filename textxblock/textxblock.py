@@ -12,9 +12,8 @@ import psycopg2
 import os
 from webob import Response
 import json
-import logging
-logging.basicConfig(level=logging.DEBUG)
-
+import redis
+import uuid
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -211,6 +210,8 @@ class TextXBlock(XBlock):
             'expected_output' : self.expected_output
         }
 
+    
+    redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
     #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
@@ -221,7 +222,7 @@ class TextXBlock(XBlock):
         user_service = self.runtime.service(self, 'user')
         current_user = user_service.get_current_user()
         student_name = current_user.opt_attrs.get("edx-platform.username", None)
-  
+
         data_dict = self.get_admin_data()
         data_dict['student_id'] = student_id
         data_dict['student_name'] = student_name
@@ -230,6 +231,16 @@ class TextXBlock(XBlock):
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
 
         celery_task_id = task_method.delay(data_dict)
+
+        #for redis and uuids
+        submission_id = str(uuid.uuid4())
+        redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
+        redis_client.expire(submission_id, 900)
+        submission_data = redis_client.hgetall(submission_id)
+        print(submission_id, "submision id this is...............................................................")
+        print(submission_data, ".1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.11.1.1.1.1.1.1.1.1")
+
+
         if cursor:
             try:
                 #it checks if there is nay related data to this xblock id and userid
@@ -370,32 +381,6 @@ class TextXBlock(XBlock):
                     cursor.close()
                 if connection:
                     connection.close()
-
-
-    @XBlock.json_handler
-    def results_handler(self, request, suffix=''):
-        print("Handler invoked - Inside the results_handler method.................!!!!!..........!!!!.........!!!!.!!!.....!!!!!!!")
-        
-        try:
-            # Parse JSON body from the incoming request
-            data = json.loads(request.body)
-            print("Received data:", data)
-
-            # Extract key from request data
-            key_value = data.get('key', 'default_value')
-
-            # Prepare response data
-            response_data = {
-                'status': 'success',
-                'message': 'Handler executed successfully',
-                'received_key_value': key_value
-            }
-
-            # Return JSON response
-            return Response(json.dumps(response_data), content_type='application/json', status=200)
-        
-        except Exception as e:
-            return Response(json.dumps({'status': 'error', 'message': str(e)}), content_type='application/json', status=400)
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the

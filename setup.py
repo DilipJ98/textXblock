@@ -33,6 +33,7 @@ setup(
     install_requires=[
         'XBlock',
         'psycopg2-binary',
+        'redis>=4.0.0'
     ],
     entry_points={
         'xblock.v1': [
