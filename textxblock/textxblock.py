@@ -385,9 +385,8 @@ class TextXBlock(XBlock):
 
     @XBlock.json_handler
     def results_handler(self, data, suffix=''):
-        print("results handler is executing .2.2.2.2.2.2.2.2.2.22..4.4.4.4..4.4.44.4....................11....")
-        print(data, "results handler is executing .")
-        return Response(json.dumps({'status': 'success'}), content_type='application/json')
+        print("results handler is executing .")
+        return "success"  #Response(json.dumps({'status': 'success'}), content_type='application/json')
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the
