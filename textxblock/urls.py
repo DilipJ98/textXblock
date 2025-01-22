@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import path 
 from .views import receive_results
 
 
 
 urlpatterns = [
-    url(r'^receive_results/$', receive_results, name='receive_results'),
+    path('receive_results/', receive_results, name='receive_results'),
 ]
