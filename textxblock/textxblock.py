@@ -234,9 +234,9 @@ class TextXBlock(XBlock):
 
         #for redis and uuids
         submission_id = str(uuid.uuid4())
-        redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
-        redis_client.expire(submission_id, 900)
-        submission_data = redis_client.hgetall(submission_id)
+        self.redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
+        self.redis_client.expire(submission_id, 900)
+        submission_data = self.redis_client.hgetall(submission_id)
         print(submission_id, "submision id this is...............................................................")
         print(submission_data, ".1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.11.1.1.1.1.1.1.1.1")
 
