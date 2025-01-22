@@ -223,23 +223,22 @@ class TextXBlock(XBlock):
         current_user = user_service.get_current_user()
         student_name = current_user.opt_attrs.get("edx-platform.username", None)
 
+        #data_dict to send data to API gateway
         data_dict = self.get_admin_data()
         data_dict['student_id'] = student_id
         data_dict['student_name'] = student_name
-        data_dict['xblock_id'] = block_location_id
         data_dict['student_code'] = data['user_input']
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
-
-        celery_task_id = task_method.delay(data_dict)
+        data_dict['usage_key'] = block_location_id
 
         #for redis and uuids
         submission_id = str(uuid.uuid4())
         self.redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
-        self.redis_client.expire(submission_id, 900)
+        self.redis_client.expire(submission_id, 900)# here the time is set to 15 minutes before expiry
         submission_data = self.redis_client.hgetall(submission_id)
-        print(submission_id, "submision id this is...............................................................")
-        print(submission_data, ".1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.11.1.1.1.1.1.1.1.1")
 
+        #calling celery task
+        celery_task_id = task_method.delay(data_dict, submission_id)
 
         if cursor:
             try:
