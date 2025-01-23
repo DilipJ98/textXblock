@@ -384,9 +384,34 @@ class TextXBlock(XBlock):
 
 
     @XBlock.json_handler
-    def results_handler(self, data, suffix=''):
-        print("results handler is executing .")
-        return "success"  #Response(json.dumps({'status': 'success'}), content_type='application/json')
+    def results_handler(self, request, suffix=''):
+        xblock_instance_data = str(self.scope_ids)
+        block_location_id = xblock_instance_data.split("'")[-2]
+        student_id = str(self.scope_ids.user_id)
+
+        if request.method != 'POST':
+            return Response(json.dumps({'status': 'error', 'message': 'Invalid request method'}), content_type='application/json')
+        
+        data = json.loads(request.body)
+        print(data, "this is the data from the request............!!!!!....!!!!....!!!!.....!!!!......!!!!")
+        #which will be used to get the usage key and student id from redis
+        submission_id = request.headers.get('x-submission-id')
+        redis_data = self.redis_client.hgetall(submission_id)
+        if redis_data:
+            redis_data = {key.decode(): value.decode() for key, value in redis_data.items()}
+            usage_key_from_redis = redis_data.get("usage_key")
+            student_id_from_redis = redis_data.get("student_id")
+            if usage_key_from_redis == block_location_id and student_id_from_redis == student_id:
+                self.score = data['score']  # get the score from the request
+                self.save()
+                self.redis_client.delete(submission_id) #deleting the redis key after the submission
+                self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
+                return Response(json.dumps({'status': 'success'}), content_type='application/json')
+            else:
+                return Response(json.dumps({'status': 'error', 'message': 'usage key, student id are not matching with correct ids'}), content_type='application/json')
+
+        else:
+            return Response(json.dumps({'status': 'error', 'message': 'submission id not found in redis'}), content_type='application/json')   
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the
