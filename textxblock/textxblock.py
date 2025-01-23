@@ -24,13 +24,13 @@ class TextXBlock(XBlock):
 
     # TO-DO: delete count, and define your own fields.
     question = String (
-        default = "question",
+        default = "",
         scope =  Scope.content,
         help = "The question to be asked"
     )
 
     answer =    String(
-        default= "answer",
+        default= "",
         scope= Scope.user_state,
         help= "the answer"
     )
@@ -72,19 +72,19 @@ class TextXBlock(XBlock):
     )
 
     code_results = String(
-        default= "code resulst",
+        default= "",
         scope= Scope.user_state,
         help= "the code results"
     )
 
     file_name = String(
-        default= "file name",
+        default= "",
         scope= Scope.content,
         help= "file name"
     )
 
     execution_mode = String(
-        default= "execution mode",
+        default= "",
         scope= Scope.content,
         help= "execution mode"
     )
