@@ -400,12 +400,15 @@ class TextXBlock(XBlock):
                 self.save()
                 self.redis_client.delete(submission_id) #deleting the redis key after the submission
                 self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
-                return Response(json.dumps({'status': 'success'}), content_type='application/json')
+                return "success"
+                #return Response(json.dumps({'status': 'success'}), content_type='application/json; charset=UTF-8')
             else:
-                return Response(json.dumps({'status': 'error', 'message': 'usage key, student id are not matching with correct ids'}), content_type='application/json')
+                return "usage key, student id are not matching with correct ids"
+                #return Response(json.dumps({'status': 'error', 'message': 'usage key, student id are not matching with correct ids'}), content_type='application/json; charset=UTF-8')
 
         else:
-            return Response(json.dumps({'status': 'error', 'message': 'submission id not found in redis'}), content_type='application/json')   
+            return "submission id not found in redis"
+            #return Response(json.dumps({'status': 'error', 'message': 'submission id not found in redis'}), content_type='application/json; charset=UTF-8')   
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the
