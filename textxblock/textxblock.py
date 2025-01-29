@@ -12,8 +12,6 @@ import psycopg2
 import os
 from webob import Response
 import json
-import redis
-import uuid
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -24,13 +22,13 @@ class TextXBlock(XBlock):
 
     # TO-DO: delete count, and define your own fields.
     question = String (
-        default = "",
+        default = "question",
         scope =  Scope.content,
         help = "The question to be asked"
     )
 
     answer =    String(
-        default= "",
+        default= "answer",
         scope= Scope.user_state,
         help= "the answer"
     )
@@ -72,19 +70,19 @@ class TextXBlock(XBlock):
     )
 
     code_results = String(
-        default= "",
+        default= "code resulst",
         scope= Scope.user_state,
         help= "the code results"
     )
 
     file_name = String(
-        default= "",
+        default= "file name",
         scope= Scope.content,
         help= "file name"
     )
 
     execution_mode = String(
-        default= "",
+        default= "execution mode",
         scope= Scope.content,
         help= "execution mode"
     )
@@ -210,8 +208,6 @@ class TextXBlock(XBlock):
             'expected_output' : self.expected_output
         }
 
-    
-    redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
     #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
@@ -222,24 +218,15 @@ class TextXBlock(XBlock):
         user_service = self.runtime.service(self, 'user')
         current_user = user_service.get_current_user()
         student_name = current_user.opt_attrs.get("edx-platform.username", None)
-
-        #data_dict to send data to API gateway
+  
         data_dict = self.get_admin_data()
         data_dict['student_id'] = student_id
         data_dict['student_name'] = student_name
+        data_dict['xblock_id'] = block_location_id
         data_dict['student_code'] = data['user_input']
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
-        data_dict['usage_key'] = block_location_id
 
-        #for redis and uuids
-        submission_id = str(uuid.uuid4())
-        self.redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
-        self.redis_client.expire(submission_id, 900)# here the time is set to 15 minutes before expiry
-        submission_data = self.redis_client.hgetall(submission_id)
-
-        #calling celery task
-        celery_task_id = task_method.delay(data_dict, submission_id)
-
+        celery_task_id = task_method.delay(data_dict)
         if cursor:
             try:
                 #it checks if there is nay related data to this xblock id and userid
@@ -382,33 +369,14 @@ class TextXBlock(XBlock):
                     connection.close()
 
 
-
-    @XBlock.json_handler
-    def results_handler(self, data, suffix=''):
-        xblock_instance_data = str(self.scope_ids)
-        block_location_id = xblock_instance_data.split("'")[-2]
-        student_id = str(self.scope_ids.user_id)
-        print(data, "this is the data from the request............!!!!!....!!!!....!!!!.....!!!!......!!!!")
-        #which will be used to get the usage key and student id from redis
-        submission_id = data.get('x-submission-id')
-        redis_data = self.redis_client.hgetall(submission_id)
-        if redis_data:
-            usage_key_from_redis = redis_data.get("usage_key")
-            student_id_from_redis = redis_data.get("student_id")
-            if usage_key_from_redis == block_location_id and student_id_from_redis == student_id:
-                self.score = data['score']  # get the score from the request
-                self.save()
-                self.redis_client.delete(submission_id) #deleting the redis key after the submission
-                self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
-                return "success"
-                #return Response(json.dumps({'status': 'success'}), content_type='application/json; charset=UTF-8')
-            else:
-                return "usage key, student id are not matching with correct ids"
-                #return Response(json.dumps({'status': 'error', 'message': 'usage key, student id are not matching with correct ids'}), content_type='application/json; charset=UTF-8')
-
-        else:
-            return "submission id not found in redis"
-            #return Response(json.dumps({'status': 'error', 'message': 'submission id not found in redis'}), content_type='application/json; charset=UTF-8')   
+    @XBlock.handler
+    def results_handler(self, request, suffix=''):
+        print("Handler invoked - Inside the handler method")
+        print("Request body:", request.body.decode('utf-8'))        
+        response_data = {'status': 'success', 'message': 'Handler executed successfully'}
+        response = Response(json.dumps(response_data))
+        response.content_type = 'application/json'
+        return response
 
 
     # TO-DO: change this to create the scenarios you'd like to see in the

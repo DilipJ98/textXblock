@@ -116,6 +116,33 @@
   justify-content: space-evenly;
   border: 1px solid rgb(134, 131, 131);
   border-radius: 3px;
+  position: relative;
+}
+
+#timer {
+  text-align: center;
+  font-size: smaller;
+  padding: 5px;
+  display: none;
+  background-color: bisque;
+  position: absolute;
+  top: -40px;
+  left: 100px;
+  width: 200%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+#timer::after {
+  content: " time left to view solution";
+}
+
+.checkbox-div:hover #timer {
+  display: block;
 }
 
 .lable-checkbox {

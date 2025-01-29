@@ -27,6 +27,7 @@ function TextXBlock(runtime, element) {
     let isResetRequestInProgress = false;
     let dataFromInitiaRequest;
     let progressLoad = 0;
+    let isTImerEnd = false;
 
     //for clearing polling intervals
     function clearIntervalsFunction() {
@@ -34,6 +35,75 @@ function TextXBlock(runtime, element) {
       clearInterval(intervalOnSubmit);
       isPolling = false;
     }
+
+    function timerFun() {
+      let currentDateTime = new Date();
+      let timeDifference;
+      let minutesFromLocalStorage = 0;
+      let secondsFromLocalStorage = 0;
+
+      // Check if the time data is stored in localStorage
+      if (
+        localStorage.getItem("time") &&
+        localStorage.getItem("remainingTime")
+      ) {
+        let storedDate = new Date(localStorage.getItem("time"));
+        timeDifference = currentDateTime - storedDate;
+        console.log(
+          Math.floor(timeDifference / 60000),
+          " this is time difference"
+        );
+        // Calculate the remaining time based on the stored time
+        let remainingTime = parseInt(localStorage.getItem("remainingTime"));
+        minutesFromLocalStorage = Math.floor(remainingTime / 60);
+        secondsFromLocalStorage = remainingTime % 60;
+      } else {
+        // if no time is stored, initialize the timer and save the start time
+        minutesFromLocalStorage = 2; // intiallly set to 5 min
+        secondsFromLocalStorage = 0;
+        localStorage.setItem("time", currentDateTime.toISOString());
+        localStorage.setItem(
+          "remainingTime",
+          minutesFromLocalStorage * 60 + secondsFromLocalStorage
+        );
+      }
+
+      let count = secondsFromLocalStorage;
+      let min = minutesFromLocalStorage;
+      let zeroBeforeSec = "0";
+      let zeroBeforeMin = "0";
+
+      if (Math.floor(timeDifference / 60000) < 2) {
+        let interval = setInterval(() => {
+          count--;
+          if (count < 0) {
+            min--;
+            count = 59;
+          }
+
+          let formattedCount = count < 10 ? zeroBeforeSec + count : count;
+          let formattedMin = min < 10 ? zeroBeforeMin + min : min;
+          let formattedTimer = `${formattedMin}:${formattedCount}`;
+
+          // Update the timer on the page
+          $(element).find("#timer").text(formattedTimer);
+
+          // Save the remaining time to localStorage each second
+          localStorage.setItem("remainingTime", min * 60 + count);
+
+          if (min === 0 && count === 0) {
+            clearInterval(interval);
+            isTImerEnd = true;
+            // localStorage.removeItem("time");
+            // localStorage.removeItem("remainingTime");
+          }
+        }, 1000);
+      } else {
+        isTImerEnd = true;
+      }
+    }
+
+    timerFun();
 
     /*
     which will used to get the admin input data that is comes from studio or editor admin input Fileds
@@ -213,27 +283,7 @@ function TextXBlock(runtime, element) {
       });
 
     function toggleAnswer() {
-      $.ajax({
-        type: "POST",
-        url: runtime.handlerUrl(element, "get_time_stamp"),
-        data: JSON.stringify({}),
-        success: (data) => {
-          toggleAnswer2(data);
-        },
-      });
-    }
-
-    function toggleAnswer2(data) {
-      let serverDate = new Date(data.time_stamp).toISOString();
-      let frontEndDate = new Date().toISOString();
-      let serverDateObj = new Date(serverDate);
-      let frontEndDateObj = new Date(frontEndDate);
-      let differenceInMilliseconds =
-        frontEndDateObj.getTime() - serverDateObj.getTime();
-      let differenceInSeconds = Math.floor(differenceInMilliseconds / 1000);
-      let differenceInMinutes = Math.floor(differenceInSeconds / 60);
-
-      if (!isCheckBoxChecked && differenceInMinutes > 5) {
+      if (!isCheckBoxChecked && isTImerEnd) {
         $(element).find(".answer-container").text(dataFromInitiaRequest.answer);
         $(element).find(".answer-container").css({
           "pointer-events": "auto",
