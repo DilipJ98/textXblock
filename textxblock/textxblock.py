@@ -116,6 +116,13 @@ class TextXBlock(XBlock):
         "password": os.getenv("DATABASE_PASSWORD"),
     }
         
+
+    def updare_graders_of_student(self):
+        print(self.marks, self.score, " this is self mars and score...........!!!!!!!!")
+        self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+        return "grade updated successfully"
+    
+
     def database_connection_fun(self):
         try:
             connection = psycopg2.connect(
