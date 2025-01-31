@@ -30,11 +30,7 @@ class TextXBlock(XBlock):
         help = "The question to be asked"
     )
 
-    student_input_code =  String(
-        default= "",
-        scope= Scope.user_state,
-        help= "student input code"
-    )
+    
 
     actual_answer = String(
         default = "",
@@ -103,6 +99,11 @@ class TextXBlock(XBlock):
         help= "time stamp of the initial load"
     )
 
+    student_input_code = String(
+        default= "",
+        scope= Scope.user_state,
+        help= "student input code"
+    )
 
     score = Integer(
         default = 0,
@@ -262,6 +263,9 @@ class TextXBlock(XBlock):
         #saving the student input code into the field
         self.student_input_code = data['user_input']
         self.save()
+        print(data['user_input'], "this is the user input code....................................!!!")
+        print(self.student_input_code, "this is the student input code....................................!!!")
+        
 
         celery_task_id = task_method.delay(data_dict, submission_id)
         if cursor:
