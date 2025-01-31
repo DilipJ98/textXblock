@@ -4,7 +4,7 @@ from importlib.resources import files
 
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope, String
+from xblock.fields import Integer, Scope, String, Boolean
 from .tasks import task_method
 from datetime import datetime, timezone
 from celery.result import AsyncResult
@@ -30,10 +30,10 @@ class TextXBlock(XBlock):
         help = "The question to be asked"
     )
 
-    answer =    String(
+    student_input_code =  String(
         default= "",
         scope= Scope.user_state,
-        help= "the answer"
+        help= "student input code"
     )
 
     actual_answer = String(
@@ -66,11 +66,6 @@ class TextXBlock(XBlock):
         help= "language for monaco editor"
     )
 
-    score = Integer(
-        default = 0,
-        scope = Scope.user_state,
-        help = " the learner score"
-    )
 
     code_results = String(
         default= "",
@@ -108,6 +103,26 @@ class TextXBlock(XBlock):
         help= "time stamp of the initial load"
     )
 
+
+    score = Integer(
+        default = 0,
+        scope = Scope.user_state,
+        help = " the learner score"
+    )
+
+    is_correct = Boolean(
+        default= False,
+        scope= Scope.user_state,
+        help= "is the answer correct or not"
+    )
+
+    message = String(
+        default= "",
+        scope= Scope.user_state,
+        help= "message to the user"    
+    )
+
+
     DATABASE = {
         "host": os.getenv("DATABASE_HOST"),
         "port": os.getenv("DATABASE_PORT"),
@@ -117,8 +132,7 @@ class TextXBlock(XBlock):
     }
         
 
-    def updare_graders_of_student(self):
-        print(self.marks, self.score, " this is self mars and score...........!!!!!!!!")
+    def update_grades_of_student(self):
         self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         return "grade updated successfully"
     
@@ -232,7 +246,7 @@ class TextXBlock(XBlock):
         user_service = self.runtime.service(self, 'user')
         current_user = user_service.get_current_user()
         student_name = current_user.opt_attrs.get("edx-platform.username", None)
-  
+
         data_dict = self.get_admin_data()
         data_dict['student_id'] = student_id
         data_dict['student_name'] = student_name
@@ -244,6 +258,10 @@ class TextXBlock(XBlock):
         self.redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
         self.redis_client.expire(submission_id, 900)# here the time is set to 15 minutes before expiry
         submission_data = self.redis_client.hgetall(submission_id)
+
+        #saving the student input code into the field
+        self.student_input_code = data['user_input']
+        self.save()
 
         celery_task_id = task_method.delay(data_dict, submission_id)
         if cursor:
@@ -340,9 +358,9 @@ class TextXBlock(XBlock):
                         self.score = 0
                         status = 400
                     #grading based on score
-                    self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+                    # self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
                     self.save()
-                    return {"status": status, "score": self.score, "explanation": self.explanation, "answer": self.actual_answer, "data": fetched_data}
+                    return {"status": status, "score": self.score, "explanation": self.explanation, "answer": self.actual_answer, "data": fetched_data, "studentInputCode": self.student_input_code, "message": self.message, "isCorrect": self.is_correct}
             else:
                 cursor.execute("select * from xblockdata where xblock_id = %s and user_id = %s", (block_location_id, user_id))
                 fetched_data = cursor.fetchone()
@@ -362,6 +380,11 @@ class TextXBlock(XBlock):
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)        
         cursor, connection = self.database_connection_fun()
+
+        #resetting the student input code to empty string
+        self.student_input_code = ""
+        self.save()
+        
         if cursor:
             try:
                 #it checks the xblock id and user id exist in databse
