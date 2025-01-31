@@ -113,7 +113,7 @@ class TextXBlock(XBlock):
 
     is_correct = Boolean(
         default= False,
-        scope= Scope.user_state,
+        scope= Scope.content,
         help= "is the answer correct or not"
     )
 
@@ -369,6 +369,7 @@ class TextXBlock(XBlock):
                     #grading based on score
                     # self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
                     self.save()
+                    print(self.student_input_code, " from fetch task method's student input code............................................ AFTER SAVE!!!! ")
                     return {"status": status, "score": self.score, "explanation": self.explanation, "answer": self.actual_answer, "data": fetched_data, "studentInputCode": self.student_input_code, "message": self.message, "isCorrect": self.is_correct}
             else:
                 cursor.execute("select * from xblockdata where xblock_id = %s and user_id = %s", (block_location_id, user_id))
