@@ -134,6 +134,9 @@ class TextXBlock(XBlock):
         
 
     def update_grades_of_student(self):
+        print(self.is_correct, "this is the is correct value............................................!!!!")
+        print(self.message, "this is the message value............................................!!!!")
+        print(self.student_input_code, "this is the student input code value............................................!!!!")
         self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         return "grade updated successfully"
     
@@ -342,6 +345,8 @@ class TextXBlock(XBlock):
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         cursor, connection = self.database_connection_fun()
+        print(self.student_input_code, " from fetch task method's student input code............................................!!!!")
+        
         try:
             if result.ready():
                 if cursor:
