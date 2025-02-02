@@ -133,7 +133,11 @@ class TextXBlock(XBlock):
     }
         
 
-    def update_grades_of_student(self):
+    def update_grades_of_student(self, score_from_grader, is_correct_fromgrader, message_from_grader):
+        self.score = score_from_grader
+        self.is_correct = is_correct_fromgrader
+        self.message = message_from_grader
+        self.save()
         print(self.is_correct, "this is the is correct value............................................!!!!")
         print(self.message, "this is the message value............................................!!!!")
         print(self.student_input_code, "this is the student input code value............................................!!!!")
