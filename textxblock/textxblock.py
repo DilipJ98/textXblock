@@ -133,11 +133,16 @@ class TextXBlock(XBlock):
     }
         
 
-    def update_grades_of_student(self, score_from_grader, is_correct_from_grader, message_from_grader, student_id):
-        print(score_from_grader, is_correct_from_grader, message_from_grader, student_id, "this is the data from the grader............................................!!!!")
-        self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
-        return "grade updated successfully"
-    
+    def update_grades_of_student(self, score, is_correct, message, student_id):
+        user_state = {
+        'score': score,
+        'is_correct': is_correct,
+        'message': message
+        }
+        self.runtime.set_user_state(self, user_state, student_id)
+        #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+        return "user updated successfully"
+
 
     def database_connection_fun(self):
         try:
