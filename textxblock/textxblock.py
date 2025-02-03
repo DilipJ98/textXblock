@@ -113,7 +113,7 @@ class TextXBlock(XBlock):
 
     is_correct = Boolean(
         default= False,
-        scope= Scope.content,
+        scope= Scope.user_state,
         help= "is the answer correct or not"
     )
 
@@ -133,13 +133,7 @@ class TextXBlock(XBlock):
     }
         
 
-    def update_grades_of_student(self, score, is_correct, message, student_id):
-        user_state = {
-        'score': score,
-        'is_correct': is_correct,
-        'message': message
-        }
-        self.runtime.set_user_state(self, user_state, student_id)
+    def update_grades_of_student(self):
         #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         return "user updated successfully"
 
