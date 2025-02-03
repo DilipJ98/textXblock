@@ -139,6 +139,7 @@ class TextXBlock(XBlock):
         print(updated_state.get('message'), " this is from stdnt module in xblock###########################")
         self.score = updated_state.get('score')
         self.message = updated_state.get('message')
+        self.save()
         #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
 
