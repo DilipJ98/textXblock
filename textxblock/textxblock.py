@@ -133,10 +133,8 @@ class TextXBlock(XBlock):
     }
         
 
-    def update_grades_of_student(self):
-        print(self.is_correct, "this is the is correct value............................................!!!!")
-        print(self.message, "this is the message value............................................!!!!")
-        print(self.student_input_code, "this is the student input code value............................................!!!!")
+    def update_grades_of_student(self, score_from_grader, is_correct_from_grader, message_from_grader, student_id):
+        print(score_from_grader, is_correct_from_grader, message_from_grader, student_id, "this is the data from the grader............................................!!!!")
         self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         return "grade updated successfully"
     
