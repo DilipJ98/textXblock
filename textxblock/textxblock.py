@@ -14,7 +14,7 @@ from webob import Response
 import json
 import redis
 import uuid
-
+from lms.djangoapps.courseware.models import StudentModule
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -133,7 +133,12 @@ class TextXBlock(XBlock):
     }
         
 
-    def update_grades_of_student(self):
+    def update_grades_of_student(self, student_id, usage_key):
+        updated_student_module = StudentModule.objects.get(student_id=student_id, module_state_key=usage_key)
+        updated_state = json.loads(updated_student_module.state)
+        print(updated_state.get('message'), " this is from stdnt module in xblock###########################")
+        self.score = updated_state.get('score')
+        self.message = updated_state.get('message')
         #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
 
