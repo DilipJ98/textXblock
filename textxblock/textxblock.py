@@ -135,7 +135,7 @@ class TextXBlock(XBlock):
 
     def update_grades_of_student(self):
         #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
-        return "user updated successfully"
+        return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
 
 
     def database_connection_fun(self):
