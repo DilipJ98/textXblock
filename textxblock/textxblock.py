@@ -146,22 +146,14 @@ class TextXBlock(XBlock):
             usage_key = UsageKey.from_string(location)
             updated_student_module = StudentModule.objects.get(student_id=self.scope_ids.user_id, module_state_key=usage_key)
             updated_state = json.loads(updated_student_module.state)
-            print(updated_state.get('score'), updated_state.get('message'), " updated state from handler..........@@@@")
             self.score = updated_state.get('score')
             self.is_correct = updated_state.get('is_correct')
             self.message = updated_state.get('message')            
-            print(self.score, self.is_correct, self.message, " these details from handler..........@@@@")
             self.save()
-
-            #state_client = XBlockUserStateClient()
-            # user_state = state_client.get(self.scope_ids.user_id, usage_key, scope = Scope.user_state)
-            # self.score = user_state.get('score')
-            # self.is_correct = user_state.get('is_correct')
-            # self.message = user_state.get('message')
-            # print(user_state, " this is from user state client###########################")
-            # print(user_state.get('score'), " this is from user state client###########################")
+            self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+            #grading based on score
         except Exception as e:
-            print(type(e), e , " this is exception from get_user_state_details_from_db method########################")
+            print(type(e), e)
             traceback.print_exc()
             return None
         return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
@@ -171,13 +163,12 @@ class TextXBlock(XBlock):
         try:
             updated_student_module = StudentModule.objects.get(student_id=student_id, module_state_key=usage_key)
             updated_state = json.loads(updated_student_module.state)
-            print(updated_state.get('message'), " this is from stdnt module in xblock###########################")
             self.score = updated_state.get('score')
             self.message = updated_state.get('message')
             self.save()
         #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         except Exception as e:
-            print(e, " this is exception from update_grades of student methiod########################")
+            print(e)
             return None
         return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
 
@@ -307,10 +298,7 @@ class TextXBlock(XBlock):
         #saving the student input code into the field
         self.student_input_code = data['user_input']
         self.save()
-        print(data['user_input'], "this is the user input code....................................!!!")
-        print(self.student_input_code, "this is the student input code....................................!!!")
         
-
         celery_task_id = task_method.delay(data_dict, submission_id)
         if cursor:
             try:
@@ -386,7 +374,6 @@ class TextXBlock(XBlock):
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         cursor, connection = self.database_connection_fun()
-        print(self.student_input_code, " from fetch task method's student input code............................................!!!!")
         
         try:
             if result.ready():
@@ -395,7 +382,7 @@ class TextXBlock(XBlock):
                     fetched_data = cursor.fetchone()
                     #checks the results
                     if result.get()['isSuccess'] == 200:
-                        self.score = self.marks
+                        #self.score = self.marks
                         status = 200
                         #execute this if the xblock and user id already exist in database
                         if fetched_data is not None:
@@ -405,12 +392,10 @@ class TextXBlock(XBlock):
                     elif result.get()['isSuccess'] == 400:
                         #update score if the user code evaluated to wrong
                         #set score to Zero
-                        self.score = 0
+                        #self.score = 0
                         status = 400
-                    #grading based on score
-                    # self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
-                    self.save()
-                    print(self.student_input_code, " from fetch task method's student input code............................................ AFTER SAVE!!!! ")
+
+                    #self.save()
                     return {"status": status, "score": self.score, "explanation": self.explanation, "answer": self.actual_answer, "data": fetched_data, "studentInputCode": self.student_input_code, "message": self.message, "isCorrect": self.is_correct}
             else:
                 cursor.execute("select * from xblockdata where xblock_id = %s and user_id = %s", (block_location_id, user_id))
