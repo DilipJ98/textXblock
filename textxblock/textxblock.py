@@ -138,7 +138,7 @@ class TextXBlock(XBlock):
 
 
     @XBlock.json_handler 
-    def get_user_state_details_from_db(self):
+    def get_user_state_details_from_db(self, data, suffix=''):
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         try:
