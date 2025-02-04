@@ -139,6 +139,7 @@ class TextXBlock(XBlock):
 
     @XBlock.json_handler 
     def get_user_state_details_from_db(self, data, suffix=''):
+        print(self.score, self.is_correct, self.message, "this is the user state details from the XBLOCK")
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         try:
@@ -289,6 +290,7 @@ class TextXBlock(XBlock):
         data_dict['student_code'] = data['user_input']
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
         data_dict['usage_key'] = block_location_id
+         
          #for redis and uuids
         submission_id = str(uuid.uuid4())
         self.redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
