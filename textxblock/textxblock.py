@@ -17,7 +17,7 @@ import uuid
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.courseware.user_state_client import XBlockUserStateClient
 from opaque_keys.edx.keys import UsageKey
-
+import traceback
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -152,7 +152,8 @@ class TextXBlock(XBlock):
             print(user_state, " this is from user state client###########################")
             print(user_state.get('score'), " this is from user state client###########################")
         except Exception as e:
-            print(e, " this is exception from get_user_state_details_from_db method########################")
+            print(type(e), e , " this is exception from get_user_state_details_from_db method########################")
+            traceback.print_exc()
             return None
         return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
 
