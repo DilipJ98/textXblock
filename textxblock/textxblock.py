@@ -15,6 +15,8 @@ import json
 import redis
 import uuid
 from lms.djangoapps.courseware.models import StudentModule
+from lms.djangoapps.courseware.models import XBlockUserStateClient
+
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -133,14 +135,37 @@ class TextXBlock(XBlock):
     }
         
 
+
+    @XBlock.json_handler 
+    def get_user_state_details_from_db(self):
+        xblock_instance_data = str(self.scope_ids)
+        block_location_id = xblock_instance_data.split("'")[-2]
+        try:
+            location = "block-v1:cklabs+XBLOCK002+202_T1+type@textxblock+block@" + block_location_id
+            user_state = XBlockUserStateClient.get(self.scope_ids.user_id, location)
+            self.score = user_state.get('score')
+            self.is_correct = user_state.get('is_correct')
+            self.message = user_state.get('message')
+            print(user_state, " this is from user state client###########################")
+            print(user_state.get('score'), " this is from user state client###########################")
+        except Exception as e:
+            print(e, " this is exception from get_user_state_details_from_db method########################")
+            return None
+        return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
+
+
     def update_grades_of_student(self, student_id, usage_key):
-        updated_student_module = StudentModule.objects.get(student_id=student_id, module_state_key=usage_key)
-        updated_state = json.loads(updated_student_module.state)
-        print(updated_state.get('message'), " this is from stdnt module in xblock###########################")
-        self.score = updated_state.get('score')
-        self.message = updated_state.get('message')
-        self.save()
+        try:
+            updated_student_module = StudentModule.objects.get(student_id=student_id, module_state_key=usage_key)
+            updated_state = json.loads(updated_student_module.state)
+            print(updated_state.get('message'), " this is from stdnt module in xblock###########################")
+            self.score = updated_state.get('score')
+            self.message = updated_state.get('message')
+            self.save()
         #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+        except Exception as e:
+            print(e, " this is exception from update_grades of student methiod########################")
+            return None
         return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
 
 

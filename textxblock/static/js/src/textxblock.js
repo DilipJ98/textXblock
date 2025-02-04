@@ -36,6 +36,23 @@ function TextXBlock(runtime, element) {
       isPolling = false;
     }
 
+    function getUserClientDetails() {
+      let handlerUrls = runtime.handlerUrl(
+        element,
+        "get_user_state_details_from_db"
+      );
+      $.ajax({
+        type: "POST",
+        url: handlerUrls,
+        data: JSON.stringify({}),
+        success: (data) => {
+          console.log(data, " :: this is user data from user client handler");
+        },
+      });
+    }
+
+    getUserClientDetails();
+
     function timerFun() {
       let currentDateTime = new Date();
       let timeDifference;
