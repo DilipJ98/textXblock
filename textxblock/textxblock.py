@@ -144,8 +144,8 @@ class TextXBlock(XBlock):
         try:
             location = "block-v1:cklabs+XBLOCK002+202_T1+type@textxblock+block@" + block_location_id
             usage_key = UsageKey.from_string(location)
-            state_client = XBlockUserStateClient(self)
-            user_state = state_client.get(self.scope_ids.user_id, usage_key)
+            state_client = XBlockUserStateClient()
+            user_state = state_client.get(self.scope_ids.user_id, usage_key, scope = Scope.user_state)
             self.score = user_state.get('score')
             self.is_correct = user_state.get('is_correct')
             self.message = user_state.get('message')
