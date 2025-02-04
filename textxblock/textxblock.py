@@ -15,7 +15,8 @@ import json
 import redis
 import uuid
 from lms.djangoapps.courseware.models import StudentModule
-from lms.djangoapps.courseware.models import XBlockUserStateClient
+from lms.djangoapps.courseware.user_state_client import XBlockUserStateClient
+
 
 
 @XBlock.needs('user')
