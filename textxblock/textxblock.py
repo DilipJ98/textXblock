@@ -16,7 +16,7 @@ import redis
 import uuid
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.courseware.user_state_client import XBlockUserStateClient
-
+from opaque_keys.edx.keys import UsageKey
 
 
 @XBlock.needs('user')
@@ -143,7 +143,9 @@ class TextXBlock(XBlock):
         block_location_id = xblock_instance_data.split("'")[-2]
         try:
             location = "block-v1:cklabs+XBLOCK002+202_T1+type@textxblock+block@" + block_location_id
-            user_state = XBlockUserStateClient.get(self.scope_ids.user_id, location)
+            usage_key = UsageKey.from_string(location)
+            state_client = XBlockUserStateClient()
+            user_state = state_client.get(self.scope_ids.user_id, usage_key)
             self.score = user_state.get('score')
             self.is_correct = user_state.get('is_correct')
             self.message = user_state.get('message')
