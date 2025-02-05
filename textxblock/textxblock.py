@@ -136,10 +136,8 @@ class TextXBlock(XBlock):
     }
         
 
-
     @XBlock.json_handler 
     def get_user_state_details_from_db(self, data, suffix=''):
-        print(self.score, self.is_correct, self.message, "this is the user state details from the XBLOCK")
         xblock_instance_data = str(self.scope_ids)
         block_location_id = xblock_instance_data.split("'")[-2]
         try:
@@ -147,29 +145,17 @@ class TextXBlock(XBlock):
             usage_key = UsageKey.from_string(location)
             updated_student_module = StudentModule.objects.get(student_id=self.scope_ids.user_id, module_state_key=usage_key)
             updated_state = json.loads(updated_student_module.state)
+            #assigning the values to the user state fields from student module    
             self.score = updated_state.get('score')
             self.is_correct = updated_state.get('is_correct')
             self.message = updated_state.get('message')            
-            self.save()
-            self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
             #grading based on score
+            self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+            self.save()
+
         except Exception as e:
             print(type(e), e)
             traceback.print_exc()
-            return None
-        return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
-
-
-    def update_grades_of_student(self, student_id, usage_key):
-        try:
-            updated_student_module = StudentModule.objects.get(student_id=student_id, module_state_key=usage_key)
-            updated_state = json.loads(updated_student_module.state)
-            self.score = updated_state.get('score')
-            self.message = updated_state.get('message')
-            self.save()
-        #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
-        except Exception as e:
-            print(e)
             return None
         return {"score": self.score, 'is_correct': self.is_correct, 'message': self.message}
 
@@ -269,9 +255,6 @@ class TextXBlock(XBlock):
             'expected_output' : self.expected_output
         }
 
-
-
-
     redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
     #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
@@ -291,16 +274,24 @@ class TextXBlock(XBlock):
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
         data_dict['usage_key'] = block_location_id
          
-         #for redis and uuids
+        #for redis and uuids
         submission_id = str(uuid.uuid4())
         self.redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
         self.redis_client.expire(submission_id, 900)# here the time is set to 15 minutes before expiry
-        submission_data = self.redis_client.hgetall(submission_id)
 
         #saving the student input code into the field
         self.student_input_code = data['user_input']
+
+        # resetting previous values of score, message, is_correct
+        self.score = 0
+        self.message = ""
+        self.is_correct = False
+
+        #reassigning grades with initial score
+        self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         self.save()
-        
+
+
         celery_task_id = task_method.delay(data_dict, submission_id)
         if cursor:
             try:
@@ -396,7 +387,6 @@ class TextXBlock(XBlock):
                         #set score to Zero
                         #self.score = 0
                         status = 400
-
                     #self.save()
                     return {"status": status, "score": self.score, "explanation": self.explanation, "answer": self.actual_answer, "data": fetched_data, "studentInputCode": self.student_input_code, "message": self.message, "isCorrect": self.is_correct}
             else:
@@ -418,11 +408,12 @@ class TextXBlock(XBlock):
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)        
         cursor, connection = self.database_connection_fun()
-
+        print(self.scope_ids.usage_id, "this is the block id")
         #resetting the student input code to empty string
         self.student_input_code = ""
+        self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
         self.save()
-        
+
         if cursor:
             try:
                 #it checks the xblock id and user id exist in databse

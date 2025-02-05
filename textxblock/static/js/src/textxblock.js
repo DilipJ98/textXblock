@@ -46,7 +46,7 @@ function TextXBlock(runtime, element) {
         url: handlerUrls,
         data: JSON.stringify({}),
         success: (data) => {
-          console.log(data, " :: this is user data from user client handler");
+          console.log(data);
         },
       });
     }
@@ -66,10 +66,7 @@ function TextXBlock(runtime, element) {
       ) {
         let storedDate = new Date(localStorage.getItem("time"));
         timeDifference = currentDateTime - storedDate;
-        console.log(
-          Math.floor(timeDifference / 60000),
-          " this is time difference"
-        );
+
         // Calculate the remaining time based on the stored time
         let remainingTime = parseInt(localStorage.getItem("remainingTime"));
         minutesFromLocalStorage = Math.floor(remainingTime / 60);
@@ -201,10 +198,6 @@ function TextXBlock(runtime, element) {
 
     //this will be called on successfull ajax request of initail load call
     function getTaskDetails(result) {
-      console.log(
-        result,
-        " ::this is data.............................................."
-      );
       //checks if there is any data is available
       if (result.data && Object.keys(result.data).length > 0) {
         let dataOfResult = result.data;
