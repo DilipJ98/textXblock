@@ -198,6 +198,7 @@ function TextXBlock(runtime, element) {
 
     //this will be called on successfull ajax request of initail load call
     function getTaskDetails(result) {
+      print(result, " from get task details");
       //checks if there is any data is available
       if (result.data && Object.keys(result.data).length > 0) {
         let dataOfResult = result.data;

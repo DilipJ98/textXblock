@@ -145,13 +145,17 @@ class TextXBlock(XBlock):
             usage_key = UsageKey.from_string(location)
             updated_student_module = StudentModule.objects.get(student_id=self.scope_ids.user_id, module_state_key=usage_key)
             updated_state = json.loads(updated_student_module.state)
+            
+            print(updated_state.get('score'), updated_state.get('is_correct'), updated_state.get('message'), "user details fetched from db#####################")
             #assigning the values to the user state fields from student module    
             self.score = updated_state.get('score')
             self.is_correct = updated_state.get('is_correct')
             self.message = updated_state.get('message')            
+            self.save()
+            print(self.score, self.is_correct, self.message, "user details fetched and assigned from db#####################")
             #grading based on score
             self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
-            self.save()
+            print("grading based on score")
 
         except Exception as e:
             print(type(e), e)
@@ -286,11 +290,12 @@ class TextXBlock(XBlock):
         self.score = 0
         self.message = ""
         self.is_correct = False
+        self.save()
+        print(self.score, self.message, "user details resetted#####################")
 
         #reassigning grades with initial score
         self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
-        self.save()
-
+        print("assigned initial grades#####################")
 
         celery_task_id = task_method.delay(data_dict, submission_id)
         if cursor:
@@ -408,7 +413,7 @@ class TextXBlock(XBlock):
         block_location_id = xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)        
         cursor, connection = self.database_connection_fun()
-        print(self.scope_ids.usage_id, "this is the block id")
+        print(self.scope_ids.usage_id, "this is the block id@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         #resetting the student input code to empty string
         self.student_input_code = ""
         self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
