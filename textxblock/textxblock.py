@@ -154,7 +154,7 @@ class TextXBlock(XBlock):
             self.save()
             print(self.score, self.is_correct, self.message, "user details fetched and assigned from db#####################")
             #grading based on score
-            self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+            #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
             print("grading based on score")
 
         except Exception as e:
@@ -418,7 +418,7 @@ class TextXBlock(XBlock):
         self.student_input_code = ""
         self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
         self.save()
-
+        
         if cursor:
             try:
                 #it checks the xblock id and user id exist in databse
