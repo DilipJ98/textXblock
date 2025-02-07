@@ -54,7 +54,7 @@ class TextXBlock(XBlock):
     )
 
     marks = Integer(
-        default=1,
+        default=0,
         scope= Scope.content,
         help= "marks assigned by admin to each question"
     )
@@ -265,8 +265,8 @@ class TextXBlock(XBlock):
     def handle_task_method(self, data, suffix=''):
         cursor, connection = self.database_connection_fun()
         xblock_instance_data = str(self.scope_ids)
-        block_location_id = xblock_instance_data.split("'")[-2]
-        student_id = str(self.scope_ids.user_id)
+        block_location_id = str(self.scope_ids.usage_id) #xblock_instance_data.split("'")[-2]
+        student_id = str(self.scope_ids.user_id) 
         user_service = self.runtime.service(self, 'user')
         current_user = user_service.get_current_user()
         student_name = current_user.opt_attrs.get("edx-platform.username", None)
@@ -337,7 +337,7 @@ class TextXBlock(XBlock):
         cursor, connection = self.database_connection_fun()
         #extract xblock id and user id
         xblock_instance_data = str(self.scope_ids)
-        block_location_id = xblock_instance_data.split("'")[-2]
+        block_location_id = str(self.scope_ids.usage_id) #xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         
         if self.time_stamp is None:
@@ -369,7 +369,7 @@ class TextXBlock(XBlock):
     def fetch_task_result(self, taskId):
         result = AsyncResult(taskId)
         xblock_instance_data = str(self.scope_ids)
-        block_location_id = xblock_instance_data.split("'")[-2]
+        block_location_id = str(self.scope_ids.usage_id) #xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)
         cursor, connection = self.database_connection_fun()
         
@@ -410,7 +410,7 @@ class TextXBlock(XBlock):
     @XBlock.json_handler
     def delete_task(self, data, suffix=''):
         xblock_instance_data = str(self.scope_ids)
-        block_location_id = xblock_instance_data.split("'")[-2]
+        block_location_id = self.scope_ids.usage_id #xblock_instance_data.split("'")[-2]
         user_id = str(self.scope_ids.user_id)        
         cursor, connection = self.database_connection_fun()
         print(self.scope_ids.usage_id, "this is the block id@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
