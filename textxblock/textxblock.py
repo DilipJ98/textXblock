@@ -139,10 +139,10 @@ class TextXBlock(XBlock):
     @XBlock.json_handler 
     def get_user_state_details_from_db(self, data, suffix=''):
         xblock_instance_data = str(self.scope_ids)
-        block_location_id = xblock_instance_data.split("'")[-2]
+        # block_location_id = xblock_instance_data.split("'")[-2]
+        block_location_id = str(self.scope_ids.usage_id)
         try:
-            location = "block-v1:cklabs+XBLOCK002+202_T1+type@textxblock+block@" + block_location_id
-            usage_key = UsageKey.from_string(location)
+            usage_key = UsageKey.from_string(block_location_id)
             updated_student_module = StudentModule.objects.get(student_id=self.scope_ids.user_id, module_state_key=usage_key)
             updated_state = json.loads(updated_student_module.state)
             
