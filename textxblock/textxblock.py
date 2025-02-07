@@ -18,6 +18,8 @@ from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.courseware.user_state_client import XBlockUserStateClient
 from opaque_keys.edx.keys import UsageKey
 import traceback
+from django.contrib.auth.models import User
+
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -294,7 +296,17 @@ class TextXBlock(XBlock):
         print(self.score, self.message, "user details resetted#####################")
 
         #reassigning grades with initial score
-        self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+        # usage_key = UsageKey.from_string(block_location_id)
+        # student = User.objects.get(id=student_id)
+        # student_module, created = StudentModule.objects.update_or_create(
+        #     student=student,
+        #     module_state_key=usage_key,  
+        #     defaults={
+        #         "grade": 0,           
+        #         "max_grade": 10    
+        #     })
+        
+        #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
         print("assigned initial grades#####################")
 
         celery_task_id = task_method.delay(data_dict, submission_id)
