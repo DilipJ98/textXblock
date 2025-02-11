@@ -456,33 +456,6 @@ class TextXBlock(XBlock):
                 if connection:
                     connection.close()
 
-
-    @XBlock.handler
-    def results_handler(self, data, suffix=''):
-        xblock_instance_data = str(self.scope_ids)
-        block_location_id = xblock_instance_data.split("'")[-2]
-        student_id = str(self.scope_ids.user_id)
-        print(data, "this is the data from the request............!!!!!....!!!!....!!!!.....!!!!......!!!!")
-        #which will be used to get the usage key and student id from redis
-        submission_id = data.get('x-submission-id')
-        redis_data = self.redis_client.hgetall(submission_id)
-        if redis_data:
-            usage_key_from_redis = redis_data.get("usage_key")
-            student_id_from_redis = redis_data.get("student_id")
-            if usage_key_from_redis == block_location_id and student_id_from_redis == student_id:
-                self.score = data['score']  # get the score from the request
-                self.save()
-                self.redis_client.delete(submission_id) #deleting the redis key after the submission
-                self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
-                return "success"
-                #return Response(json.dumps({'status': 'success'}), content_type='application/json; charset=UTF-8')
-            else:
-                return "usage key, student id are not matching with correct ids"
-                #return Response(json.dumps({'status': 'error', 'message': 'usage key, student id are not matching with correct ids'}), content_type='application/json; charset=UTF-8')
-        else:
-            return "submission id not found in redis"
-            #return Response(json.dumps({'status': 'error', 'message': 'submission id not found in redis'}), content_type='application/json; charset=UTF-8')   
-
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
     @staticmethod
