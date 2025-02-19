@@ -10,6 +10,7 @@ function TextXBlock(runtime, element) {
     $(element).find(".textxblock-container").css({ opacity: "0" });
     //whcih unchecks checkbox on page loads
     $(element).find(".show-ans-check").prop("checked", false);
+
     $(element)
       .find(".answer-container")
       .css({ "pointer-events": "none", opacity: "0" });
@@ -66,7 +67,10 @@ function TextXBlock(runtime, element) {
       ) {
         let storedDate = new Date(localStorage.getItem("time"));
         timeDifference = currentDateTime - storedDate;
-
+        console.log(
+          Math.floor(timeDifference / 60000),
+          " this is time difference"
+        );
         // Calculate the remaining time based on the stored time
         let remainingTime = parseInt(localStorage.getItem("remainingTime"));
         minutesFromLocalStorage = Math.floor(remainingTime / 60);
@@ -198,7 +202,6 @@ function TextXBlock(runtime, element) {
 
     //this will be called on successfull ajax request of initail load call
     function getTaskDetails(result) {
-      print(result, " from get task details");
       //checks if there is any data is available
       if (result.data && Object.keys(result.data).length > 0) {
         let dataOfResult = result.data;
@@ -274,6 +277,32 @@ function TextXBlock(runtime, element) {
               }
             );
 
+            //this is will resizes the monaco editor on screen size changes
+            window.addEventListener("resize", () => {
+              if (editor) {
+                editor.layout();
+                // $(element)
+                //   .find(".code-editor-sub-menu")
+                //   .css({
+                //     width: `${editor.getDomNode().clientWidth}px`,
+                //   });
+              }
+              // $(element)
+              //   .find(".editor-container")
+              //   .css({ width: `${editor.getDomNode().clientWidth}px` });
+
+              // $(element)
+              //   .find("#container")
+              //   .css({ width: `${editor.getDomNode().clientWidth}px` });
+
+              // let editoContainer = $(element).find(".editor-container").width();
+              // console.log(editoContainer, " this is editor container");
+              // let container = $(element).find("#container").width();
+              // console.log(container, " this is container");
+              // let menu = $(element).find(".code-editor-sub-menu").width();
+              // console.log(menu, " this is width of menu");
+            });
+
             //which is baiscally called on initial page relaod
             makeInitialAjaxCall();
 
@@ -299,19 +328,27 @@ function TextXBlock(runtime, element) {
 
     function toggleAnswer() {
       if (!isCheckBoxChecked && isTImerEnd) {
+        $(element).find(".answer-container-div").css({
+          "pointer-events": "none",
+          opacity: "1",
+          transition: "opacity 1s ease-in",
+        });
         $(element).find(".answer-container").text(dataFromInitiaRequest.answer);
         $(element).find(".answer-container").css({
           "pointer-events": "auto",
           opacity: "1",
           transition: "opacity 1s ease-in",
         });
-        $(element).find(".code-editor-sub-menu").css({
-          "border-top-right-radius": "0",
-        });
 
         isCheckBoxChecked = true;
       } else {
         $(element).find(".answer-container").css({
+          "pointer-events": "none",
+          opacity: "0",
+          transition: "opacity 1s ease-out",
+        });
+
+        $(element).find(".answer-container-div").css({
           "pointer-events": "none",
           opacity: "0",
           transition: "opacity 1s ease-out",
