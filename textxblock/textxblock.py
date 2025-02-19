@@ -141,7 +141,6 @@ class TextXBlock(XBlock):
     @XBlock.json_handler 
     def get_user_state_details_from_db(self, data, suffix=''):
         xblock_instance_data = str(self.scope_ids)
-        # block_location_id = xblock_instance_data.split("'")[-2]
         block_location_id = str(self.scope_ids.usage_id)
         try:
             usage_key = UsageKey.from_string(block_location_id)
@@ -149,12 +148,17 @@ class TextXBlock(XBlock):
             updated_state = json.loads(updated_student_module.state)
             
             print(updated_state.get('score'), updated_state.get('is_correct'), updated_state.get('message'), "user details fetched from db#####################")
+          
+            print(self.score, " this is score@@@@@@@")
+            print(self.message, " this is message####################")
+            print(self.is_correct, "this is is correct@!@!@!@!@!@!@!@@!@")
+          
             #assigning the values to the user state fields from student module    
-            self.score = updated_state.get('score')
-            self.is_correct = updated_state.get('is_correct')
-            self.message = updated_state.get('message')            
-            self.save()
-            print(self.score, self.is_correct, self.message, "user details fetched and assigned from db#####################")
+            # self.score = updated_state.get('score')
+            # self.is_correct = updated_state.get('is_correct')
+            # self.message = updated_state.get('message')            
+            # self.save()
+            # print(self.score, self.is_correct, self.message, "user details fetched and assigned from db#####################")
             #grading based on score
             #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
             print("grading based on score")
@@ -287,7 +291,8 @@ class TextXBlock(XBlock):
 
         #saving the student input code into the field
         self.student_input_code = data['user_input']
-
+        
+        print(self.score, self.message, self.is_correct, "Before saving")
         # resetting previous values of score, message, is_correct
         self.score = 0
         self.message = ""
@@ -307,6 +312,7 @@ class TextXBlock(XBlock):
         #     })
         
         #self.runtime.publish(self, "grade", {"value": self.score, "max_value": self.marks})
+
         print("assigned initial grades#####################")
 
         celery_task_id = task_method.delay(data_dict, submission_id)
