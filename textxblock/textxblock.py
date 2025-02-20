@@ -267,8 +267,10 @@ class TextXBlock(XBlock):
     def fetch_task_result(self):        
         try:
             if self.message == "":
+                print("inside if so message is empty", self.message)
                 return {"status" : "pending", "user_code" : self.student_input_code}
             else:
+                print("inside else so message is not empty", self.message)
                 return {"status" : "ready", "score": self.score, "is_correct": self.is_correct, "message": self.message, "user_code" : self.student_input_code}
         except Exception as e:
             return {'status': "error", 'error': str(e)}

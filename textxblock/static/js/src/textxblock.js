@@ -183,6 +183,7 @@ function TextXBlock(runtime, element) {
 
     //this will be called on successfull ajax request of initail load call
     function getTaskDetails(result) {
+      console.log(result, " from get task details");
       //checks if there is any data is available
       if (result.user_code !== "") {
         //checks if the monaco editor updated with code
@@ -449,6 +450,10 @@ function TextXBlock(runtime, element) {
             url: handlerUrl,
             data: JSON.stringify({}),
             success: (response) => {
+              console.log(
+                response,
+                " this is response from get task result handler"
+              );
               //based on the celery task status it will updted the resul for progress bar
               if (
                 response.status !== "pending" &&
