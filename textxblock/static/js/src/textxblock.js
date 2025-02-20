@@ -6,13 +6,10 @@ function TextXBlock(runtime, element) {
     metaTag.name = "viewport";
     metaTag.content = "width=device-width, initial-scale=1.0";
     document.getElementsByTagName("head")[0].appendChild(metaTag);
-    //initially hiding the the textxblock container
-    $(element).find(".textxblock-container").css({ opacity: "0" });
     //whcih unchecks checkbox on page loads
     $(element).find(".show-ans-check").prop("checked", false);
-
     $(element)
-      .find(".answer-container")
+      .find(".answer-container-div")
       .css({ "pointer-events": "none", opacity: "0" });
 
     let editor;
@@ -36,23 +33,6 @@ function TextXBlock(runtime, element) {
       clearInterval(intervalOnSubmit);
       isPolling = false;
     }
-
-    function getUserClientDetails() {
-      let handlerUrls = runtime.handlerUrl(
-        element,
-        "get_user_state_details_from_db"
-      );
-      $.ajax({
-        type: "POST",
-        url: handlerUrls,
-        data: JSON.stringify({}),
-        success: (data) => {
-          console.log(data);
-        },
-      });
-    }
-
-    getUserClientDetails();
 
     function timerFun() {
       let currentDateTime = new Date();
@@ -135,6 +115,7 @@ function TextXBlock(runtime, element) {
         data: JSON.stringify({}),
         success: (data) => {
           $(element).find("#show-question").text(data.question); //which will update UI with question
+          $(element).find(".lang").text(data.language);
           dataFromInitiaRequest = data;
           monacoEditor(data); //calling monaco editor
         },
@@ -194,7 +175,7 @@ function TextXBlock(runtime, element) {
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
           $(element)
-            .find(".results")
+            .find(".results-div")
             .text("Error occurred, please try again..........");
         },
       });
@@ -203,24 +184,24 @@ function TextXBlock(runtime, element) {
     //this will be called on successfull ajax request of initail load call
     function getTaskDetails(result) {
       //checks if there is any data is available
-      if (result.data && Object.keys(result.data).length > 0) {
-        let dataOfResult = result.data;
-        if (dataOfResult && Array.isArray(dataOfResult)) {
-          //checks if the monaco editor updated with code
-          if (!isEditorUpdated) {
-            if (editor) {
-              editor.setValue("");
-              //showing the input data code on the editor
-              editor.setValue(dataOfResult[4]);
-              //if the data is exist it it will show fetching results on page realods
-              $(element).find(".results-div").show();
-              $(element)
-                .find(".results")
-                .text("we are fetching your results.........!");
-              //assigning the user input code to a varibale to use later in the code
-              getUserAnswerFromDb = dataOfResult[4];
-              isEditorUpdated = true;
-            }
+      if (result.user_code !== "") {
+        //checks if the monaco editor updated with code
+        if (!isEditorUpdated) {
+          if (editor) {
+            editor.setValue("");
+            //showing the input data code on the editor
+            editor.setValue(result.user_code);
+            //if the data is exist it it will show fetching results on page realods
+            $(element).find(".results-div").show();
+            $(element)
+              .find(".results-div")
+              .text("we are fetching your results.........!");
+            $(element).find(".results").hide();
+            $(element).find(".results-marks").hide();
+            $(element).find(".msg").hide();
+            //assigning the user input code to a varibale to use later in the code
+            getUserAnswerFromDb = result.user_code;
+            isEditorUpdated = true;
           }
         }
         //calling the task result function which will update the UI of code results
@@ -281,33 +262,14 @@ function TextXBlock(runtime, element) {
             window.addEventListener("resize", () => {
               if (editor) {
                 editor.layout();
-                // $(element)
-                //   .find(".code-editor-sub-menu")
-                //   .css({
-                //     width: `${editor.getDomNode().clientWidth}px`,
-                //   });
               }
-              // $(element)
-              //   .find(".editor-container")
-              //   .css({ width: `${editor.getDomNode().clientWidth}px` });
-
-              // $(element)
-              //   .find("#container")
-              //   .css({ width: `${editor.getDomNode().clientWidth}px` });
-
-              // let editoContainer = $(element).find(".editor-container").width();
-              // console.log(editoContainer, " this is editor container");
-              // let container = $(element).find("#container").width();
-              // console.log(container, " this is container");
-              // let menu = $(element).find(".code-editor-sub-menu").width();
-              // console.log(menu, " this is width of menu");
             });
 
             //which is baiscally called on initial page relaod
             makeInitialAjaxCall();
 
             //showing text xblock container
-            $(element).find(".textxblock-container").css({ opacity: "1" });
+            $(".loader-overlay").fadeOut(500);
           }, (err) => {
             console.error("failed to load monaco editor", err);
           });
@@ -363,31 +325,17 @@ function TextXBlock(runtime, element) {
 
     //for theme changes
     $(element)
-      .find(".theme")
-      .on("click", () => {
+      .find(".theme-changer")
+      .on("change", () => {
         toggleTheme();
       });
 
     function toggleTheme() {
       if (!isThemeUpdated) {
         monaco.editor.setTheme("vs-light");
-        $(element).find(".light-theme").hide();
-        $(element).find(".dark-theme").show();
-        $(element)
-          .find(".code-editor-sub-menu")
-          .css({ "background-color": "white" });
-        $(element).find(".lable-checkbox").css({ color: "black" });
-
         isThemeUpdated = true;
       } else {
         monaco.editor.setTheme("vs-dark");
-        $(element).find(".dark-theme").hide();
-        $(element).find(".light-theme").show();
-        $(element)
-          .find(".code-editor-sub-menu")
-          .css({ "background-color": "rgb(62, 62, 68)" });
-
-        $(element).find(".lable-checkbox").css({ color: "white" });
         isThemeUpdated = false;
       }
     }
@@ -427,7 +375,12 @@ function TextXBlock(runtime, element) {
           console.error("Error occurred:", xhr.statusText);
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
-          $(element).find(".results").text("Error occurred, please try again.");
+          $(element)
+            .find(".results-div")
+            .text("Error occurred, please try again.");
+          $(element).find(".results").hide();
+          $(element).find(".results-marks").hide();
+          $(element).find(".msg").hide();
         },
       });
     }
@@ -463,8 +416,11 @@ function TextXBlock(runtime, element) {
               $(element).find(".progressBar-div").hide();
               $(element).find(".results-div").show();
               $(element)
-                .find(".results")
+                .find(".results-div")
                 .text("Error occurred, please try again.");
+              $(element).find(".results").hide();
+              $(element).find(".results-marks").hide();
+              $(element).find(".msg").hide();
             },
           });
         }
@@ -474,6 +430,7 @@ function TextXBlock(runtime, element) {
     }
 
     function getTaskResult(result) {
+      console.log(result, " from handler task method response");
       //which manages progress bar
       $(element)
         .find("#progressBar")
@@ -490,10 +447,13 @@ function TextXBlock(runtime, element) {
           $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: JSON.stringify({ id: result.taskid, xblock_id: result.test }),
+            data: JSON.stringify({}),
             success: (response) => {
               //based on the celery task status it will updted the resul for progress bar
-              if (response.status === 200 || response.status === 400) {
+              if (
+                response.status !== "pending" &&
+                response.status !== "error"
+              ) {
                 progressLoad = 100; //if the celery results are ready it will show bar 100%
                 $(element)
                   .find("#progressBar")
@@ -520,8 +480,11 @@ function TextXBlock(runtime, element) {
               $(element).find(".progressBar-div").hide();
               $(element).find(".results-div").show();
               $(element)
-                .find(".results")
+                .find(".results-div")
                 .text("Error occurred, please try again.");
+              $(element).find(".results").hide();
+              $(element).find(".results-marks").hide();
+              $(element).find(".msg").hide();
             },
           });
         }
@@ -530,25 +493,17 @@ function TextXBlock(runtime, element) {
 
     //which manages to show results and progress bar
     function showResults(result) {
-      if (result.status === 200) {
+      if (result.status === "ready") {
         $(element).find(".progressBar-div").hide();
         $(element).find(".results-div").show();
-        $(element).find(".results").text("your solution was correct");
+        $(element).find(".results").append(result.is_correct);
+        $(element).find(".results-marks").append(result.score);
+        $(element).find(".msg").append(result.message);
         $(element)
           .find("#submit")
           .css({ "pointer-events": "auto", opacity: "1" });
         $(element).find(".reset").css({ "pointer-events": "auto" });
 
-        //clearing interval after getting result
-        clearIntervalsFunction();
-      } else if (result.status === 400) {
-        $(element).find(".progressBar-div").hide();
-        $(element).find(".results-div").show();
-        $(element).find(".results").text("Your solution was incorrect");
-        $(element)
-          .find("#submit")
-          .css({ "pointer-events": "auto", opacity: "1" });
-        $(element).find(".reset").css({ "pointer-events": "auto" });
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {
