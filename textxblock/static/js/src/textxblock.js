@@ -194,12 +194,9 @@ function TextXBlock(runtime, element) {
             editor.setValue(result.user_code);
             //if the data is exist it it will show fetching results on page realods
             $(element).find(".results-div").show();
-            $(element)
-              .find(".results-div")
-              .text("we are fetching your results.........!");
-            $(element).find(".results").hide();
-            $(element).find(".results-marks").hide();
-            $(element).find(".msg").hide();
+            $(element).find(".results").text("We are fetching your results...");
+            $(element).find(".results-marks").text("");
+            $(element).find(".msg").text("");
             //assigning the user input code to a varibale to use later in the code
             getUserAnswerFromDb = result.user_code;
             isEditorUpdated = true;
@@ -459,6 +456,7 @@ function TextXBlock(runtime, element) {
                 response.status !== "pending" &&
                 response.status !== "error"
               ) {
+                console.log("inside if");
                 progressLoad = 100; //if the celery results are ready it will show bar 100%
                 $(element)
                   .find("#progressBar")
@@ -467,6 +465,7 @@ function TextXBlock(runtime, element) {
                   .find("#progressBar")
                   .text(progressLoad + "%");
               } else {
+                console.log("inside else");
                 //which ensures the progree bar not to exceed 100%
                 progressLoad = Math.min(progressLoad + 10, 100);
                 $(element)
@@ -498,12 +497,16 @@ function TextXBlock(runtime, element) {
 
     //which manages to show results and progress bar
     function showResults(result) {
+      console.log(result, " inside show results");
       if (result.status === "ready") {
         $(element).find(".progressBar-div").hide();
         $(element).find(".results-div").show();
-        $(element).find(".results").append(result.is_correct);
-        $(element).find(".results-marks").append(result.score);
-        $(element).find(".msg").append(result.message);
+        $(element)
+          .find(".results")
+          .text(`Solution Correct: ${result.is_correct}`);
+        $(element).find(".results-marks").text(`Marks: ${result.score}`);
+        $(element).find(".msg").text(`Message: ${result.message}`);
+
         $(element)
           .find("#submit")
           .css({ "pointer-events": "auto", opacity: "1" });
