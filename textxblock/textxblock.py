@@ -12,10 +12,10 @@ from celery.result import AsyncResult
 import os
 from webob import Response
 import json
-import redis
+#import redis
 import uuid
-from lms.djangoapps.courseware.models import StudentModule
-from opaque_keys.edx.keys import UsageKey
+#from lms.djangoapps.courseware.models import StudentModule
+#from opaque_keys.edx.keys import UsageKey
 import traceback
 from django.contrib.auth.models import User
 import base64
@@ -207,8 +207,7 @@ class TextXBlock(XBlock):
             'expected_output' : self.expected_output
         }
 
-
-    redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
+    #redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
     #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):

@@ -6,8 +6,6 @@ function TextXBlock(runtime, element) {
     metaTag.name = "viewport";
     metaTag.content = "width=device-width, initial-scale=1.0";
     document.getElementsByTagName("head")[0].appendChild(metaTag);
-    //whcih unchecks checkbox on page loads
-    $(element).find(".show-ans-check").prop("checked", false);
     $(element)
       .find(".answer-container-div")
       .css({ "pointer-events": "none", opacity: "0" });
@@ -47,6 +45,7 @@ function TextXBlock(runtime, element) {
       ) {
         let storedDate = new Date(localStorage.getItem("time"));
         timeDifference = currentDateTime - storedDate;
+        console.log(timeDifference, " rhis is time difference");
         console.log(
           Math.floor(timeDifference / 60000),
           " this is time difference"
@@ -70,8 +69,9 @@ function TextXBlock(runtime, element) {
       let min = minutesFromLocalStorage;
       let zeroBeforeSec = "0";
       let zeroBeforeMin = "0";
-
+      console.log("before if", timeDifference);
       if (Math.floor(timeDifference / 60000) < 2) {
+        console.log("inside if");
         let interval = setInterval(() => {
           count--;
           if (count < 0) {
@@ -281,7 +281,7 @@ function TextXBlock(runtime, element) {
 
     //on code check box it will show answer editor
     $(element)
-      .find(".show-ans-check")
+      .find(".ans-select")
       .on("change", () => {
         toggleAnswer();
       });
