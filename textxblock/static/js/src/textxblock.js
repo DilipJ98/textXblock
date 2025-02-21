@@ -299,7 +299,6 @@ function TextXBlock(runtime, element) {
           opacity: "1",
           transition: "opacity 1s ease-in",
         });
-
         isCheckBoxChecked = true;
       } else {
         $(element).find(".answer-container").css({
@@ -313,10 +312,6 @@ function TextXBlock(runtime, element) {
           opacity: "0",
           transition: "opacity 1s ease-out",
         });
-        $(element).find(".code-editor-sub-menu").css({
-          "border-top-right-radius": "4px",
-        });
-
         isCheckBoxChecked = false;
       }
     }

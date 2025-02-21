@@ -12,14 +12,14 @@ from celery.result import AsyncResult
 import os
 from webob import Response
 import json
-import redis
+# import redis
 import uuid
-from lms.djangoapps.courseware.models import StudentModule
-from lms.djangoapps.courseware.user_state_client import XBlockUserStateClient
-from opaque_keys.edx.keys import UsageKey
+# from lms.djangoapps.courseware.models import StudentModule
+# from lms.djangoapps.courseware.user_state_client import XBlockUserStateClient
+# from opaque_keys.edx.keys import UsageKey
 import traceback
 from django.contrib.auth.models import User
-
+import base64
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -209,7 +209,7 @@ class TextXBlock(XBlock):
         }
 
 
-    redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
+    #redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
     #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
@@ -222,7 +222,8 @@ class TextXBlock(XBlock):
         data_dict = self.get_admin_data()
         data_dict['student_id'] = student_id
         data_dict['student_name'] = student_name
-        data_dict['student_code'] = data['user_input']
+        encoded_code = base64.b64encode(data['user_input'].encode()).decode()
+        data_dict['student_code'] = encoded_code
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
         data_dict['usage_key'] = block_location_id
          
@@ -279,41 +280,15 @@ class TextXBlock(XBlock):
     #this will be triggered if user clicks on reset button
     @XBlock.json_handler
     def delete_task(self, data, suffix=''):
-        xblock_instance_data = str(self.scope_ids)
-        block_location_id = self.scope_ids.usage_id #xblock_instance_data.split("'")[-2]
-        user_id = str(self.scope_ids.user_id)        
-        cursor, connection = self.database_connection_fun()
-        print(self.scope_ids.usage_id, "this is the block id@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        #resetting the student input code to empty string
         self.student_input_code = ""
+        self.score = 0
+        self.message = ""
+        self.is_correct = False
         self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
         self.save()
-        
-        if cursor:
-            try:
-                #it checks the xblock id and user id exist in databse
-                cursor.execute('select * from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id))
-                feteched_data = cursor.fetchone()
-                #setting marks to zero if the code is resets
-                if feteched_data is not None:
-                    self.score = 0
-                    self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
-                    self.save()
-                    #delete data from database
-                    cursor.execute('delete from xblockdata where xblock_id = %s and user_id = %s', (block_location_id, user_id) )
-                    connection.commit()
-                    return {"status": "success", "message": "task deleted successfully."}
-                else:
-                    return {"status": "error", "message": "task not found."}
-            except Exception as e:
-                print("error while executing query in delete task result")
-                return {'status': 500, 'error': str(e)}
-            finally:
-                if cursor:
-                    cursor.close()
-                if connection:
-                    connection.close()
+        return {"status" : "success"}
 
+       
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
     @staticmethod
