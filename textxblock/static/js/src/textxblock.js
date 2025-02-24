@@ -495,6 +495,7 @@ function TextXBlock(runtime, element) {
       console.log(result, " inside show results");
       if (result.status === "ready") {
         $(element).find(".progressBar-div").hide();
+        $(element).find(".results-div").css({ opacity: "1" });
         $(element).find(".results-div").show();
         $(element)
           .find(".results")
