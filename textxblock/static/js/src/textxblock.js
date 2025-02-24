@@ -451,33 +451,12 @@ function TextXBlock(runtime, element) {
                 response.status !== "pending" &&
                 response.status !== "error"
               ) {
-                console.log("inside if");
-                progressLoad = 100; //if the celery results are ready it will show bar 100%
-                $(element)
-                  .find("#progressBar")
-                  .css("width", progressLoad + "%");
-                $(element)
-                  .find("#progressBar")
-                  .text(progressLoad + "%");
+                animateProgress(100);
               } else {
                 console.log("inside else");
-
                 //which ensures the progress bar not to exceed 100%
                 let finalProgressLoad = Math.min(progressLoad + 10, 100);
-                console.log(finalProgressLoad, " final progress load");
-                console.log(progressLoad, " this is progress load");
-                for (let i = progressLoad; i <= finalProgressLoad; i++) {
-                  console.log(i, " inside loop");
-                  $(element).find("#progressBar").css("width", +"%");
-                  $(element)
-                    .find("#progressBar")
-                    .text(finalProgressLoad + "%");
-                }
-                progressLoad = finalProgressLoad;
-                console.log(
-                  progressLoad,
-                  " this is after initializing the progress load"
-                );
+                animateProgress(finalProgressLoad);
               }
               showResults(response);
               isRequestInProgress = false;
@@ -497,6 +476,26 @@ function TextXBlock(runtime, element) {
           });
         }
       }, 5000);
+    }
+
+    function animateProgress(targetProgress) {
+      let currentProgress = progressLoad;
+      function updateProgress() {
+        if (currentProgress < targetProgress) {
+          currentProgress++;
+
+          $(element)
+            .find("#progressBar")
+            .css("width", currentProgress + "%");
+          $(element)
+            .find("#progressBar")
+            .text(currentProgress + "%");
+          setTimeout(updateProgress, 50);
+        } else {
+          progressLoad = targetProgress;
+        }
+      }
+      updateProgress();
     }
 
     //which manages to show results and progress bar
