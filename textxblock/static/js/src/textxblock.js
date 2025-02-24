@@ -351,7 +351,7 @@ function TextXBlock(runtime, element) {
       $(element)
         .find("#submit")
         .css({ "pointer-events": "none", opacity: "0.5" });
-      //calling user input answer function which will get the value duing submit
+      //calling user input answer function which will get the value during submit
       userInputAnswer(editor.getValue());
       clearIntervalsFunction();
     }
@@ -461,7 +461,7 @@ function TextXBlock(runtime, element) {
                   .text(progressLoad + "%");
               } else {
                 console.log("inside else");
-                //which ensures the progree bar not to exceed 100%
+                //which ensures the progress bar not to exceed 100%
                 progressLoad = Math.min(progressLoad + 10, 100);
                 $(element)
                   .find("#progressBar")
