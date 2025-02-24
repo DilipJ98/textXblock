@@ -369,6 +369,7 @@
   background-color: lightgreen;
 }
 .msg {
+  margin: 0;
   background-color: lightcoral;
 }
 

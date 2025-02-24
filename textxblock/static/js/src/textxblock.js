@@ -472,8 +472,8 @@ function TextXBlock(runtime, element) {
                     .find("#progressBar")
                     .text(i + "%");
                 }
+                progressLoad = finalProgressLoad;
               }
-              progressLoad = finalProgressLoad;
               showResults(response);
               isRequestInProgress = false;
             },
