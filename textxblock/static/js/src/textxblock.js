@@ -461,15 +461,19 @@ function TextXBlock(runtime, element) {
                   .text(progressLoad + "%");
               } else {
                 console.log("inside else");
+
                 //which ensures the progress bar not to exceed 100%
-                progressLoad = Math.min(progressLoad + 10, 100);
-                $(element)
-                  .find("#progressBar")
-                  .css("width", progressLoad + "%");
-                $(element)
-                  .find("#progressBar")
-                  .text(progressLoad + "%");
+                let finalProgressLoad = Math.min(progressLoad + 10, 100);
+                for (let i = progressLoad; i <= finalProgressLoad; i++) {
+                  $(element)
+                    .find("#progressBar")
+                    .css("width", i + "%");
+                  $(element)
+                    .find("#progressBar")
+                    .text(i + "%");
+                }
               }
+              progressLoad = finalProgressLoad;
               showResults(response);
               isRequestInProgress = false;
             },
