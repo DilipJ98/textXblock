@@ -27,6 +27,7 @@ class TextXBlock(XBlock):
     """
     has_score = True
 
+    # TO-DO: delete count, and define your own fields.
     question = String (
         default = "",
         scope =  Scope.content,
