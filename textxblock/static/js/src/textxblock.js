@@ -483,7 +483,6 @@ function TextXBlock(runtime, element) {
       function updateProgress() {
         if (currentProgress < targetProgress) {
           currentProgress++;
-
           $(element)
             .find("#progressBar")
             .css("width", currentProgress + "%");

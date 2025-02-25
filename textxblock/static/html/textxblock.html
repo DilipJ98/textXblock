@@ -1,7 +1,4 @@
 <div class="textxblock-container">
-  <div class="loader-overlay">
-    <div class="internal-loader"></div>
-  </div>
   <div class="main-div">
     <div class="show-question-div">
       <p id="show-question"></p>
@@ -10,10 +7,10 @@
       <div class="code-editor-menu">
         <div id="submit"><span class="arrow"></span><span>Run</span></div>
         <div class="checkbox-div">
-          View Answer:
+          Answer Visibility:
           <select class="ans-select" autocomplete="off">
-            <option>No</option>
-            <option>Yes</option>
+            <option>Hide</option>
+            <option>Show</option>
           </select>
           <span id="timer">00:00</span>
         </div>
@@ -41,6 +38,9 @@
         </div>
       </div>
       <div class="editors-div">
+        <div class="loader-overlay">
+          <div class="internal-loader"></div>
+        </div>
         <div class="editor-container">
           <div id="container"></div>
         </div>
@@ -56,6 +56,9 @@
         <div class="results-div">
           <span class="results"></span><span class="results-marks"></span
           ><span class="msg"></span>
+        </div>
+        <div class="test-progress">
+          <div class="progress"></div>
         </div>
       </div>
     </div>

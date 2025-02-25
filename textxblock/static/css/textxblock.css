@@ -326,8 +326,12 @@
 .progressBar-div {
   display: none;
   width: 100%;
-  border-radius: 3px;
-  background-color: rgb(203, 199, 199);
+  height: 20px;
+  border-radius: 10px;
+  background-color: #e0e0e0;
+  box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.15);
+  border: 2px solid #b0b0b0;
+  overflow: hidden;
 }
 
 #progressBar {
@@ -337,8 +341,26 @@
   width: 0%;
   height: 100%;
   color: white;
-  background-color: #337ab7;
-  transition: width 0.1s ease-in-out;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+
+  background: linear-gradient(90deg, #0556f3, #003bb3);
+
+  background-size: 40px 40px;
+  animation: progress-stripes 1s linear infinite;
+
+  border-radius: 10px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes progress-stripes {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 40px 0;
+  }
 }
 
 .results-div {

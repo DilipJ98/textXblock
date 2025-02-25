@@ -207,7 +207,7 @@ class TextXBlock(XBlock):
             'expected_output' : self.expected_output
         }
 
-    redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
+    #redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
     #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
