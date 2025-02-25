@@ -132,7 +132,7 @@
 }
 
 .ans-select:hover {
-  background-color: #e0e0e0;
+  background-color: white;
   color: #0556f3;
   transform: scale(1.05);
 }
@@ -168,7 +168,7 @@
 }
 
 .theme-changer:hover {
-  background-color: #e0e0e0;
+  background-color: white;
   color: #0556f3;
   transform: scale(1.05);
 }
@@ -279,7 +279,7 @@
   width: max-content;
   min-width: 120px;
   max-width: 200px;
-  top: -32px;
+  top: -34px;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;

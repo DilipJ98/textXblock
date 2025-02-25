@@ -34,71 +34,60 @@ function TextXBlock(runtime, element) {
 
     function timerFun() {
       let currentDateTime = new Date();
-      let timeDifference;
-      let minutesFromLocalStorage = 0;
+      let timeDifference = 0;
+      let minutesFromLocalStorage = 1;
       let secondsFromLocalStorage = 0;
+      let isNewTimer = false;
 
-      // Check if the time data is stored in localStorage
       if (
         localStorage.getItem("time") &&
         localStorage.getItem("remainingTime")
       ) {
         let storedDate = new Date(localStorage.getItem("time"));
         timeDifference = currentDateTime - storedDate;
-        console.log(timeDifference, " rhis is time difference");
-        console.log(
-          Math.floor(timeDifference / 60000),
-          " this is time difference"
-        );
-        // Calculate the remaining time based on the stored time
+
         let remainingTime = parseInt(localStorage.getItem("remainingTime"));
         minutesFromLocalStorage = Math.floor(remainingTime / 60);
         secondsFromLocalStorage = remainingTime % 60;
       } else {
-        // if no time is stored, initialize the timer and save the start time
-        minutesFromLocalStorage = 2; // intiallly set to 5 min
-        secondsFromLocalStorage = 0;
         localStorage.setItem("time", currentDateTime.toISOString());
-        localStorage.setItem(
-          "remainingTime",
-          minutesFromLocalStorage * 60 + secondsFromLocalStorage
-        );
+        localStorage.setItem("remainingTime", minutesFromLocalStorage * 60);
+        isNewTimer = true;
       }
 
-      let count = secondsFromLocalStorage;
-      let min = minutesFromLocalStorage;
-      let zeroBeforeSec = "0";
-      let zeroBeforeMin = "0";
-      console.log("before if", timeDifference);
-      if (Math.floor(timeDifference / 60000) < 2) {
-        console.log("inside if");
-        let interval = setInterval(() => {
-          count--;
-          if (count < 0) {
-            min--;
-            count = 59;
-          }
-
-          let formattedCount = count < 10 ? zeroBeforeSec + count : count;
-          let formattedMin = min < 10 ? zeroBeforeMin + min : min;
-          let formattedTimer = `${formattedMin}:${formattedCount}`;
-
-          // Update the timer on the page
-          $(element).find("#timer").text(formattedTimer);
-
-          // Save the remaining time to localStorage each second
-          localStorage.setItem("remainingTime", min * 60 + count);
-
-          if (min === 0 && count === 0) {
-            clearInterval(interval);
-            isTImerEnd = true;
-            // localStorage.removeItem("time");
-            // localStorage.removeItem("remainingTime");
-          }
-        }, 1000);
+      if (isNewTimer || Math.floor(timeDifference / 60000) < 1) {
+        startTimer(minutesFromLocalStorage, secondsFromLocalStorage);
       } else {
         isTImerEnd = true;
       }
+    }
+
+    function startTimer(min, sec) {
+      let zeroBeforeSec = "0";
+      let zeroBeforeMin = "0";
+
+      let interval = setInterval(() => {
+        sec--;
+        if (sec < 0) {
+          min--;
+          sec = 59;
+        }
+
+        let formattedSec = sec < 10 ? zeroBeforeSec + sec : sec;
+        let formattedMin = min < 10 ? zeroBeforeMin + min : min;
+        let formattedTimer = `${formattedMin}:${formattedSec}`;
+
+        //update the timer on the page
+        document.querySelector("#timer").textContent = formattedTimer;
+
+        //save the remaining time to localStorage
+        localStorage.setItem("remainingTime", min * 60 + sec);
+
+        if (min === 0 && sec === 0) {
+          clearInterval(interval);
+          isTImerEnd = true;
+        }
+      }, 1000);
     }
 
     timerFun();
@@ -282,8 +271,12 @@ function TextXBlock(runtime, element) {
     //on code check box it will show answer editor
     $(element)
       .find(".ans-select")
-      .on("change", () => {
-        toggleAnswer();
+      .on("change", function (e) {
+        if (isTImerEnd) {
+          toggleAnswer();
+        } else {
+          $(this).val("Hide");
+        }
       });
 
     function toggleAnswer() {
