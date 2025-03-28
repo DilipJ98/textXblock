@@ -333,9 +333,10 @@ function TextXBlock(runtime, element) {
     function toggleTheme() {
       if (!isThemeUpdated) {
         monaco.editor.setTheme("vs-dark");
-        $(element)
-          .find(".textxblock-container")
-          .css("background-color", "black");
+        $(element).find(".textxblock-container").css({
+          "background-color": "black",
+          border: "1px solid rgba(255, 255, 255, 0.5)",
+        });
 
         //code editor menu
         $(element).find(".code-editor-menu").css({
@@ -461,9 +462,10 @@ function TextXBlock(runtime, element) {
           .find(".editors-div")
           .css({ border: "1px solid #ddd", borderTop: "none" });
         $(element).find(".code-svg-div").css("color", "#000");
-        $(element)
-          .find(".textxblock-container")
-          .css("background-color", "#f5f5f5");
+        $(element).find(".textxblock-container").css({
+          "background-color": "#f5f5f5",
+          border: "1px solid #ddd",
+        });
 
         //answer container div
         $(element)
