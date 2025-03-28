@@ -1,72 +1,113 @@
 <div class="textxblock-container">
   <div class="main-div">
-    <div class="show-question-div">
-      <p id="show-question"></p>
+    <div class="loader-overlay">
+      <div class="internal-loader"></div>
     </div>
-    <div class="container-div">
-      <div class="code-editor-menu">
-        <div id="submit"><span class="arrow"></span><span>Run</span></div>
-        <div class="checkbox-div">
-          Answer Visibility:
-          <select class="ans-select" autocomplete="off">
-            <option>Hide</option>
-            <option>Show</option>
-          </select>
-          <div class="timer-div">
-            <span
-              style="padding: 1px; display: flex; align-items: center"
-              class="timer-text"
-              >Solution unlocks in:</span
-            >
-            <span
-              style="padding: 1px; display: flex; align-items: center"
-              id="timer"
-              >00:00</span
-            >
+    <div class="header-div">
+      <div class="sub-header-div-one"></div>
+      <div class="sub-header-div-two">
+        <select class="theme-changer" autocomplete="off">
+          <option>Light Mode</option>
+          <option>Dark Mode</option>
+        </select>
+        <div class="timer-div">
+          <span class="timer-text">Solution unlocks in:</span>
+          <div class="timer-container">
+            <span id="timer">00:00</span>
           </div>
         </div>
-
-        <div class="theme">
-          Editor Theme:
-          <select class="theme-changer" autocomplete="off">
-            <option>Dark Mode</option>
-            <option>Light Mode</option>
-          </select>
-        </div>
-        <div class="lang-div">Language: <span class="lang"></span></div>
-        <div class="reset">
-          <svg
-            width="20px"
-            height="20px"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M22.719 12A10.719 10.719 0 0 1 1.28 12h.838a9.916 9.916 0 1 0 1.373-5H8v1H2V2h1v4.2A10.71 10.71 0 0 1 22.719 12z"
-            />
-            <path fill="none" d="M0 0h24v24H0z" />
-          </svg>
-        </div>
       </div>
-      <div class="editors-div">
-        <div class="loader-overlay">
-          <div class="internal-loader"></div>
-        </div>
-        <div class="editor-container">
-          <div id="container"></div>
-        </div>
-        <div class="answer-container-div">
-          <pre class="answer-container"></pre>
-        </div>
+    </div>
+    <div class="main-container">
+      <div class="show-question-div">
+        <div class="question-menu"></div>
+        <p id="show-question"></p>
       </div>
-
-      <div class="progress-results">
-        <div class="progressBar-div">
-          <div id="progressBar"></div>
+      <div class="container-div">
+        <div class="code-editor-menu">
+          <div class="code-editor-sub-menu-one">
+            <div class="code-svg-div">
+              <?xml version="1.0" encoding="iso-8859-1"?>
+              <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+              <svg
+                height="20px"
+                width="20px"
+                version="1.1"
+                id="Layer_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 512 512"
+                xml:space="preserve"
+              >
+                <path
+                  style="fill: #1e90ff"
+                  d="M0,260.908l174.648-81.136v38.568l-132.08,57.848v0.728l132.08,57.848v38.568L0,292.212V260.908z"
+                />
+                <path
+                  style="fill: #1e90ff"
+                  d="M201.6,387.9l77.864-263.8h36.752L238.4,387.9H201.6z"
+                />
+                <path
+                  style="fill: #1e90ff"
+                  d="M512,293.284L337.352,373.34v-38.568l134.992-57.848v-0.728L337.352,218.34v-38.568L512,259.828
+	V293.284z"
+                />
+              </svg>
+              <span>Code</span>
+            </div>
+          </div>
+          <div class="code-editor-sub-menu-two">
+            <div class="submit-div">
+              <div id="submit"><span class="arrow"></span></div>
+            </div>
+            <div class="reset-div">
+              <div class="reset">
+                <svg
+                  width="15px"
+                  height="15px"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M22.719 12A10.719 10.719 0 0 1 1.28 12h.838a9.916 9.916 0 1 0 1.373-5H8v1H2V2h1v4.2A10.71 10.71 0 0 1 22.719 12z"
+                    fill="#black"
+                  />
+                  <path fill="none" d="M0 0h24v24H0z" />
+                </svg>
+              </div>
+            </div>
+            <select class="language" autocomplete="off">
+              <option>Java</option>
+            </select>
+          </div>
         </div>
-        <div class="results-div">
-          <span class="results"></span><span class="results-marks"></span
-          ><span class="msg"></span>
+        <div class="editor-output-div">
+          <div class="editors-div">
+            <div class="editor-container">
+              <div id="container"></div>
+            </div>
+            <div class="progress-results">
+              <div class="progressBar-div">
+                <div id="progressBar"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="answer-container-div">
+            <div class="output-div">
+              <div class="results-div">
+                <span class="results">&nbsp;</span
+                ><span class="results-marks">&nbsp;</span>
+              </div>
+              <select autocomplete="off" class="output-select">
+                <option>Output</option>
+                <option>Answer</option>
+              </select>
+            </div>
+            <div class="msg-answer-div">
+              <pre class="answer-container"></pre>
+            </div>
+          </div>
         </div>
       </div>
     </div>
