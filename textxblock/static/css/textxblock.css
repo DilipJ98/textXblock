@@ -28,7 +28,15 @@
   align-items: center;
   gap: 5px;
   border-radius: 4px;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border: 1px solid #ddd;
   /* position: relative; */
+}
+
+.main-div::-webkit-scrollbar {
+  display: none;
 }
 
 .main-container {
@@ -543,6 +551,7 @@
 
   .header-div {
     position: relative;
+    width: 95%;
   }
   .main-container {
     display: flex;
