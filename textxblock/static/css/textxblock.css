@@ -1,25 +1,21 @@
 #content {
-  position: relative;
-  border: 1px solid blue;
+  /* position: relative;
+  border: 1px solid blue; */
 }
 
 .textxblock-container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
+  width: 100% !important;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f5f5f5;
-  background-color: #003bb3;
+  background-color: red;
   font-family: sans-serif;
   box-sizing: border-box;
 }
 
 .main-div {
-  width: 100%;
+  width: 100% !important;
   height: 720px;
   padding-top: 10px;
   padding-bottom: 10px;
