@@ -333,10 +333,10 @@ function TextXBlock(runtime, element) {
     function toggleTheme() {
       if (!isThemeUpdated) {
         monaco.editor.setTheme("vs-dark");
-        $(element).find(".textxblock-container").css({
-          "background-color": "black",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-        });
+        // $(element).find(".textxblock-container").css({
+        //   "background-color": "black",
+        //   border: "1px solid rgba(255, 255, 255, 0.5)",
+        // });
 
         //code editor menu
         $(element).find(".code-editor-menu").css({
@@ -375,10 +375,10 @@ function TextXBlock(runtime, element) {
           color: "#d4d4d4",
         });
 
-        //.show-question-div
+        // .show-question-div
         $(element).find(".show-question-div").css({
           color: "white",
-          "background-color": "#1e1e1e",
+          // "background-color": "#1e1e1e",
         });
 
         //question mennu
@@ -477,10 +477,10 @@ function TextXBlock(runtime, element) {
           borderBottom: "none",
         });
         $(element).find(".code-svg-div").css("color", "#000");
-        $(element).find(".textxblock-container").css({
-          "background-color": "#f5f5f5",
-          border: "1px solid #ddd",
-        });
+        // $(element).find(".textxblock-container").css({
+        //   "background-color": "#f5f5f5",
+        //   border: "1px solid #ddd",
+        // });
 
         //answer container div
         $(element).find(".msg-answer-div").css({
@@ -502,7 +502,7 @@ function TextXBlock(runtime, element) {
 
         //.show-question-div
         $(element).find(".show-question-div").css({
-          "background-color": "#f5f5f5",
+          // "background-color": "#f5f5f5",
           // borderBottom: "1px solid #ddd",
           color: "#000",
         });
@@ -514,7 +514,7 @@ function TextXBlock(runtime, element) {
         });
 
         $(element).find("#show-question").css({
-          "background-color": "#f5f5f5",
+          "background-color": "white",
           border: "1px solid #ddd",
           borderTop: "none",
           // borderBottom: "none",
