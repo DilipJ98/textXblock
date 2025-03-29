@@ -314,11 +314,11 @@ function TextXBlock(runtime, element) {
         isCheckBoxChecked = true;
       } else {
         $(element).find(".answer-container").text("");
-        $(element).find(".answer-container").css({
-          "pointer-events": "none",
-          opacity: "0",
-          transition: "opacity 1s ease-out",
-        });
+        // $(element).find(".answer-container").css({
+        //   "pointer-events": "none",
+        //   opacity: "0",
+        //   transition: "opacity 1s ease-out",
+        // });
         isCheckBoxChecked = false;
       }
     }
@@ -347,21 +347,25 @@ function TextXBlock(runtime, element) {
         //progress results
         $(element).find(".progress-results").css({
           "background-color": "#0a84ff2e",
-        });
-        $(element).find(".editors-div").css({
           border: "1px solid rgba(255, 255, 255, 0.5)",
           borderTop: "none",
         });
+        $(element).find(".editor-container").css({
+          border: "1px solid rgba(255, 255, 255, 0.5)",
+          borderTop: "none",
+          borderBottom: "none",
+        });
         $(element).find(".code-svg-div").css("color", "white");
         //answer container div
-        $(element).find(".answer-container-div").css({
+        $(element).find(".msg-answer-div").css({
           "background-color": "#333",
           border: "1px solid rgba(255, 255, 255, 0.5)",
         });
         //out put div
         $(element).find(".output-div").css({
           "background-color": "#333",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.5)",
+          border: "1px solid rgba(255, 255, 255, 0.5)",
+          borderBottom: "none",
         });
 
         //answer-container
@@ -373,15 +377,22 @@ function TextXBlock(runtime, element) {
 
         //.show-question-div
         $(element).find(".show-question-div").css({
-          "background-color": "#1e1e1e",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
           color: "white",
+          "background-color": "#1e1e1e",
         });
+
         //question mennu
         $(element).find(".question-menu").css({
           "background-color": "#333",
-          borderBottom: "1px solid #888",
+          border: "1px solid #888",
           // color: "#000",
+        });
+
+        $(element).find("#show-question").css({
+          "background-color": "#1e1e1e",
+          border: "1px solid #888",
+          borderTop: "none",
+          // borderBottom: "none",
         });
 
         //theme changer
@@ -457,10 +468,14 @@ function TextXBlock(runtime, element) {
         });
         $(element).find(".progress-results").css({
           "background-color": "#0a84ff2e",
+          border: "1px solid #ddd",
+          borderTop: "none",
         });
-        $(element)
-          .find(".editors-div")
-          .css({ border: "1px solid #ddd", borderTop: "none" });
+        $(element).find(".editor-container").css({
+          border: "1px solid #ddd",
+          borderTop: "none",
+          borderBottom: "none",
+        });
         $(element).find(".code-svg-div").css("color", "#000");
         $(element).find(".textxblock-container").css({
           "background-color": "#f5f5f5",
@@ -468,13 +483,16 @@ function TextXBlock(runtime, element) {
         });
 
         //answer container div
-        $(element)
-          .find(".answer-container-div")
-          .css({ "background-color": "#f5f5f5", border: "1px solid #ddd" });
+        $(element).find(".msg-answer-div").css({
+          "background-color": "#f5f5f5",
+          border: "1px solid #ddd",
+          borderTop: "none",
+        });
+
         //out put div
         $(element).find(".output-div").css({
           "background-color": "#f5f5f5",
-          borderBottom: "1px solid #ddd",
+          border: "1px solid #ddd",
         });
 
         //answer-container
@@ -485,14 +503,21 @@ function TextXBlock(runtime, element) {
         //.show-question-div
         $(element).find(".show-question-div").css({
           "background-color": "#f5f5f5",
-          border: "1px solid #ddd",
+          // borderBottom: "1px solid #ddd",
           color: "#000",
         });
         //question mennu
         $(element).find(".question-menu").css({
           "background-color": "#f5f5f5",
-          borderBottom: "1px solid #ddd",
+          border: "1px solid #ddd",
           color: "#000",
+        });
+
+        $(element).find("#show-question").css({
+          "background-color": "#f5f5f5",
+          border: "1px solid #ddd",
+          borderTop: "none",
+          // borderBottom: "none",
         });
 
         //theme changer
