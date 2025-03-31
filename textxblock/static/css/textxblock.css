@@ -19,9 +19,9 @@
 .textxblock-container::before,
 .textxblock-container::after {
   content: "";
-  position: absolute !important;
-  height: 1px !important;
-  background-color: red !important;
+  position: absolute;
+  height: 1px;
+  background-color: #ddd;
 }
 
 .textxblock-container::before {
