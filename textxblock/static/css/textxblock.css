@@ -13,15 +13,15 @@
   box-sizing: border-box;
   /* border: 1px solid black; */
   padding: 20px;
-  position: relative;
+  position: relative !important;
 }
 
 .textxblock-container::before,
 .textxblock-container::after {
   content: "";
-  position: absolute;
-  height: 1px;
-  background-color: red;
+  position: absolute !important;
+  height: 1px !important;
+  background-color: red !important;
 }
 
 .textxblock-container::before {
