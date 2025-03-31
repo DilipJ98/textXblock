@@ -295,7 +295,7 @@ function TextXBlock(runtime, element) {
     $(document).ready(function () {
       // Get the width of #content
       var contentWidth = $("#content").outerWidth();
-
+      console.log(contentWidth, " this is content width");
       // Apply the width to the pseudo-elements using inline styles
       $("<style>")
         .prop("type", "text/css")
