@@ -21,7 +21,6 @@
   content: "";
   position: absolute;
   left: 0;
-  width: inherit;
   height: 1px;
   background-color: black;
 }

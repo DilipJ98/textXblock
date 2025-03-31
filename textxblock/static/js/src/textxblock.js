@@ -292,6 +292,24 @@ function TextXBlock(runtime, element) {
       }
     }
 
+    $(document).ready(function () {
+      // Get the width of #content
+      var contentWidth = $("#content").outerWidth();
+
+      // Apply the width to the pseudo-elements using inline styles
+      $("<style>")
+        .prop("type", "text/css")
+        .html(
+          `
+          .textxblock-container::before,
+          .textxblock-container::after {
+            width: ${contentWidth}px !important;
+          }
+        `
+        )
+        .appendTo("head");
+    });
+
     //on code check box it will show answer editor
     $(element)
       .find(".output-select")
