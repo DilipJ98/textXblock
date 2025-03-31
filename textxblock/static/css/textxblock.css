@@ -21,7 +21,7 @@
   content: "";
   position: absolute;
   height: 1px;
-  background-color: black;
+  background-color: #ddd;
 }
 
 .textxblock-container::before {

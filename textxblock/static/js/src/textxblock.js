@@ -292,32 +292,32 @@ function TextXBlock(runtime, element) {
       }
     }
 
-    $(document).ready(function () {
-      function updateBorders() {
-        var contentWidth = $(".ltr").outerWidth();
+    // $(document).ready(function () {
+    //   function updateBorders() {
+    //     var contentWidth = $(".ltr").outerWidth();
 
-        console.log(contentWidth, "content width and left");
+    //     console.log(contentWidth, "content width and left");
 
-        // Apply styles dynamically
-        $("<style>")
-          .prop("type", "text/css")
-          .html(
-            `
-            .textxblock-container::before,
-            .textxblock-container::after {
-              width: ${contentWidth}px !important;
-            }
-          `
-          )
-          .appendTo("head");
-      }
+    //     // Apply styles dynamically
+    //     $("<style>")
+    //       .prop("type", "text/css")
+    //       .html(
+    //         `
+    //         .textxblock-container::before,
+    //         .textxblock-container::after {
+    //           width: ${contentWidth}px !important;
+    //         }
+    //       `
+    //       )
+    //       .appendTo("head");
+    //   }
 
-      // Run on page load
-      updateBorders();
+    //   // Run on page load
+    //   updateBorders();
 
-      // Run on window resize (to adjust dynamically)
-      $(window).resize(updateBorders);
-    });
+    //   // Run on window resize (to adjust dynamically)
+    //   $(window).resize(updateBorders);
+    // });
 
     //on code check box it will show answer editor
     $(element)
