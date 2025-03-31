@@ -294,7 +294,7 @@ function TextXBlock(runtime, element) {
 
     $(document).ready(function () {
       function updateBorders() {
-        var contentWidth = $(".lang_en view-in-mfe").outerWidth();
+        var contentWidth = $(".ltr").outerWidth();
 
         console.log(contentWidth, "content width and left");
 
