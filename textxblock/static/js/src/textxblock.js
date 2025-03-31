@@ -327,7 +327,7 @@ function TextXBlock(runtime, element) {
     $(element)
       .find(".theme-changer")
       .on("change", () => {
-        toggleTheme();
+        // toggleTheme();
       });
 
     function toggleTheme() {

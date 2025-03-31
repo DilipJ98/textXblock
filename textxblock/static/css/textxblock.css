@@ -11,6 +11,26 @@
   /* background-color: #f5f5f5; */
   font-family: sans-serif;
   box-sizing: border-box;
+  border: 1px solid black;
+  padding: 20px;
+}
+
+.textxblock-container::before,
+.textxblock-container::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100vw;
+  height: 1px;
+  background-color: black;
+}
+
+.textxblock-container::before {
+  top: 0;
+}
+
+.textxblock-container::after {
+  bottom: 0;
 }
 
 .main-div {
