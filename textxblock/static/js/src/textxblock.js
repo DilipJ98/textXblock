@@ -297,6 +297,8 @@ function TextXBlock(runtime, element) {
         var contentWidth = $("#content").outerWidth();
         var contentLeft = $("#content").offset().left; // Get left position of #content
 
+        console.log(contentWidth, contentLeft, "content width and left");
+
         // Apply styles dynamically
         $("<style>")
           .prop("type", "text/css")
