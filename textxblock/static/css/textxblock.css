@@ -36,10 +36,8 @@
 .main-div {
   width: 100% !important;
   height: 720px;
-  /* padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 4px;
-  padding-right: 4px; */
+  padding-top: 15px;
+  padding-bottom: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
