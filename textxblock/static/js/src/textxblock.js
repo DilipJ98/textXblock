@@ -295,9 +295,8 @@ function TextXBlock(runtime, element) {
     $(document).ready(function () {
       function updateBorders() {
         var contentWidth = $("#unit-iframe").outerWidth();
-        var contentLeft = $("#unit-iframe").offset().left; // Get left position of #content
 
-        console.log(contentWidth, contentLeft, "content width and left");
+        console.log(contentWidth, "content width and left");
 
         // Apply styles dynamically
         $("<style>")
@@ -307,7 +306,6 @@ function TextXBlock(runtime, element) {
             .textxblock-container::before,
             .textxblock-container::after {
               width: ${contentWidth}px !important;
-              left: ${contentLeft}px !important;
             }
           `
           )
