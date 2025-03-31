@@ -294,7 +294,7 @@ function TextXBlock(runtime, element) {
 
     $(document).ready(function () {
       function updateBorders() {
-        var contentWidth = $("#unit-iframe").outerWidth();
+        var contentWidth = $(".lang_en view-in-mfe").outerWidth();
 
         console.log(contentWidth, "content width and left");
 
