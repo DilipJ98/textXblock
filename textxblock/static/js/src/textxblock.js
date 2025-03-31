@@ -293,21 +293,30 @@ function TextXBlock(runtime, element) {
     }
 
     $(document).ready(function () {
-      // Get the width of #content
-      var contentWidth = $("#content").outerWidth();
-      console.log(contentWidth, " this is content width");
-      // Apply the width to the pseudo-elements using inline styles
-      $("<style>")
-        .prop("type", "text/css")
-        .html(
+      function updateBorders() {
+        var contentWidth = $("#content").outerWidth();
+        var contentLeft = $("#content").offset().left; // Get left position of #content
+
+        // Apply styles dynamically
+        $("<style>")
+          .prop("type", "text/css")
+          .html(
+            `
+            .textxblock-container::before,
+            .textxblock-container::after {
+              width: ${contentWidth}px !important;
+              left: ${contentLeft}px !important;
+            }
           `
-          .textxblock-container::before,
-          .textxblock-container::after {
-            width: ${contentWidth}px !important;
-          }
-        `
-        )
-        .appendTo("head");
+          )
+          .appendTo("head");
+      }
+
+      // Run on page load
+      updateBorders();
+
+      // Run on window resize (to adjust dynamically)
+      $(window).resize(updateBorders);
     });
 
     //on code check box it will show answer editor
