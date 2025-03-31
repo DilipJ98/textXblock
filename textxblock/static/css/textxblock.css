@@ -12,8 +12,9 @@
   font-family: sans-serif;
   box-sizing: border-box;
   /* border: 1px solid black; */
-  padding: 20px;
+  /* padding: 20px; */
   position: relative !important;
+  background-color: red;
 }
 
 .textxblock-container::before,
