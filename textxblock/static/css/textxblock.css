@@ -11,8 +11,9 @@
   /* background-color: #f5f5f5; */
   font-family: sans-serif;
   box-sizing: border-box;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   padding: 20px;
+  position: relative;
 }
 
 .textxblock-container::before,
@@ -20,7 +21,7 @@
   content: "";
   position: absolute;
   left: 0;
-  width: 100vw;
+  width: inherit;
   height: 1px;
   background-color: black;
 }
