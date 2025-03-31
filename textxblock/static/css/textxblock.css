@@ -20,7 +20,6 @@
 .textxblock-container::after {
   content: "";
   position: absolute;
-  left: 0;
   height: 1px;
   background-color: black;
 }
