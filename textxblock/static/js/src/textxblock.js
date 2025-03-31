@@ -294,8 +294,8 @@ function TextXBlock(runtime, element) {
 
     $(document).ready(function () {
       function updateBorders() {
-        var contentWidth = $("body").outerWidth();
-        var contentLeft = $("body").offset().left; // Get left position of #content
+        var contentWidth = $("#unit-iframe").outerWidth();
+        var contentLeft = $("#unit-iframe").offset().left; // Get left position of #content
 
         console.log(contentWidth, contentLeft, "content width and left");
 
