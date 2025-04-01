@@ -354,7 +354,8 @@ function TextXBlock(runtime, element) {
     $(element)
       .find(".theme-changer")
       .on("change", () => {
-        // toggleTheme();
+        $("body").toggleClass("dark-mode");
+        toggleTheme();
       });
 
     function toggleTheme() {
@@ -366,245 +367,245 @@ function TextXBlock(runtime, element) {
         // });
 
         //code editor menu
-        $(element).find(".code-editor-menu").css({
-          "background-color": "#333",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-        });
+        // $(element).find(".code-editor-menu").css({
+        //   "background-color": "#333",
+        //   border: "1px solid rgba(255, 255, 255, 0.5)",
+        // });
 
-        //progress results
-        $(element).find(".progress-results").css({
-          "background-color": "#0a84ff2e",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-          borderTop: "none",
-        });
-        $(element).find(".editor-container").css({
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-          borderTop: "none",
-          borderBottom: "none",
-        });
-        $(element).find(".code-svg-div").css("color", "white");
-        //answer container div
-        $(element).find(".msg-answer-div").css({
-          "background-color": "#333",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-        });
-        //out put div
-        $(element).find(".output-div").css({
-          "background-color": "#333",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-          borderBottom: "none",
-        });
+        // //progress results
+        // $(element).find(".progress-results").css({
+        //   "background-color": "#0a84ff2e",
+        //   border: "1px solid rgba(255, 255, 255, 0.5)",
+        //   borderTop: "none",
+        // });
+        // $(element).find(".editor-container").css({
+        //   border: "1px solid rgba(255, 255, 255, 0.5)",
+        //   borderTop: "none",
+        //   borderBottom: "none",
+        // });
+        // $(element).find(".code-svg-div").css("color", "white");
+        // //answer container div
+        // $(element).find(".msg-answer-div").css({
+        //   "background-color": "#333",
+        //   border: "1px solid rgba(255, 255, 255, 0.5)",
+        // });
+        // //out put div
+        // $(element).find(".output-div").css({
+        //   "background-color": "#333",
+        //   border: "1px solid rgba(255, 255, 255, 0.5)",
+        //   borderBottom: "none",
+        // });
 
-        //answer-container
-        $(element).find(".answer-container").css({
-          "background-color": "#1e1e1e",
-          border: "1px solid #333",
-          color: "#d4d4d4",
-        });
+        // //answer-container
+        // $(element).find(".answer-container").css({
+        //   "background-color": "#1e1e1e",
+        //   border: "1px solid #333",
+        //   color: "#d4d4d4",
+        // });
 
-        // .show-question-div
-        $(element).find(".show-question-div").css({
-          color: "white",
-          // "background-color": "#1e1e1e",
-        });
+        // // .show-question-div
+        // $(element).find(".show-question-div").css({
+        //   color: "white",
+        //   // "background-color": "#1e1e1e",
+        // });
 
-        //question mennu
-        $(element).find(".question-menu").css({
-          "background-color": "#333",
-          border: "1px solid #888",
-          // color: "#000",
-        });
+        // //question mennu
+        // $(element).find(".question-menu").css({
+        //   "background-color": "#333",
+        //   border: "1px solid #888",
+        //   // color: "#000",
+        // });
 
-        $(element).find("#show-question").css({
-          "background-color": "#1e1e1e",
-          border: "1px solid #888",
-          borderTop: "none",
-          // borderBottom: "none",
-        });
+        // $(element).find("#show-question").css({
+        //   "background-color": "#1e1e1e",
+        //   border: "1px solid #888",
+        //   borderTop: "none",
+        //   // borderBottom: "none",
+        // });
 
-        //theme changer
-        $(element).find(".theme-changer").css({
-          "background-color": "#333",
-          color: "white",
-          border: "1px solid #888",
-        });
+        // //theme changer
+        // $(element).find(".theme-changer").css({
+        //   "background-color": "#333",
+        //   color: "white",
+        //   border: "1px solid #888",
+        // });
 
-        //timer div
-        $(element).find(".timer-div").css({
-          "background-color": "#333",
-          border: "1px solid #888",
-          color: "white",
-        });
+        // //timer div
+        // $(element).find(".timer-div").css({
+        //   "background-color": "#333",
+        //   border: "1px solid #888",
+        //   color: "white",
+        // });
 
-        //timer container
-        $(element).find(".timer-container").css({
-          // "background-color": "#f5f5f5",
-          color: "white",
-        });
+        // //timer container
+        // $(element).find(".timer-container").css({
+        //   // "background-color": "#f5f5f5",
+        //   color: "white",
+        // });
 
-        $(element).find(".reset").css({ "background-color": "transparent" });
+        // $(element).find(".reset").css({ "background-color": "transparent" });
 
-        // //reset svg
-        $(".reset svg path:first").attr("fill", "white");
+        // // //reset svg
+        // $(".reset svg path:first").attr("fill", "white");
 
-        //language
-        $(element).find(".language").css({
-          "background-color": "#444",
-          color: "#ffffff99",
-          border: "1px solid #888",
-          borderTop: "none",
-          borderRight: "none",
-        });
+        // //language
+        // $(element).find(".language").css({
+        //   "background-color": "#444",
+        //   color: "#ffffff99",
+        //   border: "1px solid #888",
+        //   borderTop: "none",
+        //   borderRight: "none",
+        // });
 
-        //output select
-        $(element).find(".output-select").css({
-          background: "#444",
-          color: "#ffffff99",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-        });
+        // //output select
+        // $(element).find(".output-select").css({
+        //   background: "#444",
+        //   color: "#ffffff99",
+        //   border: "1px solid rgba(255, 255, 255, 0.5)",
+        // });
 
-        //code svg over
-        $(".code-svg-div").hover(
-          function () {
-            $(this).css({
-              "background-color": " #444",
-              "border-radius": "3px",
-              // border: "1px solid #888",
-            });
-          },
-          function () {
-            $(this).css({
-              "background-color": "",
-              "border-radius": "",
-              border: "none",
-            });
-          }
-        );
+        // //code svg over
+        // $(".code-svg-div").hover(
+        //   function () {
+        //     $(this).css({
+        //       "background-color": " #444",
+        //       "border-radius": "3px",
+        //       // border: "1px solid #888",
+        //     });
+        //   },
+        //   function () {
+        //     $(this).css({
+        //       "background-color": "",
+        //       "border-radius": "",
+        //       border: "none",
+        //     });
+        //   }
+        // );
 
-        //results
-        $(element).find(".results-marks").css({ color: "white" });
-        $(element).find(".results").css({ color: "white" });
+        // //results
+        // $(element).find(".results-marks").css({ color: "white" });
+        // $(element).find(".results").css({ color: "white" });
 
         isThemeUpdated = true;
       } else {
         monaco.editor.setTheme("vs-light");
-        // $(element).find(".code-editor-menu").css("background-color", "#f5f5f5");
-        $(element).find(".code-editor-menu").css({
-          "background-color": "#f5f5f5",
-          border: "1px solid #ddd",
-        });
-        $(element).find(".progress-results").css({
-          "background-color": "#0a84ff2e",
-          border: "1px solid #ddd",
-          borderTop: "none",
-        });
-        $(element).find(".editor-container").css({
-          border: "1px solid #ddd",
-          borderTop: "none",
-          borderBottom: "none",
-        });
-        $(element).find(".code-svg-div").css("color", "#000");
-        // $(element).find(".textxblock-container").css({
+        // // $(element).find(".code-editor-menu").css("background-color", "#f5f5f5");
+        // $(element).find(".code-editor-menu").css({
+        //   "background-color": "#f5f5f5",
+        //   border: "1px solid #ddd",
+        // });
+        // $(element).find(".progress-results").css({
+        //   "background-color": "#0a84ff2e",
+        //   border: "1px solid #ddd",
+        //   borderTop: "none",
+        // });
+        // $(element).find(".editor-container").css({
+        //   border: "1px solid #ddd",
+        //   borderTop: "none",
+        //   borderBottom: "none",
+        // });
+        // $(element).find(".code-svg-div").css("color", "#000");
+        // // $(element).find(".textxblock-container").css({
+        // //   "background-color": "#f5f5f5",
+        // //   border: "1px solid #ddd",
+        // // });
+
+        // //answer container div
+        // $(element).find(".msg-answer-div").css({
+        //   "background-color": "#f5f5f5",
+        //   border: "1px solid #ddd",
+        //   borderTop: "none",
+        // });
+
+        // //out put div
+        // $(element).find(".output-div").css({
         //   "background-color": "#f5f5f5",
         //   border: "1px solid #ddd",
         // });
 
-        //answer container div
-        $(element).find(".msg-answer-div").css({
-          "background-color": "#f5f5f5",
-          border: "1px solid #ddd",
-          borderTop: "none",
-        });
+        // //answer-container
+        // $(element)
+        //   .find(".answer-container")
+        //   .css({ "background-color": "white", border: "none", color: "black" });
 
-        //out put div
-        $(element).find(".output-div").css({
-          "background-color": "#f5f5f5",
-          border: "1px solid #ddd",
-        });
+        // //.show-question-div
+        // $(element).find(".show-question-div").css({
+        //   // "background-color": "#f5f5f5",
+        //   // borderBottom: "1px solid #ddd",
+        //   color: "#000",
+        // });
+        // //question mennu
+        // $(element).find(".question-menu").css({
+        //   "background-color": "#f5f5f5",
+        //   border: "1px solid #ddd",
+        //   color: "#000",
+        // });
 
-        //answer-container
-        $(element)
-          .find(".answer-container")
-          .css({ "background-color": "white", border: "none", color: "black" });
+        // $(element).find("#show-question").css({
+        //   "background-color": "white",
+        //   border: "1px solid #ddd",
+        //   borderTop: "none",
+        //   // borderBottom: "none",
+        // });
 
-        //.show-question-div
-        $(element).find(".show-question-div").css({
-          // "background-color": "#f5f5f5",
-          // borderBottom: "1px solid #ddd",
-          color: "#000",
-        });
-        //question mennu
-        $(element).find(".question-menu").css({
-          "background-color": "#f5f5f5",
-          border: "1px solid #ddd",
-          color: "#000",
-        });
+        // //theme changer
+        // $(element).find(".theme-changer").css({
+        //   "background-color": "white",
+        //   color: "black",
+        //   border: "1px solid #888",
+        // });
 
-        $(element).find("#show-question").css({
-          "background-color": "white",
-          border: "1px solid #ddd",
-          borderTop: "none",
-          // borderBottom: "none",
-        });
+        // //timer div
+        // $(element)
+        //   .find(".timer-div")
+        //   .css({ "background-color": "white", border: "1px solid #888" });
 
-        //theme changer
-        $(element).find(".theme-changer").css({
-          "background-color": "white",
-          color: "black",
-          border: "1px solid #888",
-        });
+        // //timer container
+        // $(element).find(".timer-container").css({
+        //   // "background-color": "#f5f5f5",
+        //   color: "#000",
+        // });
 
-        //timer div
-        $(element)
-          .find(".timer-div")
-          .css({ "background-color": "white", border: "1px solid #888" });
+        // //reset svg
+        // $(".reset svg path:first").attr("fill", "black");
 
-        //timer container
-        $(element).find(".timer-container").css({
-          // "background-color": "#f5f5f5",
-          color: "#000",
-        });
+        // //language
+        // $(element).find(".language").css({
+        //   "background-color": "#f5f5f5",
+        //   color: "black",
+        //   border: "1px solid #ddd",
+        //   borderTop: "none",
+        //   borderRight: "none",
+        // });
 
-        //reset svg
-        $(".reset svg path:first").attr("fill", "black");
+        // //output select
+        // $(element).find(".output-select").css({
+        //   "background-color": "white",
+        //   color: "black",
+        //   border: "1px solid #888",
+        // });
 
-        //language
-        $(element).find(".language").css({
-          "background-color": "#f5f5f5",
-          color: "black",
-          border: "1px solid #ddd",
-          borderTop: "none",
-          borderRight: "none",
-        });
+        // //code svg over
+        // $(".code-svg-div").hover(
+        //   function () {
+        //     $(this).css({
+        //       "background-color": "#fff",
+        //       "border-radius": "3px",
+        //       // border: "1px solid #888",
+        //     });
+        //   },
+        //   function () {
+        //     $(this).css({
+        //       "background-color": "",
+        //       "border-radius": "",
+        //       border: "none",
+        //     });
+        //   }
+        // );
 
-        //output select
-        $(element).find(".output-select").css({
-          "background-color": "white",
-          color: "black",
-          border: "1px solid #888",
-        });
-
-        //code svg over
-        $(".code-svg-div").hover(
-          function () {
-            $(this).css({
-              "background-color": "#fff",
-              "border-radius": "3px",
-              // border: "1px solid #888",
-            });
-          },
-          function () {
-            $(this).css({
-              "background-color": "",
-              "border-radius": "",
-              border: "none",
-            });
-          }
-        );
-
-        //results
-        $(element).find(".results-marks").css({ color: "black" });
-        $(element).find(".results").css({ color: "black" });
+        // //results
+        // $(element).find(".results-marks").css({ color: "black" });
+        // $(element).find(".results").css({ color: "black" });
 
         isThemeUpdated = false;
       }
