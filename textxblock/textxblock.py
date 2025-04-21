@@ -62,7 +62,7 @@ class TextXBlock(XBlock):
 
     language = String(
         default="java",
-        scope= Scope.content,
+        scope= Scope.user_state,
         help= "language for monaco editor"
     )
 
