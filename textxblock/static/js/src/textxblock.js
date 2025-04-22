@@ -202,6 +202,7 @@ function TextXBlock(runtime, element) {
       //which gets data from initial request and show the code in the editor basically contains boilerplate code and etc
       let data = dataFromInitiaRequest;
       console.log(data.language, "language from data");
+
       try {
         //monaco editor shows initailly
         var requiredScript = document.createElement("script");
@@ -730,7 +731,7 @@ function TextXBlock(runtime, element) {
         url: handlerUrl,
         data: JSON.stringify({
           user_input: userAnswer,
-          language: $(element).find(".language").val(),
+          language: $(element).find(".language").val().toLowerCase(),
         }),
         success: (result) => {
           console.log(result, " from handle task method response");

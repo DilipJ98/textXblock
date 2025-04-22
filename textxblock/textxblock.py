@@ -61,7 +61,7 @@ class TextXBlock(XBlock):
     )
 
     language = String(
-        default="java",
+        default="",
         scope= Scope.user_state,
         help= "language for monaco editor"
     )
@@ -279,6 +279,7 @@ class TextXBlock(XBlock):
     @XBlock.json_handler
     def delete_task(self, data, suffix=''):
         self.student_input_code = ""
+        self.language = ""
         self.score = 0
         self.message = ""
         self.is_correct = False
