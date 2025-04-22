@@ -482,29 +482,29 @@ function TextXBlock(runtime, element) {
               }
             };
 
-            // let version = 2;
-            // let sendDidChange = debounce(() => {
-            //   console.log("did change");
-            //   try {
-            //     ws.send(
-            //       JSON.stringify({
-            //         jsonrpc: "2.0",
-            //         method: "textDocument/didChange",
-            //         params: {
-            //           textDocument: {
-            //             uri: fileUri,
-            //             version: version++,
-            //           },
-            //           contentChanges: [{ text: editor.getValue() }],
-            //         },
-            //       })
-            //     );
-            //   } catch (error) {
-            //     console.error("Error", error);
-            //   }
-            // }, 10);
+            let version = 2;
+            let sendDidChange = debounce(() => {
+              console.log("did change");
+              try {
+                ws.send(
+                  JSON.stringify({
+                    jsonrpc: "2.0",
+                    method: "textDocument/didChange",
+                    params: {
+                      textDocument: {
+                        uri: fileUri,
+                        version: version++,
+                      },
+                      contentChanges: [{ text: editor.getValue() }],
+                    },
+                  })
+                );
+              } catch (error) {
+                console.error("Error", error);
+              }
+            }, 10);
 
-            // editor.onDidChangeModelContent(sendDidChange);
+            editor.onDidChangeModelContent(sendDidChange);
 
             function debounce(func, delay) {
               let timeoutId;
