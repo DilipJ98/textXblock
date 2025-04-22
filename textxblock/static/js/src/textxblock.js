@@ -233,7 +233,7 @@ function TextXBlock(runtime, element) {
             fileUri =
               "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
             webSocketUri = "ws://host.docker.internal:3080/java";
-            $(element).find(".language").val("Python");
+            $(element).find(".language").val("Java");
             console.log(data.language, "language from data if");
           } else if (data.language === "python") {
             editorLang = "python";
