@@ -168,7 +168,7 @@ class TextXBlock(XBlock):
             "answer": self.actual_answer,
             "explanation": self.explanation ,
             'boilerplate' : self.boilerplate_code,
-            # 'language' : self.language,
+            'language' : self.language,
             'marks' : self.marks,
             'fileName' : self.file_name,
             'executionMode' : self.execution_mode,

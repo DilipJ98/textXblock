@@ -280,7 +280,7 @@ function TextXBlock(runtime, element) {
             }
 
             let model = monaco.editor.createModel(
-              editorLang === "java" ? data.boilerplate : "def test():",
+              editorLang === "java" ? "class Main {}" : "def test():",
               editorLang,
               uri
             );
