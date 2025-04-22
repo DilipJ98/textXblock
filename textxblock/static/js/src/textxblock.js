@@ -201,7 +201,6 @@ function TextXBlock(runtime, element) {
     function monacoEditor() {
       //which gets data from initial request and show the code in the editor basically contains boilerplate code and etc
       let data = dataFromInitiaRequest;
-      console.log(data.language, "language from data");
 
       try {
         //monaco editor shows initailly
@@ -225,11 +224,24 @@ function TextXBlock(runtime, element) {
           });
           //load the monaco editor
           //this tells the requireJs to load the vs/editor/ediot.main module which is main entry
+          let editorLang;
+          let fileUri;
+          let webSocketUri;
 
-          let editorLang = "java";
-          let fileUri =
-            "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
-          let webSocketUri = "ws://host.docker.internal:3080/java";
+          if (data.language === "java" && !data.language) {
+            editorLang = "java";
+            fileUri =
+              "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
+            webSocketUri = "ws://host.docker.internal:3080/java";
+            $(element).find(".language").val("Python");
+            console.log(data.language, "language from data if");
+          } else if (data.language === "python") {
+            editorLang = "python";
+            fileUri = "file:///C:/Users/Dilip/work/example.py";
+            webSocketUri = "ws://host.docker.internal:3080/python";
+            $(element).find(".language").val("Python");
+            console.log(data.language, "language from data else if");
+          }
 
           if (selectedEditorLanguage) {
             if (selectedEditorLanguage === "Java") {
