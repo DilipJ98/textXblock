@@ -354,7 +354,7 @@ function TextXBlock(runtime, element) {
 
             ws.onopen = () => {
               console.log("websocket connect opened");
-
+              console.log(fileUri, " this is file uri");
               ws.send(
                 JSON.stringify({
                   jsonrpc: "2.0",
@@ -367,11 +367,14 @@ function TextXBlock(runtime, element) {
                   },
                 })
               );
+
+              console.log("initialize request sent to server");
             };
 
             let initializedSent = false;
 
             ws.onmessage = (event) => {
+              console.log("insdie on message");
               const message = JSON.parse(event.data);
 
               if (message.id === 1 && message.result && !initializedSent) {
@@ -384,6 +387,8 @@ function TextXBlock(runtime, element) {
                     params: {},
                   })
                 );
+
+                console.log("initialized notification sent");
                 //sending did open notification to server
                 ws.send(
                   JSON.stringify({
@@ -399,6 +404,7 @@ function TextXBlock(runtime, element) {
                     },
                   })
                 );
+                console.log("did open");
               }
 
               if (message.method === "textDocument/publishDiagnostics") {
