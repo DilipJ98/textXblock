@@ -156,7 +156,7 @@ class TextXBlock(XBlock):
         self.explanation = data['explanation']
         self.actual_answer = data['ans']
         self.boilerplate_code = data['boilerplate']
-        self.language = data['language']
+        # self.language = data['language']
         self.marks = data['marks']
         self.file_name = data['fileName']
         self.execution_mode = data['executionMode']
