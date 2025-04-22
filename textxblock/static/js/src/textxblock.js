@@ -23,6 +23,7 @@ function TextXBlock(runtime, element) {
     let isTImerEnd = false;
     let selectedEditorLanguage;
     let wsc;
+    let isLanguageUpdate = false;
 
     //for clearing polling intervals
     function clearIntervalsFunction() {
@@ -228,19 +229,22 @@ function TextXBlock(runtime, element) {
           let fileUri;
           let webSocketUri;
 
-          if (data.language === "java" || !data.language) {
-            editorLang = "java";
-            fileUri =
-              "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
-            webSocketUri = "ws://host.docker.internal:3080/java";
-            // $(element).find(".language").val("Java");
-            console.log(data.language, "language from data if");
-          } else if (data.language === "python") {
-            editorLang = "python";
-            fileUri = "file:///C:/Users/Dilip/work/example.py";
-            webSocketUri = "ws://host.docker.internal:3080/python";
-            // $(element).find(".language").val("Python");
-            console.log(data.language, "language from data else if");
+          if (!isLanguageUpdate) {
+            if (data.language === "java" || !data.language) {
+              editorLang = "java";
+              fileUri =
+                "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
+              webSocketUri = "ws://host.docker.internal:3080/java";
+              // $(element).find(".language").val("Java");
+              console.log(data.language, "language from data if");
+            } else if (data.language === "python") {
+              editorLang = "python";
+              fileUri = "file:///C:/Users/Dilip/work/example.py";
+              webSocketUri = "ws://host.docker.internal:3080/python";
+              $(element).find(".language").val("Python");
+              console.log(data.language, "language from data else if");
+            }
+            isLanguageUpdate = true;
           }
 
           if (selectedEditorLanguage) {
