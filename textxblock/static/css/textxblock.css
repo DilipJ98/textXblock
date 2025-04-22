@@ -8,6 +8,7 @@
   box-sizing: border-box;
   position: relative !important;
   padding: 10px;
+  background-color: red;
 }
 
 .textxblock-container::before,
