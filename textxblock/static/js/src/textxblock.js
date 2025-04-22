@@ -228,7 +228,7 @@ function TextXBlock(runtime, element) {
           let fileUri;
           let webSocketUri;
 
-          if (data.language === "java" && !data.language) {
+          if (data.language === "java" || !data.language) {
             editorLang = "java";
             fileUri =
               "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
