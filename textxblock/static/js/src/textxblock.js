@@ -346,6 +346,7 @@ function TextXBlock(runtime, element) {
 
             const ws = new WebSocket(webSocketUri);
             wsc = ws;
+            console.log(ws);
             //websocket stuff to get the real time sugestions from node js and JDTLS server
 
             // ws.close();
@@ -372,6 +373,7 @@ function TextXBlock(runtime, element) {
             };
 
             let initializedSent = false;
+            let isDidOpenSent = false;
 
             ws.onmessage = (event) => {
               console.log("insdie on message");
@@ -404,6 +406,7 @@ function TextXBlock(runtime, element) {
                     },
                   })
                 );
+                isDidOpenSent = true;
                 console.log("did open");
               }
 
@@ -484,6 +487,7 @@ function TextXBlock(runtime, element) {
 
             let version = 2;
             let sendDidChange = debounce(() => {
+              if (!isDidOpenSent) return;
               console.log("did change");
               try {
                 ws.send(
