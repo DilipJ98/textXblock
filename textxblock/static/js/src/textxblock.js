@@ -23,6 +23,7 @@ function TextXBlock(runtime, element) {
     let isTImerEnd = false;
     let selectedEditorLanguage;
     let isLanguageUpdate = false;
+    let userInputCode;
     let ws;
     //for clearing polling intervals
     function clearIntervalsFunction() {
@@ -173,6 +174,7 @@ function TextXBlock(runtime, element) {
     function getTaskDetails(result) {
       //checks if there is any data is available
       if (result.user_code !== "") {
+        userInputCode = result.user_code;
         //checks if the monaco editor updated with code
         if (!isEditorUpdated) {
           if (editor) {
@@ -277,10 +279,11 @@ function TextXBlock(runtime, element) {
               editor.dispose();
               console.log("inside editor dispose");
             }
+
             let val;
-            if (editorLang === "java" && !data.user_code) {
+            if (editorLang === "java" && !userInputCode.user_code) {
               val = "class Main {}";
-            } else if (editorLang === "python" && !data.user_code) {
+            } else if (editorLang === "python" && !userInputCode.user_code) {
               val = "def main():";
             } else {
               val = data.user_code;
