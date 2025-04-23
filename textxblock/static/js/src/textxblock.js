@@ -286,7 +286,7 @@ function TextXBlock(runtime, element) {
             } else if (editorLang === "python" && !userInputCode) {
               val = "def main():";
             } else {
-              val = data.user_code;
+              val = userInputCode;
             }
 
             let model = monaco.editor.createModel(val, editorLang, uri);
