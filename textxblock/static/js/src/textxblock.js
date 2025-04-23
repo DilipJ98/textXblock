@@ -172,9 +172,9 @@ function TextXBlock(runtime, element) {
 
     //this will be called on successfull ajax request of initail load call
     function getTaskDetails(result) {
+      userInputCode = result.user_code;
       //checks if there is any data is available
       if (result.user_code !== "") {
-        userInputCode = result.user_code;
         //checks if the monaco editor updated with code
         if (!isEditorUpdated) {
           if (editor) {
@@ -281,9 +281,9 @@ function TextXBlock(runtime, element) {
             }
 
             let val;
-            if (editorLang === "java" && !userInputCode.user_code) {
+            if (editorLang === "java" && !userInputCode) {
               val = "class Main {}";
-            } else if (editorLang === "python" && !userInputCode.user_code) {
+            } else if (editorLang === "python" && !userInputCode) {
               val = "def main():";
             } else {
               val = data.user_code;
