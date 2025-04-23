@@ -246,7 +246,7 @@ function TextXBlock(runtime, element) {
             $(element).find(".language").val("Python");
           }
 
-          if (languageUpdateCount < 1) {
+          if (languageUpdateCount === 1) {
             isLanguageUpdate = true;
           }
 
