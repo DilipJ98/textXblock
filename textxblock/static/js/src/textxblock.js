@@ -285,7 +285,9 @@ function TextXBlock(runtime, element) {
               val = "class Main {}";
             } else if (editorLang === "python" && !userInputCode) {
               val = "def main():";
-            } else {
+            } else if (editorLang === "python" && userInputCode) {
+              val = userInputCode;
+            } else if (editorLang === "java" && userInputCode) {
               val = userInputCode;
             }
 
@@ -809,10 +811,10 @@ function TextXBlock(runtime, element) {
             url: resetHandleUrl,
             data: JSON.stringify({}),
             success: (data) => {
-              monacoEditor();
-              // if (editor) {
-              //   editor.setValue(dataFromInitiaRequest.boilerplate);
-              // }
+              // monacoEditor()
+              if (editor) {
+                editor.setValue(dataFromInitiaRequest.boilerplate);
+              }
               $(element).find(".results-div").hide();
               $(element).find(".progressBar-div").hide();
               isResetRequestInProgress = false;
