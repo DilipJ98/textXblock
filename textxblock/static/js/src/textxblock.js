@@ -251,15 +251,17 @@ function TextXBlock(runtime, element) {
           }
 
           let val;
+          console.log(userInputCode, "user input code from db");
           if (!userInputCode) {
+            console.log(data.language, "data language from db");
             if (!data.language && data.language === "java") {
+              console.log("inside java");
               val = "class Test {}";
             } else if (!data.language && data.language === "python") {
+              console.log("inside python");
               val = "def test():\n    pass";
             }
           }
-
-          console.log(userInputCode, "user input code from db");
 
           require(["vs/editor/editor.main"], () => {
             //this is call back that runs once module load is successful
