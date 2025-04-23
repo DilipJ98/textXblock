@@ -277,12 +277,16 @@ function TextXBlock(runtime, element) {
               editor.dispose();
               console.log("inside editor dispose");
             }
+            let val;
+            if (editorLang === "java" && !data.user_code) {
+              val = "class Main {}";
+            } else if (editorLang === "python" && !data.user_code) {
+              val = "def main():";
+            } else {
+              val = data.user_code;
+            }
 
-            let model = monaco.editor.createModel(
-              editorLang === "java" ? "class Main {}" : "def test():",
-              editorLang,
-              uri
-            );
+            let model = monaco.editor.createModel(val, editorLang, uri);
 
             //for white theme of monaco editor
             monaco.editor.defineTheme("monaco-white-theme", {
@@ -602,17 +606,11 @@ function TextXBlock(runtime, element) {
           ws.onclose = () => {
             ws = null;
             initializeMonacoEditor();
-            if (editor) {
-              editor.setValue("Sample");
-            }
           };
           ws.close();
         } else {
           ws = null;
           initializeMonacoEditor();
-          if (editor) {
-            editor.setValue("Sample");
-          }
         }
       });
 
