@@ -22,9 +22,8 @@ function TextXBlock(runtime, element) {
     let progressLoad = 0;
     let isTImerEnd = false;
     let selectedEditorLanguage;
-    let wsc;
     let isLanguageUpdate = false;
-
+    let ws;
     //for clearing polling intervals
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
@@ -344,8 +343,8 @@ function TextXBlock(runtime, element) {
               }
             );
 
-            const ws = new WebSocket(webSocketUri);
-            wsc = ws;
+            ws = new WebSocket(webSocketUri);
+
             console.log(ws);
             //websocket stuff to get the real time sugestions from node js and JDTLS server
 
@@ -599,14 +598,14 @@ function TextXBlock(runtime, element) {
       .find(".language")
       .on("change", (e) => {
         selectedEditorLanguage = e.target.value;
-        if (wsc && wsc.readyState === WebSocket.OPEN) {
-          wsc.onclose = () => {
-            wsc = null;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.onclose = () => {
+            ws = null;
             initializeMonacoEditor();
           };
-          wsc.close();
+          ws.close();
         } else {
-          wsc = null;
+          ws = null;
           initializeMonacoEditor();
         }
       });
