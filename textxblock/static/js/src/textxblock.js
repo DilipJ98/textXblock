@@ -602,11 +602,17 @@ function TextXBlock(runtime, element) {
           ws.onclose = () => {
             ws = null;
             initializeMonacoEditor();
+            if (editor) {
+              editor.setValue("Sample");
+            }
           };
           ws.close();
         } else {
           ws = null;
           initializeMonacoEditor();
+          if (editor) {
+            editor.setValue("Sample");
+          }
         }
       });
 
