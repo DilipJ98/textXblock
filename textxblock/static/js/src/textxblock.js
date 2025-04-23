@@ -280,18 +280,11 @@ function TextXBlock(runtime, element) {
               console.log("inside editor dispose");
             }
 
-            let val;
-            if (editorLang === "java" && !userInputCode) {
-              val = "class Main {}";
-            } else if (editorLang === "python" && !userInputCode) {
-              val = "def main():";
-            } else if (editorLang === "python" && userInputCode) {
-              val = userInputCode;
-            } else if (editorLang === "java" && userInputCode) {
-              val = userInputCode;
-            }
+            console.log(data.language, "language from data");
+            console.log(editorLang, "editor lang from data");
+            console.log(userInputCode, "user input code from data");
 
-            let model = monaco.editor.createModel(val, editorLang, uri);
+            let model = monaco.editor.createModel("sample", editorLang, uri);
 
             //for white theme of monaco editor
             monaco.editor.defineTheme("monaco-white-theme", {
