@@ -250,6 +250,15 @@ function TextXBlock(runtime, element) {
             isLanguageUpdate = true;
           }
 
+          let val;
+          if (!userInputCode) {
+            if (!data.language && data.language === "java") {
+              val = "class Test {}";
+            } else if (!data.language && data.language === "python") {
+              val = "def test():\n    pass";
+            }
+          }
+
           console.log(userInputCode, "user input code from db");
 
           require(["vs/editor/editor.main"], () => {
