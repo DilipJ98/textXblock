@@ -200,6 +200,8 @@ function TextXBlock(runtime, element) {
       }
     }
 
+    let languageUpdateCount = 0;
+
     function monacoEditor() {
       //which gets data from initial request and show the code in the editor basically contains boilerplate code and etc
       let data = dataFromInitiaRequest;
@@ -226,39 +228,26 @@ function TextXBlock(runtime, element) {
           });
           //load the monaco editor
           //this tells the requireJs to load the vs/editor/ediot.main module which is main entry
-          let editorLang;
-          let fileUri;
-          let webSocketUri;
 
-          if (!isLanguageUpdate) {
-            if (data.language === "java" || !data.language) {
-              editorLang = "java";
-              fileUri =
-                "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
-              webSocketUri = "ws://host.docker.internal:3080/java";
-              // $(element).find(".language").val("Java");
-              console.log(data.language, "language from data if");
-            } else if (data.language === "python") {
-              editorLang = "python";
-              fileUri = "file:///C:/Users/Dilip/work/example.py";
-              webSocketUri = "ws://host.docker.internal:3080/python";
-              $(element).find(".language").val("Python");
-              console.log(data.language, "language from data else if");
-            }
-            isLanguageUpdate = true;
+          let webSocketUri = "ws://host.docker.internal:3080/java";
+          let editorLang = "java";
+          let fileUri =
+            "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
+
+          if (
+            (!isLanguageUpdate && data.language === "python") ||
+            selectedEditorLanguage === "Python"
+          ) {
+            console.log("inside python.!!!!!!!!!!!!!!!!!!!!!1");
+            webSocketUri = "ws://host.docker.internal:3080/python";
+            editorLang = "python";
+            fileUri = "file:///C:/Users/Dilip/work/example.py";
+            languageUpdateCount++;
+            $(element).find(".language").val("Python");
           }
 
-          if (selectedEditorLanguage) {
-            if (selectedEditorLanguage === "Java") {
-              webSocketUri = "ws://host.docker.internal:3080/java";
-              editorLang = "java";
-              fileUri =
-                "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
-            } else if (selectedEditorLanguage === "Python") {
-              webSocketUri = "ws://host.docker.internal:3080/python";
-              editorLang = "python";
-              fileUri = "file:///C:/Users/Dilip/work/example.py";
-            }
+          if (languageUpdateCount < 1) {
+            isLanguageUpdate = true;
           }
 
           require(["vs/editor/editor.main"], () => {
@@ -271,18 +260,12 @@ function TextXBlock(runtime, element) {
             if (existingModel) {
               //clearing exisitng model if any
               existingModel.dispose();
-              console.log("inside model dispose");
             }
 
             if (editor) {
               //clearing existing editor instance if any
               editor.dispose();
-              console.log("inside editor dispose");
             }
-
-            console.log(data.language, "language from data");
-            console.log(editorLang, "editor lang from data");
-            console.log(userInputCode, "user input code from data");
 
             let model = monaco.editor.createModel("sample", editorLang, uri);
 
@@ -356,7 +339,6 @@ function TextXBlock(runtime, element) {
 
             ws.onopen = () => {
               console.log("websocket connect opened");
-              console.log(fileUri, " this is file uri");
               ws.send(
                 JSON.stringify({
                   jsonrpc: "2.0",
