@@ -809,9 +809,10 @@ function TextXBlock(runtime, element) {
             url: resetHandleUrl,
             data: JSON.stringify({}),
             success: (data) => {
-              if (editor) {
-                editor.setValue(dataFromInitiaRequest.boilerplate);
-              }
+              monacoEditor();
+              // if (editor) {
+              //   editor.setValue(dataFromInitiaRequest.boilerplate);
+              // }
               $(element).find(".results-div").hide();
               $(element).find(".progressBar-div").hide();
               isResetRequestInProgress = false;
