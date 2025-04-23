@@ -250,6 +250,8 @@ function TextXBlock(runtime, element) {
             isLanguageUpdate = true;
           }
 
+          console.log(userInputCode, "user input code from db");
+
           require(["vs/editor/editor.main"], () => {
             //this is call back that runs once module load is successful
             //creating editor instance
