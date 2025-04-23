@@ -278,7 +278,7 @@ function TextXBlock(runtime, element) {
               editor.dispose();
             }
 
-            let model = monaco.editor.createModel("sample", editorLang, uri);
+            let model = monaco.editor.createModel(val, editorLang, uri);
 
             //for white theme of monaco editor
             monaco.editor.defineTheme("monaco-white-theme", {
