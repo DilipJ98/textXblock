@@ -243,7 +243,7 @@ function TextXBlock(runtime, element) {
             editorLang = "python";
             fileUri = "file:///C:/Users/Dilip/work/example.py";
             languageUpdateCount++;
-            // $(element).find(".language").val("Python");
+            $(element).find(".language").val("Python");
           }
 
           if (languageUpdateCount < 1) {
