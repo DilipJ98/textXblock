@@ -254,10 +254,10 @@ function TextXBlock(runtime, element) {
           console.log(userInputCode, "user input code from db");
           if (!userInputCode) {
             console.log(data.language, "data language from db");
-            if (!data.language && data.language === "java") {
+            if (!data.language && editorLang === "java") {
               console.log("inside java");
               val = "class Test {}";
-            } else if (!data.language && data.language === "python") {
+            } else if (!data.language && editorLang === "python") {
               console.log("inside python");
               val = "def test():\n    pass";
             }
