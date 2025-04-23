@@ -600,18 +600,27 @@ function TextXBlock(runtime, element) {
       .on("change", (e) => {
         selectedEditorLanguage = e.target.value;
         if (wsc && wsc.readyState === WebSocket.OPEN) {
+          wsc.onclose = () => {
+            wsc = null;
+            initializeMonacoEditor();
+          };
           wsc.close();
-        }
-        wsc = null;
-        $(".second-overlay").fadeIn(200);
-        try {
-          monacoEditor();
-        } catch (error) {
-          console.error("Error initializing Monaco Editor:", error);
-        } finally {
-          $(".second-overlay").fadeOut(800);
+        } else {
+          wsc = null;
+          initializeMonacoEditor();
         }
       });
+
+    function initializeMonacoEditor() {
+      $(".second-overlay").fadeIn(200);
+      try {
+        monacoEditor();
+      } catch (error) {
+        console.error("Error initializing Monaco Editor:", error);
+      } finally {
+        $(".second-overlay").fadeOut(800);
+      }
+    }
 
     function mapSeverity(severity) {
       switch (severity) {
