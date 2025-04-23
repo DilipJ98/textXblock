@@ -260,6 +260,8 @@ function TextXBlock(runtime, element) {
             } else if (!data.language && editorLang === "python") {
               console.log("inside python");
               val = "def test():\n    pass";
+            } else if (data.language === editorLang) {
+              val = userInputCode;
             }
           }
 
