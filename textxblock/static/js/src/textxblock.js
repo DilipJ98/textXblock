@@ -22,7 +22,7 @@ function TextXBlock(runtime, element) {
     let progressLoad = 0;
     let isTImerEnd = false;
     let selectedEditorLanguage;
-    let isLanguageUpdate = false;
+    let isEditorLanguageUpdate = false;
     let userInputCode;
     let ws;
     //for clearing polling intervals
@@ -200,7 +200,63 @@ function TextXBlock(runtime, element) {
       }
     }
 
-    let languageUpdateCount = 0;
+    function updateEditorLanguage() {
+      isEditorLanguageUpdate = true;
+      if (!dataFromInitiaRequest.language) {
+        let langs = ["java", "python"];
+        langs.forEach((lang) => {
+          $(element)
+            .find(".language")
+            .append(`<option value="${lang}">${lang}</option>`);
+        });
+        return {
+          lang: "java",
+          webSocketUri: "ws://host.docker.internal:3080/java",
+          fileUri:
+            "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java",
+        };
+      } else if (dataFromInitiaRequest.language === "python") {
+        $(element)
+          .find(".language")
+          .append(
+            `<option value="${dataFromInitiaRequest.language}">${dataFromInitiaRequest.language}</option>`
+          );
+        return {
+          lang: "python",
+          webSocketUri: "ws://host.docker.internal:3080/python",
+          fileUri: "file:///C:/Users/Dilip/work/example.py",
+        };
+      } else if (dataFromInitiaRequest.language === "java") {
+        $(element)
+          .find(".language")
+          .append(
+            `<option value="${dataFromInitiaRequest.language}">${dataFromInitiaRequest.language}</option>`
+          );
+        return {
+          lang: "java",
+          webSocketUri: "ws://host.docker.internal:3080/java",
+          fileUri:
+            "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java",
+        };
+      }
+    }
+
+    function userSelectedEditorLanguage() {
+      if (selectedEditorLanguage === "java") {
+        return {
+          lang: "java",
+          webSocketUri: "ws://host.docker.internal:3080/java",
+          fileUri:
+            "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java",
+        };
+      } else if (selectedEditorLanguage === "python") {
+        return {
+          lang: "python",
+          webSocketUri: "ws://host.docker.internal:3080/python",
+          fileUri: "file:///C:/Users/Dilip/work/example.py",
+        };
+      }
+    }
 
     function monacoEditor() {
       //which gets data from initial request and show the code in the editor basically contains boilerplate code and etc
@@ -229,42 +285,12 @@ function TextXBlock(runtime, element) {
           //load the monaco editor
           //this tells the requireJs to load the vs/editor/ediot.main module which is main entry
 
-          let webSocketUri = "ws://host.docker.internal:3080/java";
-          let editorLang = "java";
-          let fileUri =
-            "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
-
-          if (data.language) {
-            let langs = ["java", "python"];
-            langs.forEach((lang) => {
-              $(element)
-                .find(".language")
-                .append(`<option value="${lang}">${lang}</option>`);
-            });
-          } else {
-            $(element)
-              .find(".language")
-              .append(
-                `<option value="${data.language}">${data.language}</option>`
-              );
-          }
-
-          if (
-            (!isLanguageUpdate && data.language === "python") ||
-            selectedEditorLanguage === "Python"
-          ) {
-            console.log("inside python.!!!!!!!!!!!!!!!!!!!!!1");
-            webSocketUri = "ws://host.docker.internal:3080/python";
-            editorLang = "python";
-            fileUri = "file:///C:/Users/Dilip/work/example.py";
-            languageUpdateCount++;
-          }
-
-          if (languageUpdateCount === 1) {
-            isLanguageUpdate = true;
-          }
-
-          console.log(editorLang, "editor language/////!!?!?!?!?!??!?!?!?!");
+          let updateLangueageStuff = !isEditorLanguageUpdate
+            ? updateEditorLanguage()
+            : userSelectedEditorLanguage();
+          let editorLang = updateLangueageStuff.lang;
+          let webSocketUri = updateLangueageStuff.webSocketUri;
+          let fileUri = updateLangueageStuff.fileUri;
 
           require(["vs/editor/editor.main"], () => {
             //this is call back that runs once module load is successful
