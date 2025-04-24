@@ -163,6 +163,8 @@ class TextXBlock(XBlock):
         self.solution_repo = data['solutionRepo']
         self.expected_output = data['expectedOutput']
         self.save()
+        print(self.file_name, " this is file name")
+        print(self.language, ".....................................!!!!!!!!!!!")
         return {
             "question": self.question,
             "answer": self.actual_answer,
