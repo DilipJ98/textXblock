@@ -238,7 +238,8 @@ class TextXBlock(XBlock):
         self.message = ""
         self.is_correct = False
         self.save()
-
+        print(self.file_name, " this is file name")
+        print(self.language, ".....................................!!!!!!!!!!!")
         response = task_method(data_dict, submission_id)
         return {"accepted" : response['isAccepted']}
 
@@ -277,6 +278,7 @@ class TextXBlock(XBlock):
     #this will be triggered if user clicks on reset button
     @XBlock.json_handler
     def delete_task(self, data, suffix=''):
+
         self.student_input_code = ""
         self.score = 0
         self.message = ""
