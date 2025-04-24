@@ -156,7 +156,7 @@ class TextXBlock(XBlock):
         self.explanation = data['explanation']
         self.actual_answer = data['ans']
         self.boilerplate_code = data['boilerplate']
-        # self.language = data['language']
+        self.language = data['language']
         self.marks = data['marks']
         self.file_name = data['fileName']
         self.execution_mode = data['executionMode']
@@ -224,7 +224,7 @@ class TextXBlock(XBlock):
         data_dict['student_code'] = encoded_code
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
         data_dict['usage_key'] = block_location_id
-        data_dict['language'] = data['language'] 
+        
         #for redis and uuids
         submission_id = str(uuid.uuid4())
         self.redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
@@ -232,7 +232,6 @@ class TextXBlock(XBlock):
 
         #saving the student input code into the field
         self.student_input_code = data['user_input']
-        self.language = data['language']
         print(self.score, self.message, self.is_correct, "Before saving")
         # resetting previous values of score, message, is_correct
         self.score = 0
@@ -279,7 +278,6 @@ class TextXBlock(XBlock):
     @XBlock.json_handler
     def delete_task(self, data, suffix=''):
         self.student_input_code = ""
-        self.language = ""
         self.score = 0
         self.message = ""
         self.is_correct = False

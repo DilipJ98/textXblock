@@ -234,6 +234,11 @@ function TextXBlock(runtime, element) {
           let fileUri =
             "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
 
+          $(element)
+            .find(".language")
+            .append(
+              `<option value="${data.language}">${data.language}</option>`
+            );
           if (
             (!isLanguageUpdate && data.language === "python") ||
             selectedEditorLanguage === "Python"
@@ -243,26 +248,11 @@ function TextXBlock(runtime, element) {
             editorLang = "python";
             fileUri = "file:///C:/Users/Dilip/work/example.py";
             languageUpdateCount++;
-            $(element).find(".language").val("Python");
+            $(element).find(".language").val(editorLang);
           }
 
           if (languageUpdateCount === 1) {
             isLanguageUpdate = true;
-          }
-
-          let val;
-          console.log(userInputCode, "user input code from db");
-          if (!userInputCode) {
-            console.log(data.language, "data language from db");
-            if (!data.language && editorLang === "java") {
-              console.log("inside java");
-              val = "class Test {}";
-            } else if (!data.language && editorLang === "python") {
-              console.log("inside python");
-              val = "def test():\n    pass";
-            } else if (data.language === editorLang) {
-              val = userInputCode;
-            }
           }
 
           require(["vs/editor/editor.main"], () => {
@@ -282,7 +272,11 @@ function TextXBlock(runtime, element) {
               editor.dispose();
             }
 
-            let model = monaco.editor.createModel(val, editorLang, uri);
+            let model = monaco.editor.createModel(
+              "There is no boilerplate code at the moment",
+              editorLang,
+              uri
+            );
 
             //for white theme of monaco editor
             monaco.editor.defineTheme("monaco-white-theme", {
@@ -597,6 +591,7 @@ function TextXBlock(runtime, element) {
       .find(".language")
       .on("change", (e) => {
         selectedEditorLanguage = e.target.value;
+        console.log(selectedEditorLanguage, "selected language");
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.onclose = () => {
             ws = null;
@@ -764,7 +759,6 @@ function TextXBlock(runtime, element) {
         url: handlerUrl,
         data: JSON.stringify({
           user_input: userAnswer,
-          language: $(element).find(".language").val().toLowerCase(),
         }),
         success: (result) => {
           console.log(result, " from handle task method response");
