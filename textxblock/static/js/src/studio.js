@@ -25,7 +25,6 @@ function TextXBlock(runtime, element) {
 
     getAdminInputData();
 
-    let selectedLanguage = $(element).find("#select-language").val();
     let executionMode = "direct";
     let repoUrl = null;
     let expectedOutput = 0;
@@ -53,6 +52,9 @@ function TextXBlock(runtime, element) {
 
         let fileName = $(element).find("#file-name").val();
 
+        let programmingLanguage = $(element).find("#language-input").val();
+        console.log(programmingLanguage, "programming language");
+
         expectedOutput =
           executionMode === "direct"
             ? $(element).find("#expected-output").val()
@@ -71,7 +73,7 @@ function TextXBlock(runtime, element) {
             explanation: explanationValue,
             ans: answer,
             boilerplate: boilerPlateCode,
-            language: selectedLanguage,
+            language: programmingLanguage,
             marks: marks,
             expectedOutput: expectedOutput,
             fileName: fileName,
@@ -82,13 +84,6 @@ function TextXBlock(runtime, element) {
             console.log("instructor data is saved successfully");
           },
         });
-      });
-
-    $(element)
-      .find("#select-language")
-      .on("change", () => {
-        selectedLanguage = $(element).find("#select-language").val();
-        console.log(selectedLanguage);
       });
 
     $(element)
