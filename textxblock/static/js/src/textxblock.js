@@ -261,7 +261,7 @@ function TextXBlock(runtime, element) {
     function monacoEditor() {
       //which gets data from initial request and show the code in the editor basically contains boilerplate code and etc
       let data = dataFromInitiaRequest;
-
+      console.log(data.language, "language from data");
       try {
         //monaco editor shows initailly
         var requiredScript = document.createElement("script");
