@@ -234,12 +234,20 @@ function TextXBlock(runtime, element) {
           let fileUri =
             "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
 
-          let langs = ["java", "python", "javascript", "c++", "c#", "go"];
-          langs.forEach((lang) => {
+          if (data.language) {
+            let langs = ["java", "python"];
+            langs.forEach((lang) => {
+              $(element)
+                .find(".language")
+                .append(`<option value="${lang}">${lang}</option>`);
+            });
+          } else {
             $(element)
               .find(".language")
-              .append(`<option value="${lang}">${lang}</option>`);
-          });
+              .append(
+                `<option value="${data.language}">${data.language}</option>`
+              );
+          }
 
           if (
             (!isLanguageUpdate && data.language === "python") ||
@@ -255,6 +263,8 @@ function TextXBlock(runtime, element) {
           if (languageUpdateCount === 1) {
             isLanguageUpdate = true;
           }
+
+          console.log(editorLang, "editor language/////!!?!?!?!?!??!?!?!?!");
 
           require(["vs/editor/editor.main"], () => {
             //this is call back that runs once module load is successful
