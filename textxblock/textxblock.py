@@ -234,6 +234,7 @@ class TextXBlock(XBlock):
         self.student_input_code = data['user_input']
         print(self.score, self.message, self.is_correct, "Before saving")
         # resetting previous values of score, message, is_correct
+        self.language = ""
         self.score = 0
         self.message = ""
         self.is_correct = False
