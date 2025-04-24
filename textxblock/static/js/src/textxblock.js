@@ -234,11 +234,13 @@ function TextXBlock(runtime, element) {
           let fileUri =
             "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java";
 
-          $(element)
-            .find(".language")
-            .append(
-              `<option value="${data.language}">${data.language}</option>`
-            );
+          let langs = ["java", "python", "javascript", "c++", "c#", "go"];
+          langs.forEach((lang) => {
+            $(element)
+              .find(".language")
+              .append(`<option value="${lang}">${lang}</option>`);
+          });
+
           if (
             (!isLanguageUpdate && data.language === "python") ||
             selectedEditorLanguage === "Python"
@@ -248,7 +250,6 @@ function TextXBlock(runtime, element) {
             editorLang = "python";
             fileUri = "file:///C:/Users/Dilip/work/example.py";
             languageUpdateCount++;
-            $(element).find(".language").val(editorLang);
           }
 
           if (languageUpdateCount === 1) {
