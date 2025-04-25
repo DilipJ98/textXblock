@@ -229,7 +229,9 @@ function TextXBlock(runtime, element) {
         if (dataFromInitiaRequest.user_submit_language === "java") {
           $(element)
             .find(".language")
-            .append(`<option value="${language}">${language}</option>`);
+            .append(
+              `<option value="${dataFromInitiaRequest.user_submit_language}">${dataFromInitiaRequest.user_submit_language}</option>`
+            );
           return {
             lang: "java",
             webSocketUri: "ws://host.docker.internal:3080/java",
@@ -239,7 +241,9 @@ function TextXBlock(runtime, element) {
         } else if (dataFromInitiaRequest.user_submit_language === "python") {
           $(element)
             .find(".language")
-            .append(`<option value="${language}">${language}</option>`);
+            .append(
+              `<option value="${dataFromInitiaRequest.user_submit_language}">${dataFromInitiaRequest.user_submit_language}</option>`
+            );
           return {
             lang: "python",
             webSocketUri: "ws://host.docker.internal:3080/python",
