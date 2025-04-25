@@ -197,7 +197,8 @@ class TextXBlock(XBlock):
             'fileName' : self.file_name,
             'executionMode' : self.execution_mode,
             'solutionRepo' : self.solution_repo,
-            'expectedOutput' : self.expected_output
+            'expectedOutput' : self.expected_output,
+            'user_submit_language': self.user_code_submit_language
         }
 
     @XBlock.json_handler

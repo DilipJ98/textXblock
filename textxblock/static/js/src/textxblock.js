@@ -225,8 +225,8 @@ function TextXBlock(runtime, element) {
     function updateEditorLanguage() {
       isEditorLanguageUpdate = true;
 
-      if (language) {
-        if (language === "java") {
+      if (dataFromInitiaRequest.user_submit_language) {
+        if (dataFromInitiaRequest.user_submit_language === "java") {
           $(element)
             .find(".language")
             .append(`<option value="${language}">${language}</option>`);
@@ -236,7 +236,7 @@ function TextXBlock(runtime, element) {
             fileUri:
               "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java",
           };
-        } else if (language === "python") {
+        } else if (dataFromInitiaRequest.user_submit_language === "python") {
           $(element)
             .find(".language")
             .append(`<option value="${language}">${language}</option>`);
