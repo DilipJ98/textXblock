@@ -361,7 +361,9 @@ function TextXBlock(runtime, element) {
             }
 
             let model = monaco.editor.createModel(
-              "There is no boilerplate code at the moment",
+              editorLang === "java"
+                ? "class Main{\n\tpublic static void main(String args[]){\n\n\t}}"
+                : "def main():\n",
               editorLang,
               uri
             );
@@ -834,6 +836,9 @@ function TextXBlock(runtime, element) {
       $(element)
         .find("#submit")
         .css({ "pointer-events": "none", opacity: "0.5" });
+      $(element)
+        .find(".language")
+        .css({ "pointer-events": "none", opacity: "0.5" });
       // calling user input answer function which will get the value during submit
       userInputAnswer(editor.getValue());
       clearIntervalsFunction();
@@ -884,10 +889,14 @@ function TextXBlock(runtime, element) {
             url: resetHandleUrl,
             data: JSON.stringify({}),
             success: (data) => {
-              // monacoEditor()
-              if (editor) {
-                editor.setValue(dataFromInitiaRequest.boilerplate);
-              }
+              getAdminInputData();
+              monacoEditor();
+              $(element)
+                .find(".language")
+                .css({ "pointer-events": "auto", opacity: "1" });
+              // if (editor) {
+              // editor.setValue(dataFromInitiaRequest.boilerplate);
+              // }
               $(element).find(".results-div").hide();
               $(element).find(".progressBar-div").hide();
               isResetRequestInProgress = false;
