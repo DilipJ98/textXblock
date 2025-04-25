@@ -127,6 +127,12 @@ class TextXBlock(XBlock):
         help= "message to the user"    
     )
 
+    user_code_submit_language = String(
+        default= "",
+        scope= Scope.user_state,
+        help= "user submitted code language"
+    )
+
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         return files(__package__).joinpath(path).read_text(encoding="utf-8")
@@ -234,6 +240,7 @@ class TextXBlock(XBlock):
 
         #saving the student input code into the field
         self.student_input_code = data['user_input']
+        self.user_code_submit_language = data['language']
         print(self.score, self.message, self.is_correct, "Before saving")
         # resetting previous values of score, message, is_correct
         self.score = 0
@@ -242,6 +249,7 @@ class TextXBlock(XBlock):
         self.save()
         print(self.file_name, " this is file name")
         print(self.language, ".....................................!!!!!!!!!!!")
+        print(self.user_code_submit_language, " this is user code submit language")
         response = task_method(data_dict, submission_id)
         return {"accepted" : response['isAccepted']}
 
@@ -282,6 +290,7 @@ class TextXBlock(XBlock):
     def delete_task(self, data, suffix=''):
 
         self.student_input_code = ""
+        self.user_code_submit_language = ""
         self.score = 0
         self.message = ""
         self.is_correct = False

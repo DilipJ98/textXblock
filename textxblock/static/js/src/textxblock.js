@@ -25,6 +25,7 @@ function TextXBlock(runtime, element) {
     let isEditorLanguageUpdate = false;
     let userInputCode;
     let ws;
+    let language;
     //for clearing polling intervals
     function clearIntervalsFunction() {
       clearInterval(intervalOnPageLoad);
@@ -223,7 +224,29 @@ function TextXBlock(runtime, element) {
 
     function updateEditorLanguage() {
       isEditorLanguageUpdate = true;
-      if (!dataFromInitiaRequest.language) {
+
+      if (language) {
+        if (language === "java") {
+          $(element)
+            .find(".language")
+            .append(`<option value="${language}">${language}</option>`);
+          return {
+            lang: "java",
+            webSocketUri: "ws://host.docker.internal:3080/java",
+            fileUri:
+              "file:///C:/Users/Dilip/IdeaProjects/Java-intellisense/src/main/java/Test.java",
+          };
+        } else if (language === "python") {
+          $(element)
+            .find(".language")
+            .append(`<option value="${language}">${language}</option>`);
+          return {
+            lang: "python",
+            webSocketUri: "ws://host.docker.internal:3080/python",
+            fileUri: "file:///C:/Users/Dilip/work/example.py",
+          };
+        }
+      } else if (!dataFromInitiaRequest.language) {
         let langs = ["java", "python"];
         langs.forEach((lang) => {
           $(element)
@@ -310,8 +333,11 @@ function TextXBlock(runtime, element) {
             ? updateEditorLanguage()
             : userSelectedEditorLanguage();
           let editorLang = updateLangueageStuff.lang;
+          language = editorLang;
           let webSocketUri = updateLangueageStuff.webSocketUri;
           let fileUri = updateLangueageStuff.fileUri;
+
+          console.log(editorLang, "editor language");
 
           require(["vs/editor/editor.main"], () => {
             //this is call back that runs once module load is successful
@@ -817,6 +843,7 @@ function TextXBlock(runtime, element) {
         url: handlerUrl,
         data: JSON.stringify({
           user_input: userAnswer,
+          language: language,
         }),
         success: (result) => {
           console.log(result, " from handle task method response");
