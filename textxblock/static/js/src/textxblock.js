@@ -889,6 +889,7 @@ function TextXBlock(runtime, element) {
             url: resetHandleUrl,
             data: JSON.stringify({}),
             success: (data) => {
+              isEditorLanguageUpdate = false;
               getAdminInputData();
               monacoEditor();
               $(element)
