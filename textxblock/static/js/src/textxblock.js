@@ -104,6 +104,7 @@ function TextXBlock(runtime, element) {
         data: JSON.stringify({}),
         success: (data) => {
           $(element).find("#show-question").text(data.question); //which will update UI with question
+          $(element).find(".activity").text(data.fileName);
           // $(element).find(".lang").text(data.language);
           dataFromInitiaRequest = data;
           monacoEditor(); //calling monaco editor
@@ -169,6 +170,26 @@ function TextXBlock(runtime, element) {
         },
       });
     }
+
+    $(element)
+      .find(".activity")
+      .on("click", () => {
+        let height = $(element).find(".main-container-div").height();
+        console.log(height);
+
+        console.log($(element).find(".answer-container-div").height());
+        $(element).find(".editors-div").hide();
+        $(element).find(".language").hide();
+        $(element).find(".show-question-div").hide();
+        $(element).find(".code-editor-menu").hide();
+
+        setTimeout(() => {
+          $(element)
+            .find(".container-div")
+            .css({ display: "block", height: `${height}px` });
+          $(element).find(".answer-container-div").css({ display: "block" }); //, height: `${height}px`
+        }, 0);
+      });
 
     //this will be called on successfull ajax request of initail load call
     function getTaskDetails(result) {
