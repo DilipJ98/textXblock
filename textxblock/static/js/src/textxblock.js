@@ -887,7 +887,7 @@ function TextXBlock(runtime, element) {
             data: JSON.stringify({}),
             success: (data) => {
               isEditorLanguageUpdate = false;
-              // getAdminInputData();
+              getAdminInputData();
               //clearing all drop down language options before reset
               $(element).find(".language").empty();
               initializeMonacoEditor();
