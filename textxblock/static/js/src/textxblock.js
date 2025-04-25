@@ -337,6 +337,7 @@ function TextXBlock(runtime, element) {
             ? updateEditorLanguage()
             : userSelectedEditorLanguage();
           let editorLang = updateLangueageStuff.lang;
+          console.log(editorLang, "editor language");
           language = editorLang;
           let webSocketUri = updateLangueageStuff.webSocketUri;
           let fileUri = updateLangueageStuff.fileUri;
