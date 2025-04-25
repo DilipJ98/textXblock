@@ -224,9 +224,6 @@ function TextXBlock(runtime, element) {
 
     function updateEditorLanguage() {
       isEditorLanguageUpdate = true;
-      console.log(
-        "inside update editor language...................................."
-      );
       if (dataFromInitiaRequest.user_submit_language) {
         if (dataFromInitiaRequest.user_submit_language === "java") {
           $(element)
@@ -339,10 +336,6 @@ function TextXBlock(runtime, element) {
             ? updateEditorLanguage()
             : userSelectedEditorLanguage();
           let editorLang = updateLangueageStuff.lang;
-          console.log(
-            editorLang,
-            "editor language .1.1.1.1.1.1.1.1.1.1.1..1.1.1.1.1.1.1.1.1.1.1.1.1."
-          );
           language = editorLang;
           let webSocketUri = updateLangueageStuff.webSocketUri;
           let fileUri = updateLangueageStuff.fileUri;
@@ -895,6 +888,8 @@ function TextXBlock(runtime, element) {
             success: (data) => {
               isEditorLanguageUpdate = false;
               // getAdminInputData();
+              //clearing all drop down language options before reset
+              $(element).find(".language").empty();
               initializeMonacoEditor();
               $(element)
                 .find(".language")
