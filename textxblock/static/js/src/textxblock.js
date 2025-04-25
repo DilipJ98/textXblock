@@ -224,7 +224,12 @@ function TextXBlock(runtime, element) {
 
     function updateEditorLanguage() {
       isEditorLanguageUpdate = true;
+      console.log(
+        dataFromInitiaRequest.user_submit_language,
+        "user submit language"
+      );
       if (dataFromInitiaRequest.user_submit_language) {
+        console.log("inside if condition.1.1.11.1.1..1.1.1.1.1.1.1.1.1.1.");
         if (dataFromInitiaRequest.user_submit_language === "java") {
           $(element)
             .find(".language")
