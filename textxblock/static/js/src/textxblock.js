@@ -224,7 +224,9 @@ function TextXBlock(runtime, element) {
 
     function updateEditorLanguage() {
       isEditorLanguageUpdate = true;
-
+      console.log(
+        "inside update editor language...................................."
+      );
       if (dataFromInitiaRequest.user_submit_language) {
         if (dataFromInitiaRequest.user_submit_language === "java") {
           $(element)
@@ -337,12 +339,13 @@ function TextXBlock(runtime, element) {
             ? updateEditorLanguage()
             : userSelectedEditorLanguage();
           let editorLang = updateLangueageStuff.lang;
-          console.log(editorLang, "editor language");
+          console.log(
+            editorLang,
+            "editor language .1.1.1.1.1.1.1.1.1.1.1..1.1.1.1.1.1.1.1.1.1.1.1.1."
+          );
           language = editorLang;
           let webSocketUri = updateLangueageStuff.webSocketUri;
           let fileUri = updateLangueageStuff.fileUri;
-
-          console.log(editorLang, "editor language");
 
           require(["vs/editor/editor.main"], () => {
             //this is call back that runs once module load is successful
@@ -891,8 +894,8 @@ function TextXBlock(runtime, element) {
             data: JSON.stringify({}),
             success: (data) => {
               isEditorLanguageUpdate = false;
-              getAdminInputData();
-              monacoEditor();
+              // getAdminInputData();
+              initializeMonacoEditor();
               $(element)
                 .find(".language")
                 .css({ "pointer-events": "auto", opacity: "1" });
