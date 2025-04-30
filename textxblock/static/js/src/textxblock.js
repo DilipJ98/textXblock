@@ -895,6 +895,9 @@ function TextXBlock(runtime, element) {
 
     function onCodeSubmit() {
       $(element).find(".reset").css({ "pointer-events": "none" });
+      $(element).find("#submit-small").css({ "pointer-events": "none" });
+      $(element).find(".arrow-small").hide();
+      $(element).find(".small-loader-run").show();
       progressLoad = 10;
       $(element).find(".results-div").hide();
       $(element)
@@ -1076,6 +1079,11 @@ function TextXBlock(runtime, element) {
           .find("#submit")
           .css({ "pointer-events": "auto", opacity: "1" });
         $(element).find(".reset").css({ "pointer-events": "auto" });
+
+        //for small screen run button
+        $(element).find("#submit-small").css({ "pointer-events": "auto" });
+        $(element).find(".arrow-small").show();
+        $(element).find(".small-loader-run").hide();
 
         //clearing interval after getting result
         clearIntervalsFunction();
