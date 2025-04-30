@@ -232,10 +232,10 @@ function TextXBlock(runtime, element) {
           }>Light Mode</option>
         `);
       } else {
-        const outputTab = $(element).find('.tabs-btn[data-tab="code"]');
+        const codeTab = $(element).find('.tabs-btn[data-tab="code"]');
         $(element).find(".tabs-btn").removeClass("active");
-        outputTab.addClass("active");
-        toggleTabs.call(outputTab[0]);
+        codeTab.addClass("active");
+        toggleTabs.call(codeTab[0]);
       }
     });
 
@@ -898,6 +898,10 @@ function TextXBlock(runtime, element) {
       $(element).find("#submit-small").css({ "pointer-events": "none" });
       $(element).find(".arrow-small").hide();
       $(element).find(".small-loader-run").show();
+      const codeTab = $(element).find('.tabs-btn[data-tab="output"]');
+      $(element).find(".tabs-btn").removeClass("active");
+      codeTab.addClass("active");
+
       progressLoad = 10;
       $(element).find(".results-div").hide();
       $(element)

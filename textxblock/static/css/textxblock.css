@@ -918,6 +918,7 @@ select {
   }
 
   .progress-results {
+    display: none;
     height: 3%;
     border: none !important;
     border-bottom-left-radius: 0px;
@@ -952,7 +953,7 @@ select {
     justify-content: end;
     align-items: end;
     gap: 10px;
-    top: 85%;
+    top: 89%;
     /* background-color: red; */
     /* bottom: 10px; */
   }
