@@ -897,8 +897,10 @@ function TextXBlock(runtime, element) {
       $(element).find(".reset").css({ "pointer-events": "none" });
       $(element).find("#submit-small").css({ "pointer-events": "none" });
       $(element).find(".arrow-small").hide();
+      $(element).find(".run-text").hide();
       $(element).find(".small-loader-run").show();
       const codeTab = $(element).find('.tabs-btn[data-tab="output"]');
+      codeTab.click();
       $(element).find(".tabs-btn").removeClass("active");
       codeTab.addClass("active");
 
@@ -1088,7 +1090,7 @@ function TextXBlock(runtime, element) {
         $(element).find("#submit-small").css({ "pointer-events": "auto" });
         $(element).find(".arrow-small").show();
         $(element).find(".small-loader-run").hide();
-
+        $(element).find(".run-text").hide();
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {

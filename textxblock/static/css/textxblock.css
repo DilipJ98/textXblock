@@ -648,7 +648,7 @@ select {
   color: #fff !important;
 }
 
-.dark-mode .progress-results,
+/* .dark-mode .progress-results, */
 .dark-mode .editor-container,
 .dark-mode .msg-answer-div {
   border: 1px solid rgba(255, 255, 255, 0.5) !important;
@@ -1048,5 +1048,11 @@ select {
 
   #dark {
     /* display: none; */
+  }
+
+  .run-text {
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
   }
 }
