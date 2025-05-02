@@ -898,7 +898,7 @@ function TextXBlock(runtime, element) {
       });
 
     function onCodeSubmit() {
-      progressLoad = 0;
+      // progressLoad = 0;
       $(element).find(".reset").css({ "pointer-events": "none" });
       $(element).find("#submit-small").css({ "pointer-events": "none" });
       $(element).find(".arrow-small").hide();
@@ -1074,6 +1074,9 @@ function TextXBlock(runtime, element) {
     function showResults(result) {
       // console.log(result, " inside show results");
       if (result.status === "ready") {
+        //clearing interval after getting result
+        clearIntervalsFunction();
+        // progressLoad = 0;
         $(element).find(".progressBar-div").hide();
         $(element).find(".results-div").css({ opacity: "1" });
         $(element).find(".results-div").show();
@@ -1093,8 +1096,6 @@ function TextXBlock(runtime, element) {
         $(element).find(".arrow-small").show();
         $(element).find(".small-loader-run").hide();
         $(element).find(".run-text").show();
-        //clearing interval after getting result
-        clearIntervalsFunction();
       } else {
         console.log(result.status, " from else ......");
       }
