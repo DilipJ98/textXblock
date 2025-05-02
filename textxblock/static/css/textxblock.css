@@ -8,6 +8,7 @@
   box-sizing: border-box;
   position: relative !important;
   padding: 10px;
+  background-color: inherit !important;
 }
 
 .textxblock-container::before,
@@ -920,6 +921,12 @@ select {
     height: 100%;
   }
 
+  #container {
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    overflow: hidden;
+  }
+
   .editor-output-div {
     gap: 0;
     /* display: none; */
@@ -984,6 +991,12 @@ select {
     top: 89%;
     /* background-color: red; */
     /* bottom: 10px; */
+  }
+
+  .header-one-div {
+    border-right: none !important;
+    border-left: none !important;
+    border-bottom: 1px solid #ddd !important;
   }
 
   .sub-header-div-two {
