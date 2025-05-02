@@ -814,30 +814,30 @@ function TextXBlock(runtime, element) {
     }
 
     //for extra  border on the text xblock container inside edx environment
-    $(document).ready(function () {
-      function updateBorders() {
-        var contentWidth = $(".ltr").outerWidth();
-        if (window.innerWidth > 799) {
-          $("<style>")
-            .prop("type", "text/css")
-            .html(
-              `
-            .textxblock-container::before,
-            .textxblock-container::after {
-              width: ${contentWidth}px !important;
-            }
-          `
-            )
-            .appendTo("head");
-        }
-      }
+    // $(document).ready(function () {
+    //   function updateBorders() {
+    //     var contentWidth = $(".ltr").outerWidth();
+    //     if (window.innerWidth > 799) {
+    //       $("<style>")
+    //         .prop("type", "text/css")
+    //         .html(
+    //           `
+    //         .textxblock-container::before,
+    //         .textxblock-container::after {
+    //           width: ${contentWidth}px !important;
+    //         }
+    //       `
+    //         )
+    //         .appendTo("head");
+    //     }
+    //   }
 
-      updateBorders();
+    //   updateBorders();
 
-      $(window).resize(() => {
-        updateBorders;
-      });
-    });
+    //   $(window).resize(() => {
+    //     updateBorders;
+    //   });
+    // });
 
     //on code check box it will show answer editor
     $(element)
