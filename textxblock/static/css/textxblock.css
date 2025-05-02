@@ -8,7 +8,7 @@
   box-sizing: border-box;
   position: relative !important;
   padding: 10px;
-  background-color: inherit !important;
+  /* background-color: inherit !important; */
 }
 
 .textxblock-container::before,
