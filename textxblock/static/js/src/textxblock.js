@@ -898,7 +898,7 @@ function TextXBlock(runtime, element) {
       });
 
     function onCodeSubmit() {
-      // progressLoad = 0;
+      progressLoad = 0;
       $(element).find(".reset").css({ "pointer-events": "none" });
       $(element).find("#submit-small").css({ "pointer-events": "none" });
       $(element).find(".arrow-small").hide();
@@ -1052,6 +1052,8 @@ function TextXBlock(runtime, element) {
     }
 
     function animateProgress(targetProgress) {
+      console.log(targetProgress, "target progress");
+      console.log(progressLoad, "progress load");
       let currentProgress = progressLoad;
       function updateProgress() {
         if (currentProgress < targetProgress) {
