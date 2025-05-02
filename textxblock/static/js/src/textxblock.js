@@ -1026,10 +1026,13 @@ function TextXBlock(runtime, element) {
                 response.status !== "pending" &&
                 response.status !== "error"
               ) {
+                console.log("from if");
                 animateProgress(100);
               } else {
+                console.log("from else");
                 //which ensures the progress bar not to exceed 100%
                 let finalProgressLoad = Math.min(progressLoad + 10, 100);
+                console.log(finalProgressLoad, "final progress load from else");
                 animateProgress(finalProgressLoad);
               }
               showResults(response);
