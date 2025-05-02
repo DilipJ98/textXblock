@@ -1057,6 +1057,7 @@ function TextXBlock(runtime, element) {
       let currentProgress = progressLoad;
       function updateProgress() {
         if (currentProgress < targetProgress) {
+          console.log(currentProgress, "current progress in if");
           currentProgress++;
           $(element)
             .find("#progressBar")
@@ -1066,6 +1067,7 @@ function TextXBlock(runtime, element) {
             .text(currentProgress + "%");
           setTimeout(updateProgress, 50);
         } else {
+          console.log(targetProgress, "target progress in else");
           progressLoad = targetProgress;
         }
       }
