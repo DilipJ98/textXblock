@@ -357,9 +357,6 @@ function TextXBlock(runtime, element) {
       }
     }
 
-    var isChecked = $("#theme-toggle-checkbox").is(":checked");
-    console.log(isChecked, " checked or not");
-
     function monacoEditor() {
       //which gets data from initial request and show the code in the editor basically contains boilerplate code and etc
       let data = dataFromInitiaRequest;
@@ -902,27 +899,29 @@ function TextXBlock(runtime, element) {
 
     function onCodeSubmit() {
       $(element).find(".reset").css({ "pointer-events": "none" });
-      $(element).find("#submit-small").css({ "pointer-events": "none" });
-      $(element).find(".arrow-small").hide();
-      $(element).find(".run-text").hide();
-      $(element).find(".small-loader-run").show();
-      const codeTab = $(element).find('.tabs-btn[data-tab="output"]');
-      codeTab.click();
-      $(element).find(".tabs-btn").removeClass("active");
-      codeTab.addClass("active");
-
-      progressLoad = 10;
-      $(element).find(".results-div").hide();
-      $(element)
-        .find("#progressBar")
-        .css("width", 0 + "%"); //on click initially it sets width to zero
-      $(element).find(".progressBar-div").show();
-      $(element)
-        .find("#submit")
-        .css({ "pointer-events": "none", opacity: "0.5" });
-      $(element)
-        .find(".language")
-        .css({ "pointer-events": "none", opacity: "0.5" });
+      if (window.innerWidth < 799) {
+        $(element).find("#submit-small").css({ "pointer-events": "none" });
+        $(element).find(".arrow-small").hide();
+        $(element).find(".run-text").hide();
+        $(element).find(".small-loader-run").show();
+        const codeTab = $(element).find('.tabs-btn[data-tab="output"]');
+        codeTab.click();
+        $(element).find(".tabs-btn").removeClass("active");
+        codeTab.addClass("active");
+      } else {
+        progressLoad = 10;
+        $(element).find(".results-div").hide();
+        $(element)
+          .find("#progressBar")
+          .css("width", 0 + "%"); //on click initially it sets width to zero
+        $(element).find(".progressBar-div").show();
+        $(element)
+          .find("#submit")
+          .css({ "pointer-events": "none", opacity: "0.5" });
+        $(element)
+          .find(".language")
+          .css({ "pointer-events": "none", opacity: "0.5" });
+      }
       // calling user input answer function which will get the value during submit
       userInputAnswer(editor.getValue());
       clearIntervalsFunction();
