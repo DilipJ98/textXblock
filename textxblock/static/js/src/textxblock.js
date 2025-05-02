@@ -817,22 +817,26 @@ function TextXBlock(runtime, element) {
     $(document).ready(function () {
       function updateBorders() {
         var contentWidth = $(".ltr").outerWidth();
-        $("<style>")
-          .prop("type", "text/css")
-          .html(
-            `
+        if (window.innerWidth > 799) {
+          $("<style>")
+            .prop("type", "text/css")
+            .html(
+              `
             .textxblock-container::before,
             .textxblock-container::after {
               width: ${contentWidth}px !important;
             }
           `
-          )
-          .appendTo("head");
+            )
+            .appendTo("head");
+        }
       }
 
       updateBorders();
 
-      $(window).resize(updateBorders);
+      $(window).resize(() => {
+        updateBorders;
+      });
     });
 
     //on code check box it will show answer editor
@@ -1090,7 +1094,7 @@ function TextXBlock(runtime, element) {
         $(element).find("#submit-small").css({ "pointer-events": "auto" });
         $(element).find(".arrow-small").show();
         $(element).find(".small-loader-run").hide();
-        $(element).find(".run-text").hide();
+        $(element).find(".run-text").show();
         //clearing interval after getting result
         clearIntervalsFunction();
       } else {
