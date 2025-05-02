@@ -357,8 +357,8 @@ function TextXBlock(runtime, element) {
       }
     }
 
-    var bgColor = $(".textxblock-container").css("background-color");
-    console.log(bgColor, " this is color of textxblock container");
+    var isChecked = $("#theme-toggle-checkbox").is(":checked");
+    console.log(isChecked, " checked or not");
 
     function monacoEditor() {
       //which gets data from initial request and show the code in the editor basically contains boilerplate code and etc
