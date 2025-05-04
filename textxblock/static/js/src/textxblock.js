@@ -1089,6 +1089,7 @@ function TextXBlock(runtime, element) {
           if (typeof onComplete === "function") {
             onComplete();
           }
+          progressBarInterval = null;
         }
       }
       updateProgress();
