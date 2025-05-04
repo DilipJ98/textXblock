@@ -1080,7 +1080,7 @@ function TextXBlock(runtime, element) {
     //which manages to show results and progress bar
     function showResults(result) {
       // console.log(result, " inside show results");
-      if (result.status === "ready" && progressLoad === 100) {
+      if (result.status === "ready") {
         //clearing interval after getting result
         clearIntervalsFunction();
         // progressLoad = 0;
