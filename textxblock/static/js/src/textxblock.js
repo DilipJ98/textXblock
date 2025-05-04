@@ -27,6 +27,7 @@ function TextXBlock(runtime, element) {
     let ws;
     let language;
     let isThemeIconUpdated = false;
+    let progressBarInterval;
 
     //for clearing polling intervals
     function clearIntervalsFunction() {
@@ -898,6 +899,9 @@ function TextXBlock(runtime, element) {
       });
 
     function onCodeSubmit() {
+      if (progressBarInterval) {
+        clearTimeout(progressBarInterval);
+      }
       clearIntervalsFunction();
       progressLoad = 0;
       $(element).find(".reset").css({ "pointer-events": "none" });
@@ -1070,7 +1074,7 @@ function TextXBlock(runtime, element) {
           $(element)
             .find("#progressBar")
             .text(currentProgress + "%");
-          setTimeout(updateProgress, 50);
+          progressBarInterval = setTimeout(updateProgress, 50);
         } else {
           console.log(targetProgress, "target progress in else");
           progressLoad = targetProgress;
