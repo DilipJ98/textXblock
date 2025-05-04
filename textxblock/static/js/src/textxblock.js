@@ -1044,7 +1044,10 @@ function TextXBlock(runtime, element) {
                 //which ensures the progress bar not to exceed 100%
                 let finalProgressLoad = Math.min(progressLoad + 10, 100);
                 console.log(finalProgressLoad, "final progress load from else");
-                animateProgress(finalProgressLoad);
+                if (finalProgressLoad > progressLoad) {
+                  // Add this check
+                  animateProgress(finalProgressLoad);
+                }
               }
               isRequestInProgress = false;
             },
@@ -1093,6 +1096,7 @@ function TextXBlock(runtime, element) {
 
     //which manages to show results and progress bar
     function showResults(result) {
+      progressLoad = 0;
       // console.log(result, " inside show results");
       if (result.status === "ready") {
         //clearing interval after getting result
