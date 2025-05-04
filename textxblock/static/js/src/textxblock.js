@@ -28,6 +28,7 @@ function TextXBlock(runtime, element) {
     let language;
     let isThemeIconUpdated = false;
     let progressBarInterval;
+    let isSubmitting = false;
 
     //for clearing polling intervals
     function clearIntervalsFunction() {
@@ -899,6 +900,7 @@ function TextXBlock(runtime, element) {
       });
 
     function onCodeSubmit() {
+      isSubmitting = true;
       if (progressBarInterval) {
         clearTimeout(progressBarInterval);
       }
@@ -939,10 +941,12 @@ function TextXBlock(runtime, element) {
           language: language,
         }),
         success: (result) => {
+          isSubmitting = false;
           console.log(result, " from handle task method response");
           getTaskResult(result);
         },
         error: (xhr) => {
+          isSubmitting = false;
           console.error("Error occurred:", xhr.statusText);
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
@@ -1019,7 +1023,7 @@ function TextXBlock(runtime, element) {
       //polls till celery return results
       intervalOnSubmit = setInterval(() => {
         let handlerUrl = runtime.handlerUrl(element, "get_task_result");
-        if (!isRequestInProgress) {
+        if (!isRequestInProgress && !isSubmitting) {
           isRequestInProgress = true;
           $.ajax({
             type: "POST",
