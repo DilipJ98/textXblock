@@ -898,6 +898,7 @@ function TextXBlock(runtime, element) {
       });
 
     function onCodeSubmit() {
+      clearIntervalsFunction();
       progressLoad = 0;
       $(element).find(".reset").css({ "pointer-events": "none" });
       $(element).find("#submit-small").css({ "pointer-events": "none" });
@@ -920,7 +921,7 @@ function TextXBlock(runtime, element) {
 
       // calling user input answer function which will get the value during submit
       userInputAnswer(editor.getValue());
-      clearIntervalsFunction();
+      // clearIntervalsFunction();
     }
 
     //this function have the user input answer and which invokes after user clicks on code submit button
@@ -1027,7 +1028,9 @@ function TextXBlock(runtime, element) {
                 response.status !== "error"
               ) {
                 console.log("from if");
-                animateProgress(100);
+                animateProgress(100, () => {
+                  showResults(response);
+                });
               } else {
                 console.log("from else");
                 //which ensures the progress bar not to exceed 100%
@@ -1035,7 +1038,6 @@ function TextXBlock(runtime, element) {
                 console.log(finalProgressLoad, "final progress load from else");
                 animateProgress(finalProgressLoad);
               }
-              showResults(response);
               isRequestInProgress = false;
             },
             error: (xhr) => {
@@ -1054,7 +1056,7 @@ function TextXBlock(runtime, element) {
       }, 5000);
     }
 
-    function animateProgress(targetProgress) {
+    function animateProgress(targetProgress, onComplete) {
       console.log(targetProgress, "target progress");
       console.log(progressLoad, "progress load");
       let currentProgress = progressLoad;
@@ -1072,6 +1074,10 @@ function TextXBlock(runtime, element) {
         } else {
           console.log(targetProgress, "target progress in else");
           progressLoad = targetProgress;
+          //calling callback function to show results
+          if (typeof onComplete === "function") {
+            onComplete();
+          }
         }
       }
       updateProgress();
