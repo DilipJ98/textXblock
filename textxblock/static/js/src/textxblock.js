@@ -273,6 +273,7 @@ function TextXBlock(runtime, element) {
 
     function updateEditorLanguage() {
       isEditorLanguageUpdate = true;
+      console.log("inside update editor language function");
       console.log(
         dataFromInitiaRequest.user_submit_language,
         "user submit language"
@@ -343,6 +344,7 @@ function TextXBlock(runtime, element) {
     }
 
     function userSelectedEditorLanguage() {
+      console.log("inside user selected editor language function");
       if (selectedEditorLanguage === "java") {
         return {
           lang: "java",
