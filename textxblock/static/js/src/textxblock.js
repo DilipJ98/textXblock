@@ -197,7 +197,7 @@ function TextXBlock(runtime, element) {
           break;
         case "output":
           $(element).find(".editors-div").hide();
-          $(element).find(".language").hide();
+          // $(element).find(".language").hide();
           $(element).find(".show-question-div").hide();
           $(element).find(".code-editor-menu").hide();
           $(element).find(".container-div").css({ display: "block" });
@@ -206,7 +206,7 @@ function TextXBlock(runtime, element) {
 
         case "question":
           $(element).find(".editors-div").hide();
-          $(element).find(".language").hide();
+          // $(element).find(".language").hide();
           $(element).find(".show-question-div").show();
           $(element).find(".code-editor-menu").hide();
           $(element).find(".container-div").css({ display: "none" });
@@ -221,7 +221,7 @@ function TextXBlock(runtime, element) {
         $(element).find(".answer-container-div").removeAttr("style");
         $(element).find(".container-div").removeAttr("style");
         $(element).find(".show-question-div").removeAttr("style");
-        $(element).find(".language").removeAttr("style");
+        // $(element).find(".language").removeAttr("style");
         $(element).find(".code-editor-menu").removeAttr("style");
         const selectedValue = !isThemeUpdated ? "dark" : "light";
         const themeSelect = $(element).find(".theme-changer");
@@ -479,10 +479,10 @@ function TextXBlock(runtime, element) {
                   enabled: false,
                 },
                 scrollbar: {
-                  vertical: "hidden",
+                  // vertical: "hidden",
                   horizontal: "hidden",
-                  // verticalScrollbarSize: 4,
-                  // horizontalScrollbarSize: 4,
+                  verticalScrollbarSize: 4,
+                  horizontalScrollbarSize: 4,
                 },
                 guides: {
                   indentation: false,
@@ -1123,11 +1123,6 @@ function TextXBlock(runtime, element) {
         $(element).find(".arrow-small").show();
         $(element).find(".small-loader-run").hide();
         $(element).find(".run-text").show();
-
-        //language
-        $(element)
-          .find(".language")
-          .css({ "pointer-events": "none", opacity: "1" });
       } else {
         console.log(result.status, " from else ......");
       }

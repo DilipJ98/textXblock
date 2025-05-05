@@ -300,7 +300,7 @@ select {
   padding: 4px;
   border: 1px solid #888;
   border-radius: 4px;
-  background-color: white;
+  /* background-color: white; */
   cursor: pointer;
 }
 
@@ -313,15 +313,16 @@ select {
 }
 
 #submit {
-  background-color: white;
+  /* background-color: white; */
   /* color: white; */
+  background-color: #0556f3;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 5px 15px;
   cursor: pointer;
-  border: 1px solid #888;
-  border-radius: 4px;
+  /* border: 1px solid #888; */
+  border-radius: 2px;
   /* font-size: 15px; */
 }
 
@@ -337,22 +338,21 @@ select {
   height: 0;
   border-top: 7px solid transparent;
   border-bottom: 7px solid transparent;
-  border-left: 12px solid blue;
+  border-left: 12px solid white;
 }
 
 .language {
-  width: 10%;
+  width: 80px;
   height: 33px;
   z-index: 999;
   position: absolute;
-  top: 129.5%;
-  /* right: 2%; */
-  background: transparent;
+  right: 0;
+  /* background: transparent; */
   border: 1px solid rgba(0, 0, 0, 0.2);
   outline: none;
   border-top: none;
   border-right: none;
-  border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 2px;
   color: black;
   padding: 5px;
   /* border: none; */
@@ -641,43 +641,56 @@ select {
 
 .dark-mode .code-editor-menu,
 .dark-mode .output-div,
-.dark-mode .msg-answer-div,
-.dark-mode .question-menu {
+.dark-mode .msg-answer-div {
   background-color: #333 !important;
   color: #fff !important;
 }
 
-.dark-mode .answer-container,
+.dark-mode .question-menu {
+  border: none !important;
+  color: #d4d4d4;
+  background-color: #1e1e1e !important;
+}
 .dark-mode #show-question {
   border: 1px solid rgba(255, 255, 255, 0.5) !important;
   background-color: #1e1e1e !important;
+  color: #d4d4d4;
+  border-top: none !important;
+}
+
+.dark-mode .answer-container {
+  background-color: #1e1e1e !important;
   color: #fff !important;
+  border: none !important;
 }
 
 .dark-mode .progress-results {
   background-color: #1e1e1e !important;
-  /* border: none !important; */
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  border-top: none !important;
+  border: none !important;
 }
 
 .dark-mode .editor-container {
+  border: none !important;
+}
+.dark-mode .editors-div {
   border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  border-bottom: none !important;
+  border-top: none !important;
 }
 .dark-mode .msg-answer-div {
   border: 1px solid rgba(255, 255, 255, 0.5) !important;
+
   border-top: none !important;
 }
 
 .dark-mode .output-div {
   border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  /* border-bottom: none !important; */
   border-top: none !important;
+  border-bottom: none !important;
 }
 
-.dark-mode .answer-container {
-  border: none !important;
+.dark-mode .output-select {
+  background-color: #1e1e1e !important;
+  color: #fff !important;
 }
 
 .dark-mode .code-editor-menu {
@@ -705,11 +718,18 @@ select {
   color: black !important;
 }
 
+.dark-mode .theme-changer {
+  background-color: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  color: #fff !important;
+}
+
 .dark-mode .language {
   border: 1px solid rgba(255, 255, 255, 0.5) !important;
   border-top: none !important;
   border-right: none !important;
   color: #fff !important;
+  background-color: #1e1e1e !important;
 }
 
 .dark-mode .theme-icon-div {
@@ -724,17 +744,8 @@ select {
   display: none;
 }
 
-/* .dark-mode #light {
-  stroke: yellow;
-  fill: yellow;
-  display: block;
-} */
-
-/* .dark-mode #dark {
-  display: none;
-} */
-
-.dark-mode #reset-svg {
+.dark-mode #reset-svg,
+.dark-mode #reset-svg-one {
   fill: #ffffff;
 }
 
@@ -962,7 +973,9 @@ select {
   }
 
   .language {
-    right: 3%;
+    /* right: 3%; */
+    width: 70px;
+    /* height: 24px; */
   }
 
   .sub-header-div-one {
