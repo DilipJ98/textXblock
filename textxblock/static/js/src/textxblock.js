@@ -112,7 +112,9 @@ function TextXBlock(runtime, element) {
           $(element).find(".text-left").text(data.fileName);
           // $(element).find(".lang").text(data.language);
           dataFromInitiaRequest = data;
-          monacoEditor(); //calling monaco editor
+          //monacoEditor();
+          //calling monaco editor
+          initializeMonacoEditor();
         },
         error: (xhr) => {
           console.error("error occured", xhr.statusText);
@@ -279,7 +281,6 @@ function TextXBlock(runtime, element) {
         "user submit language"
       );
       if (dataFromInitiaRequest.user_submit_language) {
-        console.log("inside if condition.1.1.11.1.1..1.1.1.1.1.1.1.1.1.1.");
         if (dataFromInitiaRequest.user_submit_language === "java") {
           $(element)
             .find(".language")
@@ -980,16 +981,14 @@ function TextXBlock(runtime, element) {
             url: resetHandleUrl,
             data: JSON.stringify({}),
             success: (data) => {
-              isEditorLanguageUpdate = false;
+              // isEditorLanguageUpdate = true;
               //clearing all drop down language options before reset
               $(element).find(".language").empty();
-              initializeMonacoEditor();
+              isEditorLanguageUpdate = false;
+              getAdminInputData();
               $(element)
                 .find(".language")
                 .css({ "pointer-events": "auto", opacity: "1" });
-              // if (editor) {
-              // editor.setValue(dataFromInitiaRequest.boilerplate);
-              // }
               $(element).find(".results-div").hide();
               $(element).find(".progressBar-div").hide();
               isResetRequestInProgress = false;
