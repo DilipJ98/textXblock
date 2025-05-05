@@ -748,22 +748,22 @@ function TextXBlock(runtime, element) {
       .on("change", (e) => {
         selectedEditorLanguage = e.target.value;
         console.log(selectedEditorLanguage, "selected language");
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.onclose = () => {
-            ws = null;
-            initializeMonacoEditor();
-          };
-          ws.close();
-        } else {
-          ws = null;
-          initializeMonacoEditor();
-        }
+        initializeMonacoEditor();
       });
 
     function initializeMonacoEditor() {
       $(".second-overlay").fadeIn(200);
       try {
-        monacoEditor();
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.onclose = () => {
+            ws = null;
+            monacoEditor();
+          };
+          ws.close();
+        } else {
+          ws = null;
+          monacoEditor();
+        }
       } catch (error) {
         console.error("Error initializing Monaco Editor:", error);
       } finally {
@@ -1123,6 +1123,11 @@ function TextXBlock(runtime, element) {
         $(element).find(".arrow-small").show();
         $(element).find(".small-loader-run").hide();
         $(element).find(".run-text").show();
+
+        //language
+        $(element)
+          .find(".language")
+          .css({ "pointer-events": "none", opacity: "1" });
       } else {
         console.log(result.status, " from else ......");
       }
