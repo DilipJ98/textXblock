@@ -995,6 +995,7 @@ function TextXBlock(runtime, element) {
               // isEditorLanguageUpdate = true;
               //clearing all drop down language options before reset
               $(element).find(".language").empty();
+              isCheckBoxChecked = false;
               resultsMessage = "";
               $(element).find(".answer-container").text(resultsMessage);
               //show the output as selected on code reset instead of answer
