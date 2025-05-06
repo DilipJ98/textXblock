@@ -29,6 +29,7 @@ function TextXBlock(runtime, element) {
     let isThemeIconUpdated = false;
     let progressBarInterval;
     let isSubmitting = false;
+    let resultsMessage = "";
 
     //for clearing polling intervals
     function clearIntervalsFunction() {
@@ -865,7 +866,7 @@ function TextXBlock(runtime, element) {
         });
         isCheckBoxChecked = true;
       } else {
-        $(element).find(".answer-container").text("");
+        $(element).find(".answer-container").text(resultsMessage);
         isCheckBoxChecked = false;
       }
     }
@@ -927,6 +928,9 @@ function TextXBlock(runtime, element) {
       $(element)
         .find(".language")
         .css({ "pointer-events": "none", opacity: "0.5" });
+
+      //setting answer to empty string on submit button click
+      $(element).find(".answer-container").text("");
 
       // calling user input answer function which will get the value during submit
       userInputAnswer(editor.getValue());
@@ -1111,8 +1115,9 @@ function TextXBlock(runtime, element) {
           .find(".results")
           .text(`Solution Correct: ${result.is_correct}`);
         $(element).find(".results-marks").text(`Marks: ${result.score}`);
-        $(element).find(".answer-container").text(`${result.message}`);
-
+        //assigning the result message to the global results message variable and showing it in the answer container
+        resultsMessage = result.message;
+        $(element).find(".answer-container").text(resultsMessage);
         $(element)
           .find("#submit")
           .css({ "pointer-events": "auto", opacity: "1" });
@@ -1123,6 +1128,11 @@ function TextXBlock(runtime, element) {
         $(element).find(".arrow-small").show();
         $(element).find(".small-loader-run").hide();
         $(element).find(".run-text").show();
+
+        //showing the language option but user not interact with it
+        $(element)
+          .find(".language")
+          .css({ "pointer-events": "none", opacity: "1" });
       } else {
         console.log(result.status, " from else ......");
       }
