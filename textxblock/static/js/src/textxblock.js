@@ -931,6 +931,8 @@ function TextXBlock(runtime, element) {
 
       //setting answer to empty string on submit button click
       $(element).find(".answer-container").text("");
+      //show the output as selected on code submit instead of answer
+      $(".output-select").val("output");
 
       // calling user input answer function which will get the value during submit
       userInputAnswer(editor.getValue());
