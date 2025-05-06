@@ -849,6 +849,7 @@ function TextXBlock(runtime, element) {
     $(element)
       .find(".output-select")
       .on("change", function (e) {
+        console.log(e.target.value, "value of select box");
         if (isTImerEnd) {
           toggleAnswer();
         } else {
@@ -864,9 +865,11 @@ function TextXBlock(runtime, element) {
           opacity: "1",
           transition: "opacity 1s ease-in",
         });
+        console.log("inside if of toggle answer");
         isCheckBoxChecked = true;
       } else {
         $(element).find(".answer-container").text(resultsMessage);
+        console.log("inside else of toggle answer");
         isCheckBoxChecked = false;
       }
     }
