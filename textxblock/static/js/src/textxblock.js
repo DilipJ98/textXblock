@@ -905,6 +905,7 @@ function TextXBlock(runtime, element) {
 
     function onCodeSubmit() {
       isSubmitting = true;
+
       if (progressBarInterval) {
         clearTimeout(progressBarInterval);
       }
@@ -929,8 +930,9 @@ function TextXBlock(runtime, element) {
         .find(".language")
         .css({ "pointer-events": "none", opacity: "0.5" });
 
+      resultsMessage = "";
       //setting answer to empty string on submit button click
-      $(element).find(".answer-container").text("");
+      $(element).find(".answer-container").text(resultsMessage);
       //show the output as selected on code submit instead of answer
       $(".output-select").val("output");
 
@@ -990,6 +992,7 @@ function TextXBlock(runtime, element) {
               // isEditorLanguageUpdate = true;
               //clearing all drop down language options before reset
               $(element).find(".language").empty();
+              resultsMessage = "";
               isEditorLanguageUpdate = false;
               getAdminInputData();
               $(element)
@@ -1120,6 +1123,9 @@ function TextXBlock(runtime, element) {
         //assigning the result message to the global results message variable and showing it in the answer container
         resultsMessage = result.message;
         $(element).find(".answer-container").text(resultsMessage);
+        //show ouput option in the drop down
+        $(".output-select").val("output");
+
         $(element)
           .find("#submit")
           .css({ "pointer-events": "auto", opacity: "1" });
