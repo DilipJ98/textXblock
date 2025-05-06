@@ -993,6 +993,9 @@ function TextXBlock(runtime, element) {
               //clearing all drop down language options before reset
               $(element).find(".language").empty();
               resultsMessage = "";
+              $(element).find(".answer-container").text(resultsMessage);
+              //show the output as selected on code reset instead of answer
+              $(".output-select").val("output");
               isEditorLanguageUpdate = false;
               getAdminInputData();
               $(element)
@@ -1120,11 +1123,11 @@ function TextXBlock(runtime, element) {
           .find(".results")
           .text(`Solution Correct: ${result.is_correct}`);
         $(element).find(".results-marks").text(`Marks: ${result.score}`);
+        //show ouput option in the drop down
+        $(".output-select").val("output");
         //assigning the result message to the global results message variable and showing it in the answer container
         resultsMessage = result.message;
         $(element).find(".answer-container").text(resultsMessage);
-        //show ouput option in the drop down
-        $(".output-select").val("output");
 
         $(element)
           .find("#submit")
