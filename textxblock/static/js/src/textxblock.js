@@ -852,8 +852,9 @@ function TextXBlock(runtime, element) {
         console.log(e.target.value, "value of select box");
         if (isTImerEnd) {
           toggleAnswer();
+          $(this).val(e.target.value);
         } else {
-          $(this).val("Output");
+          $(this).val("output");
         }
       });
 
@@ -1116,7 +1117,6 @@ function TextXBlock(runtime, element) {
       if (result.status === "ready") {
         //clearing interval after getting result
         clearIntervalsFunction();
-        // progressLoad = 0;
 
         $(element).find(".progressBar-div").hide();
         $(element).find(".results-div").css({ opacity: "1" });
