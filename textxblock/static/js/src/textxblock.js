@@ -992,6 +992,7 @@ function TextXBlock(runtime, element) {
             url: resetHandleUrl,
             data: JSON.stringify({}),
             success: (data) => {
+              resultsMessage = "";
               manageOutputAnswer(resultsMessage);
               // isEditorLanguageUpdate = true;
               //clearing all drop down language options before reset
