@@ -159,12 +159,26 @@ function TextXBlock(runtime, element) {
         url: handleUrlOfDb,
         data: JSON.stringify({}),
         success: (result) => {
-          getTaskDetails(result);
           isRequestinProgress = false;
-          //checks the status of celery task is pending or not
-          //incase the celery task is pening it will start polling to get the result
-          if (!isPolling && result.status === "pending") {
-            startPollingFun();
+          getInitialTaskDetails(result);
+          if (result.status === "ready") {
+            //calling the task result function which will update the UI of code results
+            showResults(result);
+            clearIntervalsFunction();
+          } else if (result.status === "pending") {
+            //checks the status of celery task is pending or not
+            //incase the celery task is pening it will start polling to get the result
+            if (!isPolling) {
+              startPollingFun();
+            }
+          } else if (result.status === "not_submitted") {
+            clearIntervalsFunction();
+          } else if (result.status === "error") {
+            $(element)
+              .find(".results-div")
+              .show()
+              .text("Error during grading...");
+            clearIntervalsFunction();
           }
         },
         error: (xhr) => {
@@ -172,9 +186,7 @@ function TextXBlock(runtime, element) {
           console.error("error occures", xhr.statusText);
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
-          $(element)
-            .find(".results-div")
-            .text("Error occurred, please try again..........");
+          $(element).find(".results-div").text(xhr.statusText);
         },
       });
     }
@@ -245,7 +257,7 @@ function TextXBlock(runtime, element) {
     });
 
     //this will be called on successfull ajax request of initail load call
-    function getTaskDetails(result) {
+    function getInitialTaskDetails(result) {
       userInputCode = result.user_code;
       //checks if there is any data is available
       if (result.user_code !== "") {
@@ -264,13 +276,6 @@ function TextXBlock(runtime, element) {
             isEditorUpdated = true;
           }
         }
-        //calling the task result function which will update the UI of code results
-        showResults(result);
-      } else {
-        // console.log("no data receiving from get task details");
-        //clearing interval if there is no data avaialbale on the intial load
-        //this will effectively stop polling if there is no data available in db
-        clearIntervalsFunction();
       }
     }
 
@@ -854,6 +859,12 @@ function TextXBlock(runtime, element) {
           toggleAnswer();
           $(this).val(e.target.value);
         } else {
+          const timerText = $(element).find(".timer-text");
+          timerText.show();
+
+          setTimeout(() => {
+            timerText.fadeOut();
+          }, 4000);
           $(this).val("output");
         }
       });
@@ -956,18 +967,21 @@ function TextXBlock(runtime, element) {
           language: language,
         }),
         success: (result) => {
-          isSubmitting = false;
-          console.log(result, " from handle task method response");
-          getTaskResult(result);
+          if (result.is_accepted) {
+            isSubmitting = false;
+            console.log(result, " from handle task method response");
+            getTaskResult(result);
+          } else {
+            console.log(result, " from else of handle task method response");
+          }
         },
         error: (xhr) => {
           isSubmitting = false;
-          console.error("Error occurred:", xhr.statusText);
+          console.log("inside error of handle task method");
+          console.error("Error occurred:", xhr.statusText, xhr);
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
-          $(element)
-            .find(".results-div")
-            .text("Error occurred, please try again.");
+          $(element).find(".results-div").text(xhr.statusText);
           $(element).find(".results").hide();
           $(element).find(".results-marks").hide();
         },
@@ -1045,29 +1059,43 @@ function TextXBlock(runtime, element) {
             url: handlerUrl,
             data: JSON.stringify({}),
             success: (response) => {
-              // //based on the celery task status it will updted the resul for progress bar
-              if (
-                response.status !== "pending" &&
-                response.status !== "error"
-              ) {
-                console.log("from if");
-                animateProgress(100, () => {
-                  showResults(response);
-                });
-              } else {
-                console.log("from else");
-                //which ensures the progress bar not to exceed 100%
-                let finalProgressLoad = Math.min(progressLoad + 10, 100);
-                console.log(finalProgressLoad, "final progress load from else");
-                if (finalProgressLoad > progressLoad) {
-                  // Add this check
-                  animateProgress(finalProgressLoad);
-                }
-              }
               isRequestInProgress = false;
+              try {
+                // //based on the celery task status it will updted the resul for progress bar
+                if (response.status === "ready") {
+                  console.log("inside ready response");
+                  animateProgress(100, () => {
+                    showResults(response);
+                  });
+                } else if (response.status === "error") {
+                  console.log("inside error response");
+                  clearIntervalsFunction(); //clear interval if error occurs
+                  //managing progress bar and showing error message
+                  $(element).find(".progressBar-div").hide();
+                  $(element).find(".results-div").show();
+                  $(element)
+                    .find(".results-div")
+                    .text(
+                      response.error || "Error occurred, please try again."
+                    );
+                  $(element).find(".results").hide();
+                  $(element).find(".results-marks").hide();
+                } else if (response.status === "pending") {
+                  console.log("inside pending response");
+                  //which ensures the progress bar not to exceed while polling 100%
+                  let finalProgressLoad = Math.min(progressLoad + 10, 100);
+                  if (finalProgressLoad > progressLoad) {
+                    animateProgress(finalProgressLoad);
+                  }
+                }
+              } catch (error) {
+                console.error("Error updating DOM ", error);
+                clearIntervalsFunction();
+              }
             },
             error: (xhr) => {
               isRequestInProgress = false;
+              clearIntervalsFunction();
               console.error("error occured ", xhr.statusText);
               $(element).find(".progressBar-div").hide();
               $(element).find(".results-div").show();
@@ -1114,39 +1142,35 @@ function TextXBlock(runtime, element) {
     function showResults(result) {
       progressLoad = 0;
       // console.log(result, " inside show results");
-      if (result.status === "ready") {
-        //clearing interval after getting result
-        clearIntervalsFunction();
+      //clearing interval after getting result
+      clearIntervalsFunction();
 
-        $(element).find(".progressBar-div").hide();
-        $(element).find(".results-div").css({ opacity: "1" });
-        $(element).find(".results-div").show();
-        $(element)
-          .find(".results")
-          .text(`Solution Correct: ${result.is_correct}`);
-        $(element).find(".results-marks").text(`Marks: ${result.score}`);
+      $(element).find(".progressBar-div").hide();
+      $(element).find(".results-div").css({ opacity: "1" });
+      $(element).find(".results-div").show();
+      $(element)
+        .find(".results")
+        .text(`Solution Correct: ${result.is_correct}`);
+      $(element).find(".results-marks").text(`Marks: ${result.score}`);
 
-        resultsMessage = result.message;
-        manageOutputAnswer(resultsMessage);
+      resultsMessage = result.message;
+      manageOutputAnswer(resultsMessage);
 
-        $(element)
-          .find("#submit")
-          .css({ "pointer-events": "auto", opacity: "1" });
-        $(element).find(".reset").css({ "pointer-events": "auto" });
+      $(element)
+        .find("#submit")
+        .css({ "pointer-events": "auto", opacity: "1" });
+      $(element).find(".reset").css({ "pointer-events": "auto" });
 
-        //for small screen run button
-        $(element).find("#submit-small").css({ "pointer-events": "auto" });
-        $(element).find(".arrow-small").show();
-        $(element).find(".small-loader-run").hide();
-        $(element).find(".run-text").show();
+      //for small screen run button
+      $(element).find("#submit-small").css({ "pointer-events": "auto" });
+      $(element).find(".arrow-small").show();
+      $(element).find(".small-loader-run").hide();
+      $(element).find(".run-text").show();
 
-        //showing the language option but user not interact with it
-        $(element)
-          .find(".language")
-          .css({ "pointer-events": "none", opacity: "1" });
-      } else {
-        console.log(result.status, " from else ......");
-      }
+      //showing the language option but user not interact with it
+      $(element)
+        .find(".language")
+        .css({ "pointer-events": "none", opacity: "1" });
     }
 
     function manageOutputAnswer(resultsMessage) {

@@ -10,4 +10,4 @@ def task_method(data_dict, submission_id ):
         'x-submission-id': submission_id
     }
     response = requests.post(url = server_address, json =  data_dict, headers = headers)
-    return response.json()
+    return response

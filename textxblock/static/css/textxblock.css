@@ -110,10 +110,6 @@
   /* font-weight: bold; */
 }
 
-.timer-text {
-  display: none;
-}
-
 .header-one {
   width: 100%;
   box-sizing: border-box;
@@ -351,9 +347,11 @@ select {
   outline: none;
   border-top: none;
   border-right: none;
-  border-bottom-left-radius: 2px;
+  background-color: white;
+  border-bottom-left-radius: 3px;
   color: black;
   padding: 5px;
+  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); */
 }
 
 .ans-select {
@@ -512,6 +510,32 @@ select {
   border-top: none;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
+  position: relative;
+}
+
+.timer-text {
+  display: none;
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  background-color: #f39c12;
+  font-size: 12px;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.timer-text::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 6px solid #f39c12;
 }
 
 .answer-container {

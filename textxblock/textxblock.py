@@ -16,9 +16,11 @@ import redis
 import uuid
 from lms.djangoapps.courseware.models import StudentModule
 from opaque_keys.edx.keys import UsageKey
+from webob.exc import HTTPInternalServerError, HTTPBadRequest
 import traceback
 from django.contrib.auth.models import User
 import base64
+import requests
 
 @XBlock.needs('user')
 class TextXBlock(XBlock):
@@ -55,7 +57,7 @@ class TextXBlock(XBlock):
     )
 
     marks = Integer(
-        default=0,
+        default=10,
         scope= Scope.content,
         help= "marks assigned by admin to each question"
     )
@@ -132,6 +134,13 @@ class TextXBlock(XBlock):
         scope= Scope.user_state,
         help= "user submitted code language"
     )
+
+    is_submission_graded = Boolean(
+        default= False,
+        scope= Scope.user_state,
+        help= "the submission graded or not"
+    )
+
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -216,7 +225,12 @@ class TextXBlock(XBlock):
             'expected_output' : self.expected_output
         }
 
-    redis_client = redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
+
+    def get_redis_client(self):
+        return redis.StrictRedis(host='host.docker.internal', port=6379, db=0, decode_responses=True)
+
+
+
     #this will be executed if the user clicks on run button or user submits code
     @XBlock.json_handler
     def handle_task_method(self, data, suffix=''):
@@ -225,7 +239,6 @@ class TextXBlock(XBlock):
         user_service = self.runtime.service(self, 'user')
         current_user = user_service.get_current_user()
         student_name = current_user.opt_attrs.get("edx-platform.username", None)
-
         data_dict = self.get_admin_data()
         data_dict['student_id'] = student_id
         data_dict['student_name'] = student_name
@@ -233,26 +246,44 @@ class TextXBlock(XBlock):
         data_dict['student_code'] = encoded_code
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
         data_dict['usage_key'] = block_location_id
-        
+        #setting submission graded  to false on new submission        
+        self.is_submission_graded = False
         #for redis and uuids
         submission_id = str(uuid.uuid4())
-        self.redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
-        self.redis_client.expire(submission_id, 900)# here the time is set to 15 minutes before expiry
-
+        self.get_redis_client.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id, "grading_status": "pending"})
+        self.get_redis_client.expire(submission_id, 900)# here the time is set to 15 minutes before expiry
         #saving the student input code into the field
         self.student_input_code = data['user_input']
         self.user_code_submit_language = data['language']
-        print(self.score, self.message, self.is_correct, "Before saving")
+
         # resetting previous values of score, message, is_correct
         self.score = 0
         self.message = ""
         self.is_correct = False
         self.save()
-        print(self.file_name, " this is file name")
-        print(self.language, ".....................................!!!!!!!!!!!")
-        print(self.user_code_submit_language, " this is user code submit language")
-        response = task_method(data_dict, submission_id)
-        return {"accepted" : response['isAccepted']}
+
+        try:
+            #calling the task method to send the code and data to garder
+            response = task_method(data_dict, submission_id)
+            if response.status_code == 200:
+                response_json = response.json()
+                is_accepted = response_json.get("accepted", False)
+                return {is_accepted: is_accepted}
+            elif response.status_code >= 400:
+                try:
+                    error_data = response.json()
+                    error_message = error_data.get("error", str(response))
+                except json.JSONDecodeError:
+                    error_message = str(response)
+                raise HTTPBadRequest(json_body={"accepted": False, "error": error_message})
+            else:
+                raise HTTPInternalServerError(json_body={"accepted": False, "error": f"Unexpected status code from grader: {response.status_code}"})
+        except requests.exceptions.RequestException as e:
+            print(f"Error communicating with grader: {e}")
+            raise HTTPInternalServerError(json_body={"accepted": False, "error": "Failed to communicate with the code grader."})
+        except Exception as e:
+            print(f"Error in handle_task_method: {traceback.format_exc()}")
+            raise HTTPInternalServerError(json_body={"accepted": False, "error": "An unexpected error occurred in the XBlock."})
 
     
     #which will be called with task id to check the status of the celry
@@ -276,12 +307,12 @@ class TextXBlock(XBlock):
     #this will check the celery task result
     def fetch_task_result(self):        
         try:
-            if self.message == "":
-                print("inside if so message is empty", self.message)
-                return {"status" : "pending", "user_code" : self.student_input_code}
-            else:
-                print("inside else so message is not empty", self.message)
+            if self.is_submission_graded == True:
                 return {"status" : "ready", "score": self.score, "is_correct": self.is_correct, "message": self.message, "user_code" : self.student_input_code}
+            elif self.is_submission_graded == False and self.student_input_code != "":
+                return {"status" : "pending", "user_code" : self.student_input_code}
+            elif self.is_submission_graded == False and self.student_input_code == "":
+                return {"status" : "not_submitted"}
         except Exception as e:
             return {'status': "error", 'error': str(e)}
 
