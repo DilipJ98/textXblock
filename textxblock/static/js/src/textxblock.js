@@ -152,6 +152,7 @@ function TextXBlock(runtime, element) {
     //this function will be called after monaco editor is initialized
     //because this function gets the data from the database and updates UI that previous code inputs and results
     function makeInitialAjaxCall() {
+      console.log("inside make initial ajax call function");
       let handleUrlOfDb = runtime.handlerUrl(element, "on_intial_load");
       isRequestinProgress = true;
       $.ajax({
@@ -159,8 +160,8 @@ function TextXBlock(runtime, element) {
         url: handleUrlOfDb,
         data: JSON.stringify({}),
         success: (result) => {
+          console.log(result, "result from initial load ajax call");
           isRequestinProgress = false;
-
           if (result.status === "ready") {
             console.log("inside ready of initial load ajax call");
             //calling the task result function which will update the UI of code results
