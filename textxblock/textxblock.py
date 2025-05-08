@@ -264,13 +264,16 @@ class TextXBlock(XBlock):
         self.save()
 
         try:
+            print("inside handle_task_method..............................................")
             #calling the task method to send the code and data to garder
             response = task_method(data_dict, submission_id)
             if response.status_code == 200:
+                print("response from grader is 200..............................................", response)
                 response_json = response.json()
                 is_accepted = response_json.get("accepted", False)
                 return {is_accepted: is_accepted}
             elif response.status_code >= 400:
+                print("response from grader is 400..............................................", response)
                 try:
                     error_data = response.json()
                     error_message = error_data.get("error", str(response))
@@ -331,6 +334,7 @@ class TextXBlock(XBlock):
         self.score = 0
         self.message = ""
         self.is_correct = False
+        self.is_submission_graded = False
         self.runtime.publish(self, "grade", {"value":self.score, "max_value" : self.marks})
         self.save()
         return {"status" : "success"}
