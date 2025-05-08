@@ -269,23 +269,23 @@ function TextXBlock(runtime, element) {
       console.log(result, "result from get initial task details function");
       // userInputCode = result.user_code;
       //checks if there is any data is available
-      //   if (result.user_code !== "") {
-      //     //checks if the monaco editor updated with code
-      //     if (!isEditorUpdated) {
-      //       if (editor) {
-      //         editor.setValue("");
-      //         //showing the input data code on the editor
-      //         editor.setValue(result.user_code);
-      //         //if the data is exist it it will show fetching results on page realods
-      //         $(element).find(".results-div").show();
-      //         $(element).find(".results").text("We are fetching your results...");
-      //         $(element).find(".results-marks").text("");
-      //         //assigning the user input code to a varibale to use later in the code
-      //         getUserAnswerFromDb = result.user_code;
-      //         isEditorUpdated = true;
-      //       }
-      //     }
-      //   }
+      if (result.user_code !== "") {
+        //checks if the monaco editor updated with code
+        if (!isEditorUpdated) {
+          if (editor) {
+            editor.setValue("");
+            //showing the input data code on the editor
+            editor.setValue(result.user_code);
+            //if the data is exist it it will show fetching results on page realods
+            $(element).find(".results-div").show();
+            $(element).find(".results").text("We are fetching your results...");
+            $(element).find(".results-marks").text("");
+            //assigning the user input code to a varibale to use later in the code
+            getUserAnswerFromDb = result.user_code;
+            isEditorUpdated = true;
+          }
+        }
+      }
     }
 
     function updateEditorLanguage() {
