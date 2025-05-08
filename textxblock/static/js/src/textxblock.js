@@ -269,32 +269,28 @@ function TextXBlock(runtime, element) {
       console.log(result, "result from get initial task details function");
       // userInputCode = result.user_code;
       //checks if there is any data is available
-      if (result.user_code !== "") {
-        //checks if the monaco editor updated with code
-        if (!isEditorUpdated) {
-          if (editor) {
-            editor.setValue("");
-            //showing the input data code on the editor
-            editor.setValue(result.user_code);
-            //if the data is exist it it will show fetching results on page realods
-            $(element).find(".results-div").show();
-            $(element).find(".results").text("We are fetching your results...");
-            $(element).find(".results-marks").text("");
-            //assigning the user input code to a varibale to use later in the code
-            getUserAnswerFromDb = result.user_code;
-            isEditorUpdated = true;
-          }
-        }
-      }
+      //   if (result.user_code !== "") {
+      //     //checks if the monaco editor updated with code
+      //     if (!isEditorUpdated) {
+      //       if (editor) {
+      //         editor.setValue("");
+      //         //showing the input data code on the editor
+      //         editor.setValue(result.user_code);
+      //         //if the data is exist it it will show fetching results on page realods
+      //         $(element).find(".results-div").show();
+      //         $(element).find(".results").text("We are fetching your results...");
+      //         $(element).find(".results-marks").text("");
+      //         //assigning the user input code to a varibale to use later in the code
+      //         getUserAnswerFromDb = result.user_code;
+      //         isEditorUpdated = true;
+      //       }
+      //     }
+      //   }
     }
 
     function updateEditorLanguage() {
       isEditorLanguageUpdate = true;
-      console.log("inside update editor language function");
-      console.log(
-        dataFromInitiaRequest.user_submit_language,
-        "user submit language"
-      );
+
       if (dataFromInitiaRequest.user_submit_language) {
         if (dataFromInitiaRequest.user_submit_language === "java") {
           $(element)
@@ -360,7 +356,6 @@ function TextXBlock(runtime, element) {
     }
 
     function userSelectedEditorLanguage() {
-      console.log("inside user selected editor language function");
       if (selectedEditorLanguage === "java") {
         return {
           lang: "java",
@@ -380,7 +375,6 @@ function TextXBlock(runtime, element) {
     function monacoEditor() {
       //which gets data from initial request and show the code in the editor basically contains boilerplate code and etc
       let data = dataFromInitiaRequest;
-      console.log(data.language, "language from data");
       try {
         //monaco editor shows initailly
         var requiredScript = document.createElement("script");
@@ -510,7 +504,6 @@ function TextXBlock(runtime, element) {
 
             ws = new WebSocket(webSocketUri);
 
-            console.log(ws);
             //websocket stuff to get the real time sugestions from node js and JDTLS server
 
             // ws.close();
@@ -531,15 +524,12 @@ function TextXBlock(runtime, element) {
                   },
                 })
               );
-
-              console.log("initialize request sent to server");
             };
 
             let initializedSent = false;
             let isDidOpenSent = false;
 
             ws.onmessage = (event) => {
-              console.log("insdie on message");
               const message = JSON.parse(event.data);
 
               if (message.id === 1 && message.result && !initializedSent) {
@@ -553,7 +543,6 @@ function TextXBlock(runtime, element) {
                   })
                 );
 
-                console.log("initialized notification sent");
                 //sending did open notification to server
                 ws.send(
                   JSON.stringify({
@@ -570,7 +559,6 @@ function TextXBlock(runtime, element) {
                   })
                 );
                 isDidOpenSent = true;
-                console.log("did open");
               }
 
               if (message.method === "textDocument/publishDiagnostics") {
@@ -651,7 +639,7 @@ function TextXBlock(runtime, element) {
             let version = 2;
             let sendDidChange = debounce(() => {
               if (!isDidOpenSent) return;
-              console.log("did change");
+
               try {
                 ws.send(
                   JSON.stringify({
@@ -684,8 +672,6 @@ function TextXBlock(runtime, element) {
             let requestIdOfRegister = 2;
             monaco.languages.registerCompletionItemProvider(editorLang, {
               provideCompletionItems: (model, position) => {
-                console.log("provideCompletionItems called");
-                console.log(editorLang, "language");
                 try {
                   return new Promise((resolve) => {
                     ws.resolveCompletion = resolve;
@@ -716,7 +702,6 @@ function TextXBlock(runtime, element) {
             let requestIdOfHover = 2;
             monaco.languages.registerHoverProvider(editorLang, {
               provideHover: function (model, position) {
-                console.log("hover called");
                 return new Promise((resolve) => {
                   const lspRequest = {
                     jsonrpc: "2.0",
@@ -762,7 +747,6 @@ function TextXBlock(runtime, element) {
       .find(".language")
       .on("change", (e) => {
         selectedEditorLanguage = e.target.value;
-        console.log(selectedEditorLanguage, "selected language");
         initializeMonacoEditor();
       });
 
@@ -863,7 +847,6 @@ function TextXBlock(runtime, element) {
     $(element)
       .find(".output-select")
       .on("change", function (e) {
-        console.log(e.target.value, "value of select box");
         if (isTImerEnd) {
           toggleAnswer();
           $(this).val(e.target.value);
@@ -886,11 +869,9 @@ function TextXBlock(runtime, element) {
           opacity: "1",
           transition: "opacity 1s ease-in",
         });
-        console.log("inside if of toggle answer");
         isCheckBoxChecked = true;
       } else {
         $(element).find(".answer-container").text(resultsMessage);
-        console.log("inside else of toggle answer");
         isCheckBoxChecked = false;
       }
     }
@@ -978,7 +959,6 @@ function TextXBlock(runtime, element) {
         success: (result) => {
           if (result.is_accepted) {
             isSubmitting = false;
-            console.log(result, " from handle task method response");
             getTaskResult(result);
           } else {
             console.log(result, " from else of handle task method response");
@@ -986,7 +966,6 @@ function TextXBlock(runtime, element) {
         },
         error: (xhr) => {
           isSubmitting = false;
-          console.log("inside error of handle task method");
           console.error("Error occurred:", xhr.statusText, xhr);
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
@@ -1002,7 +981,6 @@ function TextXBlock(runtime, element) {
     $(element).find(".reset, .reset-small").on("click", resetFunction);
 
     function resetFunction() {
-      console.log("reset function called");
       if (
         confirm(
           "Your current code will be discarded and reset to the default code!"
@@ -1072,12 +1050,10 @@ function TextXBlock(runtime, element) {
               try {
                 // //based on the celery task status it will updted the resul for progress bar
                 if (response.status === "ready") {
-                  console.log("inside ready response");
                   animateProgress(100, () => {
                     showResults(response);
                   });
                 } else if (response.status === "error") {
-                  console.log("inside error response");
                   clearIntervalsFunction(); //clear interval if error occurs
                   //managing progress bar and showing error message
                   $(element).find(".progressBar-div").hide();
@@ -1090,7 +1066,6 @@ function TextXBlock(runtime, element) {
                   $(element).find(".results").hide();
                   $(element).find(".results-marks").hide();
                 } else if (response.status === "pending") {
-                  console.log("inside pending response");
                   //which ensures the progress bar not to exceed while polling 100%
                   let finalProgressLoad = Math.min(progressLoad + 10, 100);
                   if (finalProgressLoad > progressLoad) {
@@ -1120,12 +1095,9 @@ function TextXBlock(runtime, element) {
     }
 
     function animateProgress(targetProgress, onComplete) {
-      console.log(targetProgress, "target progress");
-      console.log(progressLoad, "progress load");
       let currentProgress = progressLoad;
       function updateProgress() {
         if (currentProgress < targetProgress) {
-          console.log(currentProgress, "current progress in if");
           currentProgress++;
           $(element)
             .find("#progressBar")
@@ -1135,7 +1107,6 @@ function TextXBlock(runtime, element) {
             .text(currentProgress + "%");
           progressBarInterval = setTimeout(updateProgress, 50);
         } else {
-          console.log(targetProgress, "target progress in else");
           progressLoad = targetProgress;
           //calling callback function to show results
           if (typeof onComplete === "function") {
