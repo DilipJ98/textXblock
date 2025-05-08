@@ -428,7 +428,7 @@ function TextXBlock(runtime, element) {
 
             let model = monaco.editor.createModel(
               editorLang === "java"
-                ? "class Main{\n\tpublic static void main(String args[]){\n\n\t}}"
+                ? "class Main {\n\tpublic static void main(String args[]) {\n\n\t}\n}"
                 : "def main():\n",
               editorLang,
               uri
@@ -970,6 +970,9 @@ function TextXBlock(runtime, element) {
         },
         error: (xhr) => {
           isSubmitting = false;
+          let errorData = JSON.parse(xhr.responseText);
+          console.log(xhr.responseText, "error response text");
+          console.log(errorData, "error data from handle task method response");
           console.error("Error occurred:", xhr.statusText, xhr);
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();

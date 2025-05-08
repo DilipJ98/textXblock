@@ -250,9 +250,13 @@ class TextXBlock(XBlock):
         self.is_submission_graded = False
         #for redis and uuids
         submission_id = str(uuid.uuid4())
-        redis_cli = self.get_redis_client()
-        redis_cli.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
-        redis_cli.expire(submission_id, 900)# here the time is set to 15 minutes before expiry
+
+        try:
+            redis_cli = self.get_redis_client()
+            redis_cli.hset(submission_id, mapping={"usage_key": block_location_id, "student_id": student_id})
+            redis_cli.expire(submission_id, 900)# here the time is set to 15 minutes before expiry
+        except Exception as e:
+            raise HTTPInternalServerError(json_body={"accepted": False, "error": "Failed to connect to Redis."})
         #saving the student input code into the field
         self.student_input_code = data['user_input']
         self.user_code_submit_language = data['language']
