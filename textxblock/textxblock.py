@@ -308,12 +308,16 @@ class TextXBlock(XBlock):
     def fetch_task_result(self):        
         try:
             if self.is_submission_graded == True:
+                print("is submission graded is true.....................................1111111111111111111")
                 return {"status" : "ready", "score": self.score, "is_correct": self.is_correct, "message": self.message, "user_code" : self.student_input_code}
             elif self.is_submission_graded == False and self.student_input_code != "":
+                print("is submission graded is false.....................................2222222222222222222")
                 return {"status" : "pending", "user_code" : self.student_input_code}
             elif self.is_submission_graded == False and self.student_input_code == "":
+                print("is submission graded is false and student code is empty.....................................33333333333333333")
                 return {"status" : "not_submitted"}
         except Exception as e:
+            print(f"Error in fetch_task_result: {traceback.format_exc()}.............................................................")
             return {'status': "error", 'error': str(e)}
 
         

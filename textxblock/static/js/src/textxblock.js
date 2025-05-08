@@ -266,6 +266,7 @@ function TextXBlock(runtime, element) {
 
     //this will be called on successfull ajax request of initail load call
     function getInitialTaskDetails(result) {
+      console.log(result, "result from get initial task details function");
       // userInputCode = result.user_code;
       //checks if there is any data is available
       if (result.user_code !== "") {
