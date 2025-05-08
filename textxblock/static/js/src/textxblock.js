@@ -969,14 +969,16 @@ function TextXBlock(runtime, element) {
           }
         },
         error: (xhr) => {
+          $(element)
+            .find("#submit")
+            .css({ "pointer-events": "auto", opacity: "1" });
           isSubmitting = false;
-          let errorData = JSON.parse(xhr.responseText);
-          console.log(xhr.responseText, "error response text");
-          console.log(errorData, "error data from handle task method response");
           console.error("Error occurred:", xhr.statusText, xhr);
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
-          $(element).find(".results-div").text(xhr.statusText);
+          $(element)
+            .find(".results-div")
+            .text("Internal server error Please try again.");
           $(element).find(".results").hide();
           $(element).find(".results-marks").hide();
         },
