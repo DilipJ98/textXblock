@@ -174,7 +174,10 @@ function TextXBlock(runtime, element) {
             getInitialTaskDetails(result);
 
             if (!isPolling) {
-              console.log("inside pending of initial load ajax call");
+              $(element).find(".results-div").show();
+              $(element)
+                .find(".results-div")
+                .text("Please wait while we are grading...");
               startPollingFun();
             }
           } else if (result.status === "not_submitted") {

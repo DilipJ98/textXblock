@@ -264,17 +264,13 @@ class TextXBlock(XBlock):
         self.save()
 
         try:
-            print("inside handle_task_method..............................................")
             #calling the task method to send the code and data to garder
             response = task_method(data_dict, submission_id)
             if response.status_code == 200:
                 response_json = response.json()
                 is_accepted = response_json.get("accepted", False)
-                print("response from grader is 200..............................................", response)
-                print(is_accepted, "is accepted................................................")
                 return {"is_accepted": is_accepted}
             elif response.status_code >= 400:
-                print("response from grader is 400..............................................", response)
                 try:
                     error_data = response.json()
                     error_message = error_data.get("error", str(response))
@@ -284,10 +280,8 @@ class TextXBlock(XBlock):
             else:
                 raise HTTPInternalServerError(json_body={"accepted": False, "error": f"Unexpected status code from grader: {response.status_code}"})
         except requests.exceptions.RequestException as e:
-            print(f"Error communicating with grader: {e}")
             raise HTTPInternalServerError(json_body={"accepted": False, "error": "Failed to communicate with the code grader."})
         except Exception as e:
-            print(f"Error in handle_task_method: {traceback.format_exc()}")
             raise HTTPInternalServerError(json_body={"accepted": False, "error": "An unexpected error occurred in the XBlock."})
 
     
@@ -313,23 +307,18 @@ class TextXBlock(XBlock):
     def fetch_task_result(self):        
         try:
             if self.is_submission_graded == True:
-                print("is submission graded is true.....................................1111111111111111111")
                 return {"status" : "ready", "score": self.score, "is_correct": self.is_correct, "message": self.message, "user_code" : self.student_input_code}
             elif self.is_submission_graded == False and self.student_input_code != "":
-                print("is submission graded is false.....................................2222222222222222222")
                 return {"status" : "pending", "user_code" : self.student_input_code}
             elif self.is_submission_graded == False and self.student_input_code == "":
-                print("is submission graded is false and student code is empty.....................................33333333333333333")
                 return {"status" : "not_submitted"}
         except Exception as e:
-            print(f"Error in fetch_task_result: {traceback.format_exc()}.............................................................")
             return {'status': "error", 'error': str(e)}
 
         
     #this will be triggered if user clicks on reset button
     @XBlock.json_handler
     def delete_task(self, data, suffix=''):
-
         self.student_input_code = ""
         self.user_code_submit_language = ""
         self.score = 0
