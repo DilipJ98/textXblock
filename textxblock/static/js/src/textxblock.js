@@ -957,8 +957,9 @@ function TextXBlock(runtime, element) {
           language: language,
         }),
         success: (result) => {
+          console.log(result, " from handle task method response");
+          isSubmitting = false;
           if (result.is_accepted) {
-            isSubmitting = false;
             getTaskResult(result);
           } else {
             console.log(result, " from else of handle task method response");

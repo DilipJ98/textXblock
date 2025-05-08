@@ -268,9 +268,10 @@ class TextXBlock(XBlock):
             #calling the task method to send the code and data to garder
             response = task_method(data_dict, submission_id)
             if response.status_code == 200:
-                print("response from grader is 200..............................................", response)
                 response_json = response.json()
                 is_accepted = response_json.get("accepted", False)
+                print("response from grader is 200..............................................", response)
+                print(is_accepted, "is accepted................................................")
                 return {is_accepted: is_accepted}
             elif response.status_code >= 400:
                 print("response from grader is 400..............................................", response)
