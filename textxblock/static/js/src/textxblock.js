@@ -23,7 +23,7 @@ function TextXBlock(runtime, element) {
     let isTImerEnd = false;
     let selectedEditorLanguage;
     let isEditorLanguageUpdate = false;
-    let userInputCode;
+    // let userInputCode;
     let ws;
     let language;
     let isThemeIconUpdated = false;
@@ -160,20 +160,27 @@ function TextXBlock(runtime, element) {
         data: JSON.stringify({}),
         success: (result) => {
           isRequestinProgress = false;
-          getInitialTaskDetails(result);
+
           if (result.status === "ready") {
+            console.log("inside ready of initial load ajax call");
             //calling the task result function which will update the UI of code results
+            getInitialTaskDetails(result);
             showResults(result);
             clearIntervalsFunction();
           } else if (result.status === "pending") {
             //checks the status of celery task is pending or not
             //incase the celery task is pening it will start polling to get the result
+            getInitialTaskDetails(result);
+
             if (!isPolling) {
+              console.log("inside pending of initial load ajax call");
               startPollingFun();
             }
           } else if (result.status === "not_submitted") {
+            console.log("inside not submitted of initial load ajax call");
             clearIntervalsFunction();
           } else if (result.status === "error") {
+            console.log("inside error of initial load ajax call");
             $(element)
               .find(".results-div")
               .show()
@@ -258,7 +265,7 @@ function TextXBlock(runtime, element) {
 
     //this will be called on successfull ajax request of initail load call
     function getInitialTaskDetails(result) {
-      userInputCode = result.user_code;
+      // userInputCode = result.user_code;
       //checks if there is any data is available
       if (result.user_code !== "") {
         //checks if the monaco editor updated with code
