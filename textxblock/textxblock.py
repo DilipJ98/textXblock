@@ -272,7 +272,7 @@ class TextXBlock(XBlock):
                 is_accepted = response_json.get("accepted", False)
                 print("response from grader is 200..............................................", response)
                 print(is_accepted, "is accepted................................................")
-                return {is_accepted: is_accepted}
+                return {"is_accepted": is_accepted}
             elif response.status_code >= 400:
                 print("response from grader is 400..............................................", response)
                 try:
