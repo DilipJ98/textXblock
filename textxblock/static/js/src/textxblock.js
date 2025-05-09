@@ -160,10 +160,8 @@ function TextXBlock(runtime, element) {
         url: handleUrlOfDb,
         data: JSON.stringify({}),
         success: (result) => {
-          console.log(result, "result from initial load ajax call");
           isRequestinProgress = false;
           if (result.status === "ready") {
-            console.log("inside ready of initial load ajax call");
             //calling the task result function which will update the UI of code results
             getInitialTaskDetails(result);
             showResults(result);
@@ -172,7 +170,6 @@ function TextXBlock(runtime, element) {
             //checks the status of celery task is pending or not
             //incase the celery task is pening it will start polling to get the result
             getInitialTaskDetails(result);
-
             if (!isPolling) {
               $(element).find(".results-div").show();
               $(element)
@@ -181,10 +178,8 @@ function TextXBlock(runtime, element) {
               startPollingFun();
             }
           } else if (result.status === "not_submitted") {
-            console.log("inside not submitted of initial load ajax call");
             clearIntervalsFunction();
           } else if (result.status === "error") {
-            console.log("inside error of initial load ajax call");
             $(element)
               .find(".results-div")
               .show()
@@ -281,8 +276,10 @@ function TextXBlock(runtime, element) {
             editor.setValue(result.user_code);
             //if the data is exist it it will show fetching results on page realods
             $(element).find(".results-div").show();
-            $(element).find(".results").text("We are fetching your results...");
-            $(element).find(".results-marks").text("");
+            $(element)
+              .find(".results-div")
+              .text("We are fetching your results...");
+            // $(element).find(".results-marks").text("");
             //assigning the user input code to a varibale to use later in the code
             getUserAnswerFromDb = result.user_code;
             isEditorUpdated = true;
@@ -904,6 +901,35 @@ function TextXBlock(runtime, element) {
         toggleTheme();
       });
 
+    let isResizeClicked = false;
+    $(element)
+      .find(".resize")
+      .on("click", () => {
+        resizeFunction();
+      });
+
+    function resizeFunction() {
+      if (!isResizeClicked) {
+        $(element).find("#resize-svg").css({ display: "none" });
+        $(element).find("#resize-svg-two").css({ display: "block" });
+        $(element)
+          .find(".container-div")
+          .css({ width: "100%", position: "absolute" });
+        $(element)
+          .find(".editors-div")
+          .css({ position: "absolute", height: "100%", "z-index": "999" });
+        // $(element).find(".answer-container-div").css({ display: "none" });
+        isResizeClicked = true;
+      } else {
+        $(element).find("#resize-svg").css({ display: "block" });
+        $(element).find("#resize-svg-two").css({ display: "none" });
+        $(element).find(".container-div").css({ width: "", position: "" });
+        $(element).find(".editors-div").css({ position: "", height: "" });
+        // $(element).find(".answer-container-div").css({ display: "" });
+        isResizeClicked = false;
+      }
+    }
+
     //on clicking submit code button or run button
     $(element)
       .find("#submit, #submit-small")
@@ -919,7 +945,15 @@ function TextXBlock(runtime, element) {
       }
       clearIntervalsFunction();
       progressLoad = 0;
-      $(element).find(".reset").css({ "pointer-events": "none" });
+
+      if (window.innerWidth < 799) {
+        const outputTab = $(element).find('.tabs-btn[data-tab="output"]');
+        $(element).find(".tabs-btn").removeClass("active");
+        outputTab.addClass("active");
+        outputTab.click();
+      }
+
+      $(element).find(".reset, .reset-small").css({ "pointer-events": "none" });
       $(element).find("#submit-small").css({ "pointer-events": "none" });
       $(element).find(".arrow-small").hide();
       $(element).find(".run-text").hide();
@@ -938,15 +972,12 @@ function TextXBlock(runtime, element) {
         .find(".language")
         .css({ "pointer-events": "none", opacity: "0.5" });
 
-      resultsMessage = "";
       //setting answer to empty string on submit button click
-      $(element).find(".answer-container").text(resultsMessage);
-      //show the output as selected on code submit instead of answer
-      $(".output-select").val("output");
+      resultsMessage = "";
+      manageOutputAnswer(resultsMessage);
 
       // calling user input answer function which will get the value during submit
       userInputAnswer(editor.getValue());
-      // clearIntervalsFunction();
     }
 
     //this function have the user input answer and which invokes after user clicks on code submit button
@@ -969,18 +1000,28 @@ function TextXBlock(runtime, element) {
           }
         },
         error: (xhr) => {
-          $(element)
-            .find("#submit")
-            .css({ "pointer-events": "auto", opacity: "1" });
           isSubmitting = false;
-          console.error("Error occurred:", xhr.statusText, xhr);
+          setTimeout(() => {
+            $(element)
+              .find("#submit")
+              .css({ "pointer-events": "auto", opacity: "1" });
+            $(element)
+              .find(".reset, .reset-small")
+              .css({ "pointer-events": "auto" });
+            $(element).find("#submit-small").css({ "pointer-events": "auto" });
+            $(element).find(".small-loader-run").hide();
+            $(element).find(".arrow-small").show();
+            $(element).find(".run-text").show();
+            $(element)
+              .find(".results-div")
+              .text("Error occurred, please try again.");
+          }, 3000);
           $(element).find(".progressBar-div").hide();
           $(element).find(".results-div").show();
-          $(element)
-            .find(".results-div")
-            .text("Internal server error Please try again.");
-          $(element).find(".results").hide();
-          $(element).find(".results-marks").hide();
+          $(element).find(".results-div").css({ opacity: "1" });
+          // $(element).find(".results").hide();
+          // $(element).find(".results-marks").hide();
+          console.error("Error occurred:", xhr.statusText, xhr);
         },
       });
     }
@@ -1025,8 +1066,8 @@ function TextXBlock(runtime, element) {
               $(element)
                 .find(".results-div")
                 .text("Error occurred, please try again.");
-              $(element).find(".results").hide();
-              $(element).find(".results-marks").hide();
+              // $(element).find(".results").hide();
+              // $(element).find(".results-marks").hide();
             },
           });
         }
@@ -1072,8 +1113,8 @@ function TextXBlock(runtime, element) {
                     .text(
                       response.error || "Error occurred, please try again."
                     );
-                  $(element).find(".results").hide();
-                  $(element).find(".results-marks").hide();
+                  // $(element).find(".results").hide();
+                  // $(element).find(".results-marks").hide();
                 } else if (response.status === "pending") {
                   //which ensures the progress bar not to exceed while polling 100%
                   let finalProgressLoad = Math.min(progressLoad + 10, 100);
@@ -1095,8 +1136,8 @@ function TextXBlock(runtime, element) {
               $(element)
                 .find(".results-div")
                 .text("Error occurred, please try again.");
-              $(element).find(".results").hide();
-              $(element).find(".results-marks").hide();
+              // $(element).find(".results").hide();
+              // $(element).find(".results-marks").hide();
             },
           });
         }
@@ -1137,10 +1178,10 @@ function TextXBlock(runtime, element) {
       $(element).find(".progressBar-div").hide();
       $(element).find(".results-div").css({ opacity: "1" });
       $(element).find(".results-div").show();
-      $(element)
-        .find(".results")
-        .text(`Solution Correct: ${result.is_correct}`);
-      $(element).find(".results-marks").text(`Marks: ${result.score}`);
+      // $(element)
+      //   .find(".results")
+      //   .text(`Solution Correct: ${result.is_correct}`);
+      // $(element).find(".results-marks").text(`Marks: ${result.score}`);
 
       resultsMessage = result.message;
       manageOutputAnswer(resultsMessage);
