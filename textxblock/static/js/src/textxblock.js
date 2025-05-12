@@ -986,7 +986,7 @@ function TextXBlock(runtime, element) {
           $(element).find(".answer-container-div").css({
             position: "absolute",
             right: "10px",
-            bottom: "20px",
+            bottom: "40px",
             height: "50%",
             width: "50%",
 
@@ -1232,6 +1232,7 @@ function TextXBlock(runtime, element) {
       $(element).find(".progressBar-div").hide();
       $(element).find(".results-div").css({ opacity: "1" });
       $(element).find(".results-div").show();
+      $(element).find(".results-div").text("");
       // $(element)
       //   .find(".results")
       //   .text(`Solution Correct: ${result.is_correct}`);
