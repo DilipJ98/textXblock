@@ -12,10 +12,10 @@ from celery.result import AsyncResult
 import os
 from webob import Response
 import json
-import redis
+# import redis
 import uuid
-from lms.djangoapps.courseware.models import StudentModule
-from opaque_keys.edx.keys import UsageKey
+# from lms.djangoapps.courseware.models import StudentModule
+# from opaque_keys.edx.keys import UsageKey
 from webob.exc import HTTPInternalServerError, HTTPBadRequest
 import traceback
 from django.contrib.auth.models import User

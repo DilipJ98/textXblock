@@ -254,11 +254,24 @@ function TextXBlock(runtime, element) {
             selectedValue === "dark" ? "selected" : ""
           }>Light Mode</option>
         `);
+        //showing the default correct resize svg based on  chnaged screen size
+        $(element).find("#resize-svg").show();
+        $(element).find("#resize-svg-two").hide();
       } else {
         const codeTab = $(element).find('.tabs-btn[data-tab="code"]');
         $(element).find(".tabs-btn").removeClass("active");
         codeTab.addClass("active");
         toggleTabs.call(codeTab[0]);
+        $(element).find(".answer-container-div").css({
+          position: "",
+          right: "",
+          bottom: "",
+          height: "",
+          width: "",
+          "z-index": "",
+          border: "",
+        });
+        $(element).find(".output-div").css({ "border-top": "" });
       }
     });
 
@@ -912,15 +925,31 @@ function TextXBlock(runtime, element) {
       if (!isResizeClicked) {
         $(element).find("#resize-svg").css({ display: "none" });
         $(element).find("#resize-svg-two").css({ display: "block" });
-        $(element)
-          .find(".container-div")
-          .css({ width: "100%", position: "absolute" });
-        $(element)
-          .find(".editors-div")
-          .css({ position: "absolute", height: "100%", "z-index": "999" });
+        $(element).find(".container-div").css({
+          width: "100%",
+          position: "absolute",
+          // border: "1px solid blue",
+        });
+        $(element).find(".editors-div").css({
+          position: "absolute",
+          height: "100%",
+          "z-index": "999",
+          // border: "1px solid red",
+          // "border-radius": "5px",
+        });
         // $(element).find(".answer-container-div").css({ display: "none" });
         isResizeClicked = true;
       } else {
+        $(element).find(".answer-container-div").css({
+          position: "",
+          right: "",
+          bottom: "",
+          height: "",
+          width: "",
+          "z-index": "",
+          border: "",
+        });
+        $(element).find(".output-div").css({ "border-top": "" });
         $(element).find("#resize-svg").css({ display: "block" });
         $(element).find("#resize-svg-two").css({ display: "none" });
         $(element).find(".container-div").css({ width: "", position: "" });
@@ -945,6 +974,31 @@ function TextXBlock(runtime, element) {
       }
       clearIntervalsFunction();
       progressLoad = 0;
+
+      if (isResizeClicked && window.innerWidth > 799) {
+        setTimeout(() => {
+          $(element).find(".editors-div").css({
+            position: "",
+            height: "100%",
+            "z-index": "",
+          });
+
+          $(element).find(".answer-container-div").css({
+            position: "absolute",
+            right: "10px",
+            bottom: "20px",
+            height: "50%",
+            width: "50%",
+
+            "z-index": "999",
+            border: "none",
+          });
+          // $("body").toggleClass("dark-mode-large-screen");
+          $(element)
+            .find(".output-div")
+            .css({ "border-top": "1px solid #ddd" });
+        }, 2000);
+      }
 
       if (window.innerWidth < 799) {
         const outputTab = $(element).find('.tabs-btn[data-tab="output"]');

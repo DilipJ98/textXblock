@@ -844,6 +844,10 @@ select {
   border-left: 12px solid white;
 }
 
+.dark-mode-large-screen .output-div {
+  border-top: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
 @keyframes spin {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
