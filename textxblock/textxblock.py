@@ -246,6 +246,8 @@ class TextXBlock(XBlock):
         data_dict['student_code'] = encoded_code
         data_dict['submitted_time'] = datetime.now(timezone.utc).isoformat()
         data_dict['usage_key'] = block_location_id
+        #sending the programming language to the grader submited by user
+        data_dict['programming_language'] = data['language']
         #setting submission graded  to false on new submission        
         self.is_submission_graded = False
         #for redis and uuids
